@@ -93,7 +93,8 @@ function executeBattleTurn() {
             else bossItem.def += bonus;
             if (inventory.length < 10) {
                 inventory.push(bossItem);
-                addLog(`<span class="levelup-text">✦ ボスの遺品として <span class="item-text">［${bossItem.name}］</span> を手に入れた！</span>`);
+                const br = getRarityInfo(bossItem);
+                addLog(`✦ ボスの遺品として <span style="color:${br.color}; font-weight:bold">［${bossItem.name}］</span> <span style="color:${br.color}; font-size:12px">${br.label}</span> を手に入れた！`);
             } else {
                 addLog(`<span class="levelup-text">✦ ボスは <span class="item-text">［${bossItem.name}］</span> を落としたが、荷物が満杯で持てなかった！</span>`);
             }

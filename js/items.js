@@ -88,3 +88,31 @@ function mixItem(index) {
     addLog(`【${baseEq.name}】に【${mat.name}】を融解・結合した。<br><span class="mix-text">>> ${typeNames[type]}の物理演算書き換え完了。ステータスが上昇。</span>`);
     updateUI();
 }
+
+// =============================================================
+// レアリティ判定
+// =============================================================
+
+function getRarityInfo(item) {
+    if (!item) return { label: '未装備', color: 'var(--text-dim)' };
+
+    // [伝説] プレフィックスは常にレジェンド
+    if (item.name.includes('[伝説]')) return { label: '✦ 伝 説', color: '#d4a830' };
+
+    // スコア計算
+    let score = 0;
+    score += (item.atk   || 0);
+    score += (item.def   || 0);
+    score += (item.crit  || 0) * 0.4;
+    score += (item.steal || 0) * 0.4;
+    score += Object.keys(item.spirits || {}).length * 4;
+    if (item.name.includes('異界・'))                             score += 6;
+    if (item.name.includes('[祝福]'))                             score += 5;
+    if (item.name.includes('[狂気の]') || item.name.includes('[神聖な]')) score += 3;
+
+    if (score >= 30) return { label: '✦ 伝 説', color: '#d4a830' };
+    if (score >= 18) return { label: '★ 至 宝', color: '#a050d8' };
+    if (score >= 10) return { label: '◆ 貴 重', color: '#5090e0' };
+    if (score >= 4)  return { label: '◇ 上 位', color: '#4ab848' };
+    return                  { label: '  普 通', color: '#8a8070' };
+}

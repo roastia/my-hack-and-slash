@@ -629,8 +629,9 @@ function updateActionButtons() {
 
 function formatEq(eq, prop) {
     if (!eq) return '<span style="color:var(--text-dim)">未装備</span>';
-    let val = eq[prop] || 0;
-    return `<span style="color:var(--text-main)">${eq.name}</span> <span style="font-size:12px;">(+${val})</span>`;
+    const r  = getRarityInfo(eq);
+    const val = eq[prop] || 0;
+    return `<span style="color:${r.color}; font-weight:bold">${eq.name}</span> <span style="font-size:11px; color:${r.color}; opacity:0.8">(+${val})</span>`;
 }
 
 function updateUI() {
@@ -686,6 +687,7 @@ function updateUI() {
     } else {
         inventory.forEach((item, index) => {
             const li = document.createElement('li');
+            const r  = getRarityInfo(item);
             let statsText = '';
             if (item.atk > 0)  statsText += `ATK+${item.atk} `;
             if (item.def > 0)  statsText += `DEF+${item.def} `;
@@ -694,10 +696,11 @@ function updateUI() {
             let spText = getSpiritText(item.spirits);
             if (spText !== '無') statsText += `[${spText}]`;
 
+            li.style.borderLeft = `3px solid ${r.color}`;
             li.innerHTML = `
-                <div style="display:flex; flex-direction:column; flex-grow:1;">
-                    <span class="item-name">${typeIcons[item.type] || ''} ${item.name}</span>
-                    <span class="item-stats">${statsText}</span>
+                <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
+                    <span class="item-name" style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span>
+                    <span class="item-stats">${statsText}<span style="color:${r.color}; opacity:0.75; margin-left:6px;">${r.label}</span></span>
                 </div>
                 <div class="item-actions">
                     <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>

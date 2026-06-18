@@ -228,7 +228,8 @@ function findItem() {
 
     if (inventory.length < maxInventory) {
         inventory.push(item);
-        addLog(`宝箱から <span class="item-text">［${item.name}］</span> を入手した！`);
+        const r = getRarityInfo(item);
+        addLog(`宝箱から <span style="color:${r.color}; font-weight:bold">［${item.name}］</span> <span style="color:${r.color}; font-size:12px">${r.label}</span> を入手した！`);
     } else {
         addLog(`［${item.name}］を発見したが、荷物が満杯で持てなかった。`);
     }
