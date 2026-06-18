@@ -83,6 +83,21 @@ function executeBattleTurn() {
         if (battleState.isBoss) {
             if (dungeons.indexOf(activeDungeon) === currentProgress) currentProgress++;
             isBossDefeated = true;
+
+            // ボス撃破時のレアドロップ
+            const bossScale = activeDungeon.diff * 2 + currentFloor * 2 + 8;
+            const bossItem  = generateItem(bossScale);
+            const bonus     = Math.floor(activeDungeon.diff * 1.5) + 3;
+            bossItem.name   = '[伝説]' + bossItem.name;
+            if (bossItem.type === 'weapon') bossItem.atk += bonus;
+            else bossItem.def += bonus;
+            if (inventory.length < 10) {
+                inventory.push(bossItem);
+                addLog(`<span class="levelup-text">✦ ボスの遺品として <span class="item-text">［${bossItem.name}］</span> を手に入れた！</span>`);
+            } else {
+                addLog(`<span class="levelup-text">✦ ボスは <span class="item-text">［${bossItem.name}］</span> を落としたが、荷物が満杯で持てなかった！</span>`);
+            }
+
             addLog('<span class="event-text">ボスを討伐した！これ以上進む道はない。<br>……自力で出口まで帰還せよ。</span>');
         }
 

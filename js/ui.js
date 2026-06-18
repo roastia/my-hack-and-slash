@@ -84,45 +84,448 @@ function getSpiritText(spiritsObj) {
 
 function updateIllustration(type, enemy = null) {
     const content = document.getElementById('viewportContent');
-    const cCyan = 'var(--accent-cyan)', cRed = 'var(--danger-red)';
-    const cGreen = 'var(--accent-green)', cMag = 'var(--accent-magenta)';
-    const cOrg = 'var(--accent-orange)', cDim = 'var(--text-dim)';
+    const gold  = 'var(--accent-cyan)';
+    const flame = 'var(--accent-orange)';
+    const magic = 'var(--accent-magenta)';
+    const green = 'var(--accent-green)';
+    const red   = 'var(--danger-red)';
+    const dim   = 'var(--text-dim)';
+    const pale  = 'var(--text-main)';
 
-    let enemyInfo = '';
+    const logArea = document.getElementById('exploreScene');
+    if (logArea) {
+        if (type === 'battle' || type === 'boss') {
+            logArea.classList.add('battle-mode-bg');
+        } else {
+            logArea.classList.remove('battle-mode-bg');
+        }
+    }
+
+    let enemyLabel = '';
     if (enemy) {
-        let hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
-        enemyInfo = `<text x="50" y="10" fill="white" font-size="6" text-anchor="middle" font-family="monospace">${enemy.name}</text>
-                     <rect x="20" y="13" width="60" height="2" fill="#222" />
-                     <rect x="20" y="13" width="${60 * hpRatio}" height="2" fill="${cRed}" />
-                     <text x="50" y="21" fill="white" font-size="5" text-anchor="middle" font-family="monospace">HP: ${enemy.hp} / ${enemy.maxHp}</text>`;
+        const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
+        const hpCol   = hpRatio > 0.5 ? green : hpRatio > 0.25 ? flame : red;
+        enemyLabel = `<text x="50" y="10" text-anchor="middle" font-size="6.5" fill="${gold}" font-family="serif" letter-spacing="1">${enemy.name}</text>
+        <rect x="15" y="13" width="70" height="4" rx="2" fill="#1a1006"/>
+        <rect x="15" y="13" width="${70 * hpRatio}" height="4" rx="2" fill="${hpCol}" opacity="0.9"/>
+        <text x="50" y="23" text-anchor="middle" font-size="5" fill="${pale}" opacity="0.6">HP: ${enemy.hp} / ${enemy.maxHp}</text>`;
+    }
+
+    function getEnemySprite(name) {
+        if (/スライム|ぶよぶよ|バブル|はぐれ/.test(name)) return 'slime';
+        if (/スケルトン|ゾンビ|亡霊|死霊|骸骨|亡者|不死|千年|骸|しかばね|幽霊/.test(name)) return 'undead';
+        if (/ゴブリン|オーク|おに|コボルド|リザード/.test(name)) return 'goblin';
+        if (/ドラゴン|ワイバーン|ドレイク|竜|ハイドラ|飛竜/.test(name)) return 'dragon';
+        if (/ナイト|騎士|将軍|処刑|剣士|ダーク|侍/.test(name)) return 'knight';
+        if (/ウルフ|バジリスク|タイガー|ベア|ライオン|獣|くい|ありくい|狼/.test(name)) return 'beast';
+        if (/コウモリ|ドラキー|ハーピー|翼|蝙蝠/.test(name)) return 'flyer';
+        if (/魔女|魔道|魔法|きとうし|プリースト|ウィザード|ゾルガ|邪悪な|僧侶/.test(name)) return 'mage';
+        if (/ゴーレム|アーマー|鎧|石像|巨人/.test(name)) return 'golem';
+        return 'monster';
     }
 
     let svg = '';
     switch (type) {
+
         case 'base':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cCyan}" fill="none" stroke-width="2"><rect x="10" y="20" width="80" height="60"/><line x1="10" y1="85" x2="90" y2="85"/><circle cx="80" cy="30" r="3" fill="${cCyan}"/></svg>`;
-            content.style.color = cCyan; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="63" fill="#060409"/>
+            <circle cx="16" cy="14" r="6.5" fill="#e8e0a0" opacity="0.8"/>
+            <circle cx="18.5" cy="12.5" r="5" fill="#060409"/>
+            <circle cx="35" cy="6" r="0.6" fill="${pale}"/><circle cx="52" cy="9" r="0.7" fill="${pale}"/>
+            <circle cx="68" cy="4" r="0.5" fill="${pale}"/><circle cx="82" cy="12" r="0.6" fill="${pale}"/>
+            <circle cx="90" cy="7" r="0.5" fill="${pale}"/><circle cx="8" cy="24" r="0.4" fill="${pale}"/>
+            <circle cx="75" cy="22" r="0.5" fill="${pale}"/><circle cx="44" cy="3" r="0.4" fill="${pale}"/>
+            <rect x="0" y="63" width="100" height="37" fill="#0e0b07"/>
+            <rect x="24" y="33" width="36" height="30" fill="#18100a" stroke="${gold}" stroke-width="0.8"/>
+            <polygon points="20,33 60,33 40,19" fill="#221608" stroke="${gold}" stroke-width="0.8"/>
+            <rect x="49" y="19" width="5" height="10" fill="#221608" stroke="${gold}" stroke-width="0.5"/>
+            <path d="M51 19 Q54 14 51 9 Q54 5 52 2" stroke="${dim}" stroke-width="1.2" fill="none" opacity="0.45"/>
+            <rect x="37" y="49" width="8" height="14" rx="1" fill="#2a1408" stroke="${gold}" stroke-width="0.6"/>
+            <circle cx="44" cy="56" r="0.8" fill="${gold}"/>
+            <rect x="27" y="38" width="9" height="8" rx="0.5" fill="${flame}" opacity="0.2" stroke="${gold}" stroke-width="0.5"/>
+            <line x1="31.5" y1="38" x2="31.5" y2="46" stroke="${gold}" stroke-width="0.4" opacity="0.5"/>
+            <line x1="27" y1="42" x2="36" y2="42" stroke="${gold}" stroke-width="0.4" opacity="0.5"/>
+            <rect x="50" y="38" width="9" height="8" rx="0.5" fill="${flame}" opacity="0.2" stroke="${gold}" stroke-width="0.5"/>
+            <line x1="54.5" y1="38" x2="54.5" y2="46" stroke="${gold}" stroke-width="0.4" opacity="0.5"/>
+            <line x1="50" y1="42" x2="59" y2="42" stroke="${gold}" stroke-width="0.4" opacity="0.5"/>
+            <rect x="5" y="52" width="4" height="12" fill="#2a1a0a"/>
+            <ellipse cx="7" cy="49" rx="7" ry="8" fill="#142010" stroke="${green}" stroke-width="0.5" opacity="0.8"/>
+            <rect x="80" y="54" width="4" height="10" fill="#2a1a0a"/>
+            <ellipse cx="82" cy="51" rx="6" ry="7" fill="#142010" stroke="${green}" stroke-width="0.5" opacity="0.8"/>
+            <rect x="60" y="44" width="14" height="8" fill="#1a1208" stroke="${gold}" stroke-width="0.5"/>
+            <text x="67" y="50" text-anchor="middle" font-size="4.5" fill="${gold}" opacity="0.8" font-family="serif">宿屋</text>
+            </svg>`;
+            content.style.color = gold; break;
+
         case 'lab':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cGreen}" fill="none" stroke-width="2"><path d="M 30 20 Q 50 50 30 80 M 70 20 Q 50 50 70 80"/><line x1="35" y1="30" x2="65" y2="30"/><line x1="40" y1="50" x2="60" y2="50"/><line x1="35" y1="70" x2="65" y2="70"/><circle cx="50" cy="50" r="2" fill="${cGreen}"/></svg>`;
-            content.style.color = cGreen; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            <ellipse cx="35" cy="71" rx="16" ry="5" fill="${flame}" opacity="0.12"/>
+            <rect x="18" y="55" width="34" height="18" rx="2" fill="#1a1008" stroke="${flame}" stroke-width="1"/>
+            <rect x="22" y="52" width="26" height="5" rx="1" fill="#2a1808" stroke="${gold}" stroke-width="0.6"/>
+            <path d="M27 55 Q30 45 35 52 Q39 42 43 55" fill="${flame}" opacity="0.65"/>
+            <path d="M29 55 Q32 47 35 53 Q38 47 41 55" fill="#ffe060" opacity="0.45"/>
+            <circle cx="29" cy="47" r="1" fill="#ffe060" opacity="0.9"/>
+            <circle cx="36" cy="44" r="1.2" fill="${flame}" opacity="0.7"/>
+            <circle cx="41" cy="46" r="0.8" fill="#ffe060" opacity="0.8"/>
+            <rect x="60" y="60" width="22" height="11" rx="1" fill="#2a2020" stroke="${dim}" stroke-width="0.8"/>
+            <rect x="57" y="69" width="28" height="4" rx="1" fill="#1e1818"/>
+            <rect x="63" y="73" width="14" height="7" rx="1" fill="#1e1818"/>
+            <rect x="82" y="18" width="5" height="36" rx="1" fill="${gold}" opacity="0.7"/>
+            <rect x="78" y="24" width="13" height="6" rx="1" fill="${gold}" opacity="0.7"/>
+            <ellipse cx="84" cy="56" rx="3" ry="2" fill="${gold}" opacity="0.8"/>
+            <path d="M12 16 L22 16 L22 30 L17 36 L12 30 Z" fill="#18120a" stroke="${gold}" stroke-width="1"/>
+            <path d="M14 20 L20 20 L20 28 L17 32 L14 28 Z" fill="none" stroke="${flame}" stroke-width="0.6"/>
+            <rect x="0" y="80" width="100" height="20" fill="#0e0c08"/>
+            <line x1="0" y1="80" x2="100" y2="80" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+            </svg>`;
+            content.style.color = flame; break;
+
         case 'explore':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cDim}" fill="none" stroke-width="1"><path d="M 50 50 L 10 100 M 50 50 L 90 100" stroke-dasharray="5,5"/><circle cx="20" cy="30" r="1.5" fill="${cCyan}" stroke="none"/><circle cx="80" cy="20" r="1" fill="${cCyan}" stroke="none"/><path d="M 45 45 L 55 45 L 50 50 Z" fill="${cDim}"/></svg>`;
-            content.style.color = cDim; break;
-        case 'battle':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cRed}" fill="none" stroke-width="2">${enemyInfo}<polygon points="50,30 80,80 20,80"/><circle cx="50" cy="60" r="10" fill="${cRed}" opacity="0.5"/><line x1="10" y1="90" x2="90" y2="90" stroke="${cDim}" stroke-dasharray="2,2"/></svg>`;
-            content.style.color = cRed; break;
-        case 'boss':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cMag}" fill="none" stroke-width="3">${enemyInfo}<circle cx="50" cy="60" r="30" stroke-dasharray="10 5"/><circle cx="50" cy="60" r="10" fill="${cRed}" opacity="0.3"/><polygon points="50,50 60,70 40,70" fill="${cMag}"/></svg>`;
-            content.style.color = cMag; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            <rect x="0" y="0" width="23" height="100" fill="#0e0a06"/>
+            <rect x="77" y="0" width="23" height="100" fill="#0e0a06"/>
+            <rect x="0" y="0" width="100" height="14" fill="#0e0a06"/>
+            <rect x="0" y="83" width="100" height="17" fill="#0e0a06"/>
+            <line x1="0" y1="24" x2="23" y2="24" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="0" y1="40" x2="23" y2="40" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="0" y1="56" x2="23" y2="56" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="0" y1="70" x2="23" y2="70" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="10" y1="14" x2="10" y2="24" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="5" y1="24" x2="5" y2="40" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="15" y1="40" x2="15" y2="56" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="77" y1="24" x2="100" y2="24" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="77" y1="40" x2="100" y2="40" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="77" y1="56" x2="100" y2="56" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="77" y1="70" x2="100" y2="70" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <line x1="88" y1="14" x2="88" y2="24" stroke="${dim}" stroke-width="0.3" opacity="0.5"/>
+            <rect x="23" y="14" width="54" height="69" fill="#060409"/>
+            <rect x="20" y="27" width="3" height="9" fill="#3a2010"/>
+            <path d="M19 27 Q21.5 19 24 27" fill="${flame}" opacity="0.8"/>
+            <path d="M20 26 Q21.5 20 23 26" fill="#ffe060" opacity="0.5"/>
+            <ellipse cx="21.5" cy="36" rx="3" ry="1.5" fill="${flame}" opacity="0.18"/>
+            <rect x="77" y="27" width="3" height="9" fill="#3a2010"/>
+            <path d="M76 27 Q78.5 19 81 27" fill="${flame}" opacity="0.8"/>
+            <path d="M77 26 Q78.5 20 80 26" fill="#ffe060" opacity="0.5"/>
+            <ellipse cx="78.5" cy="36" rx="3" ry="1.5" fill="${flame}" opacity="0.18"/>
+            <ellipse cx="21" cy="83" rx="13" ry="3" fill="${flame}" opacity="0.07"/>
+            <ellipse cx="79" cy="83" rx="13" ry="3" fill="${flame}" opacity="0.07"/>
+            <rect x="38" y="28" width="24" height="40" fill="#060409"/>
+            <path d="M38 48 Q50 28 62 48" fill="#060409" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+            <path d="M47 38 Q50 35 53 38" fill="${flame}" opacity="0.2"/>
+            <line x1="30" y1="83" x2="70" y2="83" stroke="${dim}" stroke-width="0.3" opacity="0.3"/>
+            <line x1="36" y1="83" x2="36" y2="100" stroke="${dim}" stroke-width="0.3" opacity="0.25"/>
+            <line x1="50" y1="83" x2="50" y2="100" stroke="${dim}" stroke-width="0.3" opacity="0.25"/>
+            <line x1="64" y1="83" x2="64" y2="100" stroke="${dim}" stroke-width="0.3" opacity="0.25"/>
+            </svg>`;
+            content.style.color = dim; break;
+
         case 'item':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cGreen}" fill="none" stroke-width="2"><polygon points="50,20 80,40 50,60 20,40" fill="${cGreen}" opacity="0.2"/><polygon points="20,40 50,60 50,90 20,70"/><polygon points="80,40 50,60 50,90 80,70"/></svg>`;
-            content.style.color = cGreen; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            <ellipse cx="50" cy="72" rx="32" ry="12" fill="${gold}" opacity="0.06"/>
+            <rect x="20" y="54" width="60" height="34" rx="2" fill="#2a1c0a" stroke="${gold}" stroke-width="1.2"/>
+            <path d="M20 54 Q20 36 50 33 Q80 36 80 54" fill="#341e08" stroke="${gold}" stroke-width="1.2"/>
+            <path d="M22 52 Q22 38 50 35 Q78 38 78 52" fill="#2a1808"/>
+            <line x1="20" y1="60" x2="80" y2="60" stroke="${gold}" stroke-width="0.6"/>
+            <rect x="44" y="57" width="12" height="10" rx="2" fill="#3a2808" stroke="${gold}" stroke-width="0.8"/>
+            <circle cx="50" cy="62" r="2" fill="${gold}"/>
+            <ellipse cx="50" cy="54" rx="18" ry="7" fill="${gold}" opacity="0.16"/>
+            <line x1="50" y1="46" x2="50" y2="24" stroke="${gold}" stroke-width="0.7" opacity="0.4"/>
+            <line x1="50" y1="46" x2="28" y2="30" stroke="${gold}" stroke-width="0.5" opacity="0.3"/>
+            <line x1="50" y1="46" x2="72" y2="30" stroke="${gold}" stroke-width="0.5" opacity="0.3"/>
+            <line x1="50" y1="46" x2="18" y2="40" stroke="${gold}" stroke-width="0.3" opacity="0.2"/>
+            <line x1="50" y1="46" x2="82" y2="40" stroke="${gold}" stroke-width="0.3" opacity="0.2"/>
+            <ellipse cx="34" cy="88" rx="5" ry="2.5" fill="${gold}" opacity="0.65"/>
+            <ellipse cx="48" cy="90" rx="4" ry="2" fill="${gold}" opacity="0.55"/>
+            <ellipse cx="62" cy="87" rx="4.5" ry="2.2" fill="${gold}" opacity="0.6"/>
+            <ellipse cx="72" cy="91" rx="3" ry="1.8" fill="${gold}" opacity="0.45"/>
+            <path d="M50 20 L51 15 L52 20 L57 21 L52 22 L51 27 L50 22 L45 21 Z" fill="${gold}" opacity="0.8"/>
+            <path d="M24 35 L25 32 L26 35 L29 35.5 L26 36 L25 39 L24 36 L21 35.5 Z" fill="${gold}" opacity="0.45"/>
+            <path d="M76 33 L77 30 L78 33 L81 33.5 L78 34 L77 37 L76 34 L73 33.5 Z" fill="${gold}" opacity="0.45"/>
+            </svg>`;
+            content.style.color = gold; break;
+
         case 'event':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cOrg}" fill="none" stroke-width="3"><polygon points="50,15 90,85 10,85"/><line x1="50" y1="35" x2="50" y2="65" stroke-width="4"/><circle cx="50" cy="75" r="3" fill="${cOrg}"/></svg>`;
-            content.style.color = cOrg; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            <ellipse cx="50" cy="74" rx="28" ry="9" fill="${magic}" opacity="0.1"/>
+            <rect x="18" y="69" width="64" height="11" rx="1" fill="#1a1218" stroke="${magic}" stroke-width="0.8"/>
+            <rect x="22" y="61" width="56" height="10" rx="1" fill="#201428" stroke="${magic}" stroke-width="0.8"/>
+            <rect x="22" y="79" width="8" height="14" fill="#1a1218" stroke="${dim}" stroke-width="0.4"/>
+            <rect x="70" y="79" width="8" height="14" fill="#1a1218" stroke="${dim}" stroke-width="0.4"/>
+            <circle cx="50" cy="66" r="14" fill="none" stroke="${magic}" stroke-width="0.5" opacity="0.5" stroke-dasharray="3,2"/>
+            <circle cx="50" cy="66" r="9" fill="none" stroke="${magic}" stroke-width="0.4" opacity="0.45"/>
+            <text x="50" y="69.5" text-anchor="middle" font-size="9" fill="${magic}" opacity="0.7" font-family="serif">✦</text>
+            <circle cx="50" cy="44" r="9" fill="none" stroke="${magic}" stroke-width="1" opacity="0.8"/>
+            <circle cx="50" cy="44" r="5" fill="${magic}" opacity="0.35"/>
+            <circle cx="50" cy="44" r="2.5" fill="${magic}" opacity="0.7"/>
+            <line x1="50" y1="31" x2="50" y2="26" stroke="${magic}" stroke-width="0.5" opacity="0.5"/>
+            <line x1="41" y1="34" x2="37" y2="30" stroke="${magic}" stroke-width="0.5" opacity="0.5"/>
+            <line x1="59" y1="34" x2="63" y2="30" stroke="${magic}" stroke-width="0.5" opacity="0.5"/>
+            <line x1="37" y1="44" x2="32" y2="44" stroke="${magic}" stroke-width="0.5" opacity="0.5"/>
+            <line x1="63" y1="44" x2="68" y2="44" stroke="${magic}" stroke-width="0.5" opacity="0.5"/>
+            <circle cx="30" cy="37" r="1" fill="${magic}" opacity="0.6"/>
+            <circle cx="70" cy="41" r="1.2" fill="${magic}" opacity="0.5"/>
+            <circle cx="38" cy="26" r="0.8" fill="${magic}" opacity="0.7"/>
+            <circle cx="63" cy="24" r="1" fill="${magic}" opacity="0.6"/>
+            </svg>`;
+            content.style.color = magic; break;
+
         case 'death':
-            svg = `<svg viewBox="0 0 100 100" stroke="${cRed}" fill="none" stroke-width="2"><circle cx="42" cy="50" r="4" fill="${cRed}"/><circle cx="58" cy="50" r="4" fill="${cRed}"/><line x1="10" y1="10" x2="90" y2="90" stroke="${cRed}" opacity="0.5"/><line x1="90" y1="10" x2="10" y2="90" stroke="${cRed}" opacity="0.5"/></svg>`;
-            content.style.color = cRed; break;
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            <rect x="0" y="76" width="100" height="24" fill="#0a0806"/>
+            <rect x="36" y="30" width="28" height="42" rx="2" fill="#1a1818" stroke="${dim}" stroke-width="1"/>
+            <path d="M36 36 Q50 24 64 36" fill="#1a1818" stroke="${dim}" stroke-width="1"/>
+            <text x="50" y="54" text-anchor="middle" font-size="8" fill="${dim}" opacity="0.75" font-family="serif">R.I.P.</text>
+            <line x1="40" y1="60" x2="60" y2="60" stroke="${dim}" stroke-width="0.5" opacity="0.5"/>
+            <path d="M50 36 L48 56 L51 66" stroke="${dim}" stroke-width="0.8" opacity="0.5" fill="none"/>
+            <line x1="73" y1="54" x2="83" y2="74" stroke="${dim}" stroke-width="2" opacity="0.45"/>
+            <line x1="70" y1="57" x2="75" y2="52" stroke="${dim}" stroke-width="1.5" opacity="0.45"/>
+            <line x1="75" y1="59" x2="69" y2="64" stroke="${dim}" stroke-width="1.5" opacity="0.45"/>
+            <circle cx="26" cy="77" r="2.5" fill="${red}" opacity="0.45"/>
+            <circle cx="33" cy="76" r="2" fill="${red}" opacity="0.35"/>
+            <circle cx="66" cy="77" r="2.5" fill="${red}" opacity="0.45"/>
+            <line x1="26" y1="77" x2="26" y2="84" stroke="${green}" stroke-width="0.8" opacity="0.45"/>
+            <line x1="33" y1="76" x2="33" y2="84" stroke="${green}" stroke-width="0.8" opacity="0.35"/>
+            <line x1="66" y1="77" x2="66" y2="84" stroke="${green}" stroke-width="0.8" opacity="0.45"/>
+            <path d="M14 20 Q17 18 20 20 M17 19 L17 24" stroke="${dim}" stroke-width="0.8" fill="none" opacity="0.5"/>
+            <path d="M79 15 Q82 13 85 15 M82 14 L82 19" stroke="${dim}" stroke-width="0.8" fill="none" opacity="0.4"/>
+            </svg>`;
+            content.style.color = red; break;
+
+        case 'battle':
+        case 'boss': {
+            const isBossType = (type === 'boss');
+            const spriteType = enemy ? getEnemySprite(enemy.name) : 'monster';
+
+            const bossAura = isBossType ? `
+            <ellipse cx="50" cy="60" rx="44" ry="38" fill="none" stroke="${red}" stroke-width="0.5" stroke-dasharray="5,3" opacity="0.25"/>
+            <ellipse cx="50" cy="60" rx="48" ry="42" fill="none" stroke="${red}" stroke-width="0.3" stroke-dasharray="7,5" opacity="0.15"/>` : '';
+
+            let sprite = '';
+            switch (spriteType) {
+
+                case 'slime':
+                    sprite = `
+                    <ellipse cx="50" cy="72" rx="22" ry="6" fill="${green}" opacity="0.12"/>
+                    <path d="M28 65 Q27 50 34 41 Q40 30 50 28 Q60 30 66 41 Q73 50 72 65 Q67 71 50 73 Q33 71 28 65" fill="#1e3c10" stroke="${green}" stroke-width="1.5"/>
+                    <path d="M30 62 Q29 50 35 43 Q40 33 50 31 Q60 33 65 43 Q71 50 70 62" fill="#28481a" opacity="0.5"/>
+                    <ellipse cx="40" cy="45" rx="6" ry="4" fill="${green}" opacity="0.12" transform="rotate(-20 40 45)"/>
+                    <circle cx="42" cy="56" r="5.5" fill="#162e0c" stroke="${green}" stroke-width="1"/>
+                    <circle cx="58" cy="56" r="5.5" fill="#162e0c" stroke="${green}" stroke-width="1"/>
+                    <circle cx="42" cy="56" r="3.2" fill="${green}" opacity="0.8"/>
+                    <circle cx="58" cy="56" r="3.2" fill="${green}" opacity="0.8"/>
+                    <circle cx="43" cy="55" r="1.1" fill="#f0e8c0" opacity="0.8"/>
+                    <circle cx="59" cy="55" r="1.1" fill="#f0e8c0" opacity="0.8"/>
+                    <path d="M41 65 Q50 69 59 65" stroke="${green}" stroke-width="1" fill="none"/>`;
+                    break;
+
+                case 'undead':
+                    sprite = `
+                    <ellipse cx="50" cy="88" rx="20" ry="5" fill="${magic}" opacity="0.1"/>
+                    <ellipse cx="50" cy="34" rx="15" ry="17" fill="#b8b098" stroke="${dim}" stroke-width="1"/>
+                    <ellipse cx="50" cy="39" rx="11" ry="10" fill="#a8a090"/>
+                    <ellipse cx="42" cy="31" rx="5" ry="6" fill="#080606"/>
+                    <ellipse cx="58" cy="31" rx="5" ry="6" fill="#080606"/>
+                    <ellipse cx="42" cy="31" rx="3" ry="4" fill="${magic}" opacity="0.7"/>
+                    <ellipse cx="58" cy="31" rx="3" ry="4" fill="${magic}" opacity="0.7"/>
+                    <path d="M47 42 L50 47 L53 42" fill="#080606"/>
+                    <rect x="41" y="46" width="4" height="6" rx="1" fill="#c8c0b0"/>
+                    <rect x="46" y="46" width="3" height="5" rx="1" fill="#b8b0a0"/>
+                    <rect x="50" y="46" width="4" height="6" rx="1" fill="#c8c0b0"/>
+                    <rect x="55" y="46" width="3" height="5" rx="1" fill="#b8b0a0"/>
+                    <line x1="50" y1="53" x2="50" y2="80" stroke="#b8b098" stroke-width="2.2"/>
+                    <path d="M50 58 Q37 56 35 64 Q37 66 50 64" fill="none" stroke="#b8b098" stroke-width="1.2"/>
+                    <path d="M50 65 Q37 63 35 71 Q37 73 50 71" fill="none" stroke="#b8b098" stroke-width="1.2"/>
+                    <path d="M50 58 Q63 56 65 64 Q63 66 50 64" fill="none" stroke="#b8b098" stroke-width="1.2"/>
+                    <path d="M50 65 Q63 63 65 71 Q63 73 50 71" fill="none" stroke="#b8b098" stroke-width="1.2"/>
+                    <path d="M50 57 Q34 59 28 70 Q26 76 30 79" fill="none" stroke="#b8b098" stroke-width="1.5"/>
+                    <path d="M50 57 Q66 59 72 70 Q74 76 70 79" fill="none" stroke="#b8b098" stroke-width="1.5"/>`;
+                    break;
+
+                case 'goblin':
+                    sprite = `
+                    <ellipse cx="50" cy="88" rx="18" ry="5" fill="#000" opacity="0.25"/>
+                    <ellipse cx="50" cy="68" rx="14" ry="17" fill="#1c3010" stroke="#2a4818" stroke-width="1"/>
+                    <ellipse cx="50" cy="42" rx="13" ry="13" fill="#243818" stroke="#2a4818" stroke-width="1"/>
+                    <ellipse cx="34" cy="40" rx="6" ry="10" fill="#1c3010" stroke="#2a4818" stroke-width="1"/>
+                    <ellipse cx="66" cy="40" rx="6" ry="10" fill="#1c3010" stroke="#2a4818" stroke-width="1"/>
+                    <ellipse cx="43" cy="40" rx="4" ry="5" fill="#080606"/>
+                    <ellipse cx="57" cy="40" rx="4" ry="5" fill="#080606"/>
+                    <circle cx="43" cy="40" r="2.5" fill="${red}" opacity="0.8"/>
+                    <circle cx="57" cy="40" r="2.5" fill="${red}" opacity="0.8"/>
+                    <circle cx="44" cy="39" r="1" fill="#fff" opacity="0.5"/>
+                    <circle cx="58" cy="39" r="1" fill="#fff" opacity="0.5"/>
+                    <ellipse cx="50" cy="47" rx="3" ry="2" fill="#1a2e10"/>
+                    <path d="M42 51 Q50 56 58 51" fill="#1a2e10" stroke="#2a4818" stroke-width="0.8"/>
+                    <line x1="45" y1="51" x2="44" y2="56" stroke="#d8d0c0" stroke-width="1.5"/>
+                    <line x1="55" y1="51" x2="56" y2="56" stroke="#d8d0c0" stroke-width="1.5"/>
+                    <line x1="50" y1="61" x2="34" y2="54" stroke="#1c3010" stroke-width="6" stroke-linecap="round"/>
+                    <ellipse cx="27" cy="50" rx="7" ry="4" fill="#3a2010" stroke="${dim}" stroke-width="0.8" transform="rotate(-30 27 50)"/>`;
+                    break;
+
+                case 'dragon':
+                    sprite = `
+                    <ellipse cx="50" cy="91" rx="28" ry="5" fill="#000" opacity="0.4"/>
+                    <path d="M50 50 Q19 18 7 33 Q14 50 30 56" fill="#180606" stroke="${red}" stroke-width="0.8"/>
+                    <path d="M50 50 Q81 18 93 33 Q86 50 70 56" fill="#180606" stroke="${red}" stroke-width="0.8"/>
+                    <path d="M50 50 Q30 28 10 36" stroke="${red}" stroke-width="0.4" fill="none" opacity="0.5"/>
+                    <path d="M50 50 Q36 26 18 28" stroke="${red}" stroke-width="0.4" fill="none" opacity="0.4"/>
+                    <path d="M50 50 Q70 28 90 36" stroke="${red}" stroke-width="0.4" fill="none" opacity="0.5"/>
+                    <ellipse cx="50" cy="68" rx="21" ry="18" fill="#1e0606" stroke="${red}" stroke-width="1.2"/>
+                    <path d="M41 52 Q45 42 50 38 Q55 42 59 52" fill="#1e0606" stroke="${red}" stroke-width="1"/>
+                    <ellipse cx="50" cy="32" rx="15" ry="12" fill="#260a0a" stroke="${red}" stroke-width="1.2"/>
+                    <path d="M40 37 Q50 43 60 37" fill="#1e0606" stroke="${red}" stroke-width="0.8"/>
+                    <path d="M42 22 L38 11" stroke="${red}" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M58 22 L62 11" stroke="${red}" stroke-width="2.2" stroke-linecap="round"/>
+                    <ellipse cx="42" cy="27" rx="4" ry="5" fill="#080606"/>
+                    <ellipse cx="58" cy="27" rx="4" ry="5" fill="#080606"/>
+                    <ellipse cx="42" cy="27" rx="2.5" ry="3.5" fill="${flame}" opacity="0.9"/>
+                    <ellipse cx="58" cy="27" rx="2.5" ry="3.5" fill="${flame}" opacity="0.9"/>
+                    <path d="M42 40 L40 44 M46 41 L45 45 M54 41 L55 45 M58 40 L60 44" stroke="#d8c8a8" stroke-width="1.2" fill="none"/>
+                    <path d="M31 80 L27 88 M35 84 L31 92 M39 86 L38 94" stroke="${red}" stroke-width="1.2" fill="none"/>
+                    <path d="M69 80 L73 88 M65 84 L69 92 M61 86 L63 94" stroke="${red}" stroke-width="1.2" fill="none"/>`;
+                    break;
+
+                case 'knight':
+                    sprite = `
+                    <ellipse cx="50" cy="91" rx="18" ry="5" fill="#000" opacity="0.3"/>
+                    <path d="M38 38 Q34 56 29 87 Q40 90 50 88 Q60 90 71 87 Q66 56 62 38" fill="#180618" stroke="${magic}" stroke-width="0.6"/>
+                    <rect x="36" y="52" width="28" height="30" rx="2" fill="#282028" stroke="${dim}" stroke-width="1"/>
+                    <path d="M40 56 L50 52 L60 56 L60 72 L50 76 L40 72 Z" fill="#1a1820" stroke="${gold}" stroke-width="0.6" opacity="0.7"/>
+                    <rect x="37" y="27" width="26" height="24" rx="2" fill="#282028" stroke="${dim}" stroke-width="1"/>
+                    <rect x="37" y="36" width="26" height="8" rx="1" fill="#1a1820" stroke="${gold}" stroke-width="0.6"/>
+                    <line x1="39" y1="40" x2="63" y2="40" stroke="${magic}" stroke-width="1.5" opacity="0.8"/>
+                    <path d="M39 27 L35 17 L42 22" fill="#282028" stroke="${dim}" stroke-width="0.8"/>
+                    <path d="M61 27 L65 17 L58 22" fill="#282028" stroke="${dim}" stroke-width="0.8"/>
+                    <line x1="36" y1="55" x2="21" y2="70" stroke="#282028" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="17" y1="73" x2="8" y2="91" stroke="${gold}" stroke-width="2.2"/>
+                    <line x1="14" y1="76" x2="21" y2="73" stroke="${gold}" stroke-width="1.5"/>
+                    <line x1="64" y1="55" x2="77" y2="68" stroke="#282028" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M73 62 L85 62 L85 78 L79 84 L73 78 Z" fill="#1a1820" stroke="${gold}" stroke-width="1"/>`;
+                    break;
+
+                case 'beast':
+                    sprite = `
+                    <ellipse cx="50" cy="91" rx="25" ry="5" fill="#000" opacity="0.3"/>
+                    <ellipse cx="50" cy="68" rx="24" ry="16" fill="#281606" stroke="#3a2010" stroke-width="1.2"/>
+                    <path d="M29 60 Q35 50 50 52 Q65 50 71 60" fill="#1a0e04" stroke="#3a2010" stroke-width="0.6"/>
+                    <ellipse cx="29" cy="54" rx="17" ry="13" fill="#301806" stroke="#3a2010" stroke-width="1.2"/>
+                    <path d="M19 44 L17 34 L27 41" fill="#281606" stroke="#3a2010" stroke-width="0.8"/>
+                    <path d="M39 43 L43 33 L34 41" fill="#281606" stroke="#3a2010" stroke-width="0.8"/>
+                    <ellipse cx="19" cy="57" rx="8" ry="6" fill="#261606" stroke="#3a2010" stroke-width="0.8"/>
+                    <ellipse cx="27" cy="49" rx="4" ry="3" fill="#080606"/>
+                    <ellipse cx="27" cy="49" rx="2.5" ry="2" fill="${flame}" opacity="0.9"/>
+                    <path d="M13 60 Q19 66 28 63" fill="#200a06" stroke="#3a2010" stroke-width="0.6"/>
+                    <line x1="15" y1="60" x2="13" y2="65" stroke="#d8c8a8" stroke-width="1.5"/>
+                    <line x1="21" y1="63" x2="20" y2="68" stroke="#d8c8a8" stroke-width="1.5"/>
+                    <path d="M74 62 Q86 50 89 58 Q91 66 80 71" fill="none" stroke="#3a2010" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="37" y1="80" x2="34" y2="93" stroke="#281606" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="47" y1="82" x2="45" y2="95" stroke="#281606" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="60" y1="82" x2="62" y2="95" stroke="#281606" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="68" y1="80" x2="72" y2="93" stroke="#281606" stroke-width="7" stroke-linecap="round"/>`;
+                    break;
+
+                case 'flyer':
+                    sprite = `
+                    <ellipse cx="50" cy="92" rx="20" ry="4" fill="#000" opacity="0.2"/>
+                    <path d="M50 52 Q28 28 8 38 Q14 56 30 61 Q40 64 50 61" fill="#180620" stroke="${magic}" stroke-width="0.8"/>
+                    <path d="M50 52 Q34 33 14 36" stroke="${magic}" stroke-width="0.4" fill="none" opacity="0.5"/>
+                    <path d="M50 52 Q38 30 21 30" stroke="${magic}" stroke-width="0.4" fill="none" opacity="0.4"/>
+                    <path d="M50 52 Q72 28 92 38 Q86 56 70 61 Q60 64 50 61" fill="#180620" stroke="${magic}" stroke-width="0.8"/>
+                    <path d="M50 52 Q66 33 86 36" stroke="${magic}" stroke-width="0.4" fill="none" opacity="0.5"/>
+                    <ellipse cx="50" cy="60" rx="11" ry="15" fill="#1e0a28" stroke="${magic}" stroke-width="1"/>
+                    <ellipse cx="50" cy="41" rx="11" ry="10" fill="#260c30" stroke="${magic}" stroke-width="1"/>
+                    <path d="M41 33 L39 21 L46 29" fill="#1e0a28" stroke="${magic}" stroke-width="0.8"/>
+                    <path d="M59 33 L61 21 L54 29" fill="#1e0a28" stroke="${magic}" stroke-width="0.8"/>
+                    <circle cx="44" cy="41" r="4" fill="#080606"/>
+                    <circle cx="56" cy="41" r="4" fill="#080606"/>
+                    <circle cx="44" cy="41" r="2.5" fill="${magic}" opacity="0.8"/>
+                    <circle cx="56" cy="41" r="2.5" fill="${magic}" opacity="0.8"/>
+                    <path d="M43 49 L41 54" stroke="#d8c8e0" stroke-width="1.5"/>
+                    <path d="M57 49 L59 54" stroke="#d8c8e0" stroke-width="1.5"/>
+                    <path d="M43 74 L39 83 M44 74 L42 84" stroke="${magic}" stroke-width="1.2"/>
+                    <path d="M57 74 L61 83 M56 74 L58 84" stroke="${magic}" stroke-width="1.2"/>`;
+                    break;
+
+                case 'mage':
+                    sprite = `
+                    <ellipse cx="50" cy="91" rx="16" ry="4" fill="#000" opacity="0.3"/>
+                    <path d="M38 52 Q34 70 29 89 Q41 93 50 91 Q59 93 71 89 Q66 70 62 52 Z" fill="#1c0828" stroke="${magic}" stroke-width="0.8"/>
+                    <path d="M38 52 Q50 57 62 52" fill="none" stroke="${gold}" stroke-width="0.6"/>
+                    <rect x="37" y="44" width="26" height="11" rx="2" fill="#240c34" stroke="${magic}" stroke-width="0.8"/>
+                    <text x="50" y="52.5" text-anchor="middle" font-size="8" fill="${magic}" opacity="0.8" font-family="serif">✦</text>
+                    <ellipse cx="50" cy="31" rx="12" ry="14" fill="#281038" stroke="${magic}" stroke-width="1"/>
+                    <path d="M38 27 L50 4 L62 27 Z" fill="#200830" stroke="${magic}" stroke-width="1"/>
+                    <ellipse cx="50" cy="27" rx="15" ry="4" fill="#180620" stroke="${magic}" stroke-width="0.8"/>
+                    <path d="M50 11 L51.2 8 L52.5 11 L55.5 11.5 L53 13.5 L54 16.5 L51 15 L48 16.5 L49 13.5 L46.5 11.5 Z" fill="${gold}" opacity="0.6"/>
+                    <circle cx="43" cy="31" r="3.5" fill="#080606"/>
+                    <circle cx="57" cy="31" r="3.5" fill="#080606"/>
+                    <circle cx="43" cy="31" r="2" fill="${magic}" opacity="0.9"/>
+                    <circle cx="57" cy="31" r="2" fill="${magic}" opacity="0.9"/>
+                    <line x1="37" y1="52" x2="22" y2="70" stroke="#240c34" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="17" y1="72" x2="11" y2="92" stroke="#3a2010" stroke-width="2"/>
+                    <circle cx="17" cy="70" r="6" fill="#200830" stroke="${magic}" stroke-width="1"/>
+                    <circle cx="17" cy="70" r="3" fill="${magic}" opacity="0.6"/>
+                    <circle cx="24" cy="54" r="1.5" fill="${magic}" opacity="0.7"/>
+                    <circle cx="18" cy="61" r="1" fill="${magic}" opacity="0.6"/>`;
+                    break;
+
+                case 'golem':
+                    sprite = `
+                    <ellipse cx="50" cy="92" rx="23" ry="5" fill="#000" opacity="0.4"/>
+                    <rect x="29" y="44" width="42" height="44" rx="3" fill="#2a2420" stroke="${dim}" stroke-width="1.5"/>
+                    <line x1="31" y1="55" x2="69" y2="55" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+                    <line x1="31" y1="65" x2="69" y2="65" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+                    <line x1="31" y1="75" x2="69" y2="75" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+                    <line x1="42" y1="46" x2="42" y2="88" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+                    <line x1="58" y1="46" x2="58" y2="88" stroke="${dim}" stroke-width="0.4" opacity="0.4"/>
+                    <rect x="33" y="22" width="34" height="25" rx="2" fill="#302824" stroke="${dim}" stroke-width="1.5"/>
+                    <rect x="36" y="28" width="11" height="9" rx="1" fill="#080606"/>
+                    <rect x="53" y="28" width="11" height="9" rx="1" fill="#080606"/>
+                    <rect x="37" y="29" width="9" height="7" rx="0.5" fill="${flame}" opacity="0.7"/>
+                    <rect x="54" y="29" width="9" height="7" rx="0.5" fill="${flame}" opacity="0.7"/>
+                    <path d="M50 24 L48 37 M48 37 L53 44" stroke="${dim}" stroke-width="0.8" opacity="0.6"/>
+                    <rect x="8" y="44" width="23" height="14" rx="2" fill="#2a2420" stroke="${dim}" stroke-width="1.2"/>
+                    <rect x="69" y="44" width="23" height="14" rx="2" fill="#2a2420" stroke="${dim}" stroke-width="1.2"/>
+                    <rect x="6" y="55" width="17" height="15" rx="2" fill="#302824" stroke="${dim}" stroke-width="1.2"/>
+                    <rect x="77" y="55" width="17" height="15" rx="2" fill="#302824" stroke="${dim}" stroke-width="1.2"/>`;
+                    break;
+
+                default:
+                    sprite = `
+                    <ellipse cx="50" cy="91" rx="21" ry="5" fill="#000" opacity="0.3"/>
+                    <ellipse cx="50" cy="62" rx="23" ry="22" fill="#1a1028" stroke="${magic}" stroke-width="1.5"/>
+                    <ellipse cx="50" cy="62" rx="16" ry="16" fill="#200c30" opacity="0.5"/>
+                    <path d="M29 70 Q19 75 14 86" stroke="${magic}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M33 78 Q27 89 21 96" stroke="${magic}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M50 83 Q50 91 48 99" stroke="${magic}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M67 78 Q73 89 79 96" stroke="${magic}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M71 70 Q81 75 86 86" stroke="${magic}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle cx="41" cy="54" r="5.5" fill="#080606"/>
+                    <circle cx="59" cy="54" r="5.5" fill="#080606"/>
+                    <circle cx="50" cy="65" r="4.5" fill="#080606"/>
+                    <circle cx="41" cy="54" r="3.2" fill="${red}" opacity="0.8"/>
+                    <circle cx="59" cy="54" r="3.2" fill="${flame}" opacity="0.8"/>
+                    <circle cx="50" cy="65" r="2.8" fill="${magic}" opacity="0.8"/>
+                    <path d="M37 71 Q50 79 63 71" fill="#080606" stroke="${magic}" stroke-width="0.8"/>
+                    <line x1="41" y1="71" x2="39" y2="76" stroke="#d8c8e0" stroke-width="1.2"/>
+                    <line x1="47" y1="73" x2="46" y2="78" stroke="#d8c8e0" stroke-width="1.2"/>
+                    <line x1="53" y1="73" x2="54" y2="78" stroke="#d8c8e0" stroke-width="1.2"/>
+                    <line x1="59" y1="71" x2="61" y2="76" stroke="#d8c8e0" stroke-width="1.2"/>`;
+            }
+
+            svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="#060409"/>
+            ${bossAura}${enemyLabel}
+            ${sprite}
+            </svg>`;
+            content.style.color = isBossType ? magic : red; break;
+        }
     }
     content.innerHTML = svg;
 }
@@ -377,3 +780,4 @@ function renderBaseScene() {
     exploreBtn.textContent = '［ 目 標 を 選 択 ］';
     returnBtn.classList.add('hidden');
 }
+       

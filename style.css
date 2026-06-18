@@ -81,7 +81,7 @@ body {
 
 .equip-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 8px;
     border-top: 1px dotted #3a2c10;
     padding-top: 10px;
