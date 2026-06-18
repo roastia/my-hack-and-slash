@@ -1,14 +1,14 @@
 :root {
-    --bg-color: #020205;
-    --panel-bg: #0a0a14;
-    --border-color: #334466;
-    --text-main: #d0d0e0;
-    --text-dim: #7788aa;
-    --accent-cyan: #00ffff;
-    --accent-orange: #ff6600;
-    --accent-magenta: #ff00ff;
-    --accent-green: #00ff66;
-    --danger-red: #ff3333;
+    --bg-color:      #050302;
+    --panel-bg:      #0e0a06;
+    --border-color:  #5a4418;
+    --text-main:     #f0e8c0;
+    --text-dim:      #7a6840;
+    --accent-cyan:   #d4a830;   /* gold  */
+    --accent-orange: #e07828;   /* flame */
+    --accent-magenta:#a050d8;   /* magic */
+    --accent-green:  #4ab848;   /* forest */
+    --danger-red:    #d83030;
 }
 
 body {
@@ -21,9 +21,9 @@ body {
     justify-content: center;
     align-items: center;
     background-image:
-        radial-gradient(circle at 50% 50%, #1a1a2e 0%, transparent 60%),
-        linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 10px);
-    background-size: 100% 100%, 100% 4px;
+        radial-gradient(ellipse at 50% 30%, #1a1005 0%, transparent 70%),
+        linear-gradient(180deg, #0a0604 0%, #050302 100%);
+    background-size: 100% 100%, 100% 100%;
     height: 100vh;
     box-sizing: border-box;
     overflow: hidden;
@@ -51,7 +51,7 @@ body {
 .window-panel {
     background-color: var(--panel-bg);
     border: 1px solid var(--border-color);
-    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.05);
+    box-shadow: inset 0 0 10px rgba(180, 120, 20, 0.06);
     padding: 16px;
     border-radius: 2px;
     display: flex;
@@ -70,7 +70,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px dashed #223344;
+    border-bottom: 1px dashed #3a2c10;
     padding-bottom: 6px;
 }
 
@@ -83,7 +83,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    border-top: 1px dotted #334466;
+    border-top: 1px dotted #3a2c10;
     padding-top: 10px;
     margin-top: 6px;
     color: var(--accent-green);
@@ -94,11 +94,11 @@ body {
 .viewport-area {
     flex-grow: 1;
     height: 0;
-    background-color: #030308;
+    background-color: #060401;
     background-image:
-        linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 15px 15px;
+        linear-gradient(rgba(100, 70, 20, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 70, 20, 0.06) 1px, transparent 1px);
+    background-size: 30px 30px;
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
@@ -150,14 +150,14 @@ body {
 
 .inventory-list li {
     padding: 10px 8px;
-    border-bottom: 1px dotted #334466;
+    border-bottom: 1px dotted #3a2a08;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: background-color 0.2s;
 }
 
-.inventory-list li:hover { background-color: rgba(0, 255, 255, 0.05); }
+.inventory-list li:hover { background-color: rgba(212, 168, 48, 0.06); }
 
 .item-name { flex-grow: 1; color: var(--text-main); font-size: 16px;}
 .item-stats { font-size: 13px; color: var(--text-dim); margin-right: 12px;}
@@ -175,12 +175,12 @@ body {
 }
 
 .btn-equip { color: var(--accent-cyan); border-color: var(--accent-cyan); }
-.btn-equip:hover { background-color: rgba(0, 255, 255, 0.2); }
+.btn-equip:hover { background-color: rgba(212, 168, 48, 0.15); }
 .btn-mix { color: var(--accent-magenta); border-color: var(--accent-magenta); }
-.btn-mix:hover { background-color: rgba(255, 0, 255, 0.2); }
+.btn-mix:hover { background-color: rgba(160, 80, 216, 0.15); }
 
 .tab-btn { border-color: var(--accent-cyan); color: var(--text-dim); }
-.tab-btn.active { background-color: rgba(0, 255, 255, 0.2); color: var(--accent-cyan); font-weight: bold;}
+.tab-btn.active { background-color: rgba(212, 168, 48, 0.15); color: var(--accent-cyan); font-weight: bold;}
 
 .empty-text {
     color: var(--text-dim) !important;
@@ -213,7 +213,7 @@ body {
 .attack-text { color: var(--accent-cyan); }
 .item-text { color: var(--accent-green); font-weight: bold; }
 .levelup-text { color: var(--accent-orange); font-weight: bold; }
-.floor-text { color: var(--accent-cyan); border-left: 3px solid var(--accent-cyan); padding-left: 10px; margin: 6px 0; }
+.floor-text { color: var(--accent-cyan); border-left: 3px solid var(--accent-cyan); padding-left: 10px; margin: 6px 0; font-weight: bold; }
 .mix-text { color: var(--accent-magenta); }
 .event-text { color: #ffffaa; }
 .boss-text { color: #ff0055; font-weight: bold; font-size: 1.2em; letter-spacing: 2px; }
@@ -247,8 +247,8 @@ body {
 }
 
 .action-btn:hover {
-    background-color: rgba(0, 255, 255, 0.1);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    background-color: rgba(212, 168, 48, 0.12);
+    box-shadow: 0 0 12px rgba(212, 168, 48, 0.35);
 }
 .action-btn:disabled {
     color: var(--text-dim);
@@ -311,7 +311,7 @@ body {
 }
 
 .dungeon-btn {
-    background-color: #050510;
+    background-color: #0a0704;
     border: 1px solid var(--border-color);
     color: var(--text-main);
     padding: 16px;
@@ -322,9 +322,9 @@ body {
     display: flex;
     justify-content: space-between;
 }
-.dungeon-btn:hover { background-color: rgba(0, 255, 255, 0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); }
-.dungeon-btn.cleared { border-color: #334466; color: #7788aa; }
-.dungeon-btn.cleared::after { content: "[CLEARED]"; color: var(--accent-green); font-size: 0.8em; }
+.dungeon-btn:hover { background-color: rgba(212, 168, 48, 0.10); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+.dungeon-btn.cleared { border-color: #3a2c10; color: #6a5a30; }
+.dungeon-btn.cleared::after { content: "✓ 討伐済み"; color: var(--accent-green); font-size: 0.8em; }
 
 .lab-item {
     border: 1px dashed var(--border-color);
@@ -356,7 +356,7 @@ body {
     width: 90%;
     padding: 40px 44px;
     border: 1px solid var(--accent-cyan);
-    box-shadow: 0 0 40px rgba(0, 200, 255, 0.25), inset 0 0 30px rgba(0,0,0,0.5);
+    box-shadow: 0 0 40px rgba(180, 120, 20, 0.30), inset 0 0 30px rgba(0,0,0,0.6);
     background: rgba(4, 12, 22, 0.97);
     display: flex;
     flex-direction: column;
@@ -370,7 +370,7 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 15px;
     letter-spacing: 3px;
-    text-shadow: 0 0 8px var(--accent-cyan);
+    text-shadow: 0 0 8px rgba(212, 168, 48, 0.7);
     text-align: center;
 }
 

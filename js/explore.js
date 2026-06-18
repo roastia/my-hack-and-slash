@@ -55,7 +55,7 @@ function startDungeon(index) {
     returnBtn.disabled     = false;
     returnBtn.textContent  = '［ 戻 る ］';
 
-    addLog(`<br><span style="color:var(--accent-orange)">>>> 転移プロトコル開始</span><br>【${activeDungeon.name}】へ降下した...`);
+    addLog(`<br><span style="color:var(--accent-orange)">⚔ 冒険開始！</span><br>【${activeDungeon.name}】へ踏み込んだ...`);
     updateIllustration('explore');
     updateUI();
     updateActionButtons();
@@ -110,10 +110,10 @@ function executeExploreStep() {
     if (stepCount >= stepsToNextFloor) {
         currentFloor++;
         stepCount = 0;
-        addLog(`<div class="floor-text">ゲートを通過。<br>>> Sector: ${currentFloor} へ侵入。</div>`);
+        addLog(`<div class="floor-text">階段を下りた。<br>B${currentFloor}F へ進入。</div>`);
         updateIllustration('explore');
         if (currentFloor === activeDungeon.maxFloor) {
-            addLog(`<span class="boss-text">警告: 強力な次元震を検知。最深部に何かいる...</span>`);
+            addLog(`<span class="boss-text">⚠ 強大な気配を感じる……最深部に何かいる。</span>`);
         }
         updateUI();
         return;
@@ -139,7 +139,7 @@ function executeReturnStep() {
 
     // 入り口に着いたら帰還
     if (currentFloor === 1 && stepCount === 0) {
-        addLog('>> 転移ゲートに到達。拠点への帰還シーケンスを起動。アイテムと星屑を持ち帰りました。');
+        addLog('>> 出口に到達した。村への帰還を開始。アイテムとゴールドを持ち帰りました。');
         exploreBtn.disabled = true;
         returnBtn.disabled  = true;
         setTimeout(() => returnToBase(false), 1500);
@@ -152,7 +152,7 @@ function executeReturnStep() {
     if (stepCount < 0) {
         currentFloor--;
         stepCount = stepsToNextFloor - 1;
-        addLog(`<div class="floor-text">ゲートを逆走。<br><< Sector: ${currentFloor} へ後退。</div>`);
+        addLog(`<div class="floor-text">階段を上がった。<br>B${currentFloor}F へ引き返す。</div>`);
         updateIllustration('explore');
         updateActionButtons();
         updateUI();
@@ -228,16 +228,16 @@ function findItem() {
 
     if (inventory.length < maxInventory) {
         inventory.push(item);
-        addLog(`漂流物から <span class="item-text">［${item.name}］</span> を回収した。`);
+        addLog(`宝箱から <span class="item-text">［${item.name}］</span> を入手した！`);
     } else {
-        addLog(`［${item.name}］を発見したが、ストレージ容量が不足しているため見捨てた。`);
+        addLog(`［${item.name}］を発見したが、荷物が満杯で持てなかった。`);
     }
 }
 
 function triggerChoiceEvent() {
     updateIllustration('event');
     eventState = { active: true, type: 'console' };
-    addLog(`<span class="event-text">>> 未知のコンソールを発見した。アクセスを要求している。</span>`);
+    addLog(`<span class="event-text">謎めいた祭壇を発見した。触れてみるか？（危険かもしれない）</span>`);
     updateActionButtons();
 }
 
@@ -248,15 +248,15 @@ function resolveConsoleEvent(isConnect) {
     if (isConnect) {
         let dmg   = Math.floor(currentHp / 2);
         currentHp -= dmg;
-        addLog(`<span class="damage-text">>> 神経系に激しい負荷！ ${dmg} のダメージ！</span>`);
+        addLog(`<span class="damage-text">祭壇の呪いを受けた！ ${dmg} のダメージ！</span>`);
 
         const rareItem     = generateItem(activeDungeon.diff + currentFloor + 5);
-        rareItem.name      = '[遺物]' + rareItem.name;
+        rareItem.name      = '[祝福]' + rareItem.name;
         if (rareItem.type === 'weapon') rareItem.atk += 3; else rareItem.def += 3;
 
         if (inventory.length < maxInventory) {
             inventory.push(rareItem);
-            addLog(`代償として <span class="item-text">［${rareItem.name}］</span> を抽出した。`);
+            addLog(`祭壇の加護として <span class="item-text">［${rareItem.name}］</span> を授かった！`);
         } else {
             addLog(`しかしストレージが満杯で抽出できなかった...`);
         }
@@ -269,7 +269,7 @@ function resolveConsoleEvent(isConnect) {
             updateUI();
         }
     } else {
-        addLog(`>> アクセスを拒否した。何も起きなかった。`);
+        addLog(`>> 祭壇に近づかず通り過ぎた。何も起きなかった。`);
         updateActionButtons();
         updateUI();
     }

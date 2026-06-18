@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>テキストハクスラ - 星の海 PCワイド版</title>
+    <title>テキストRPG - 勇者の冒険</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,7 +47,7 @@
 
                 <!-- バージョン表示 -->
                 <div style="text-align: right; font-size: 12px; color: var(--text-dim); font-family: 'Courier New', monospace; margin-top: 2px;">
-                    Ver 0.2.8
+                    勇者の冒険 v1.0
                 </div>
 
                 <!-- 装備4枠 -->
@@ -71,15 +71,15 @@
             <!-- マップ（拠点）画面 -->
             <div id="baseScene" class="window-panel" style="flex-grow: 1; height: 0; display: flex; flex-direction: column;">
                 <div class="inventory-header" style="justify-content: flex-start; gap: 12px; margin-bottom: 16px;">
-                    <button id="tabMap"     class="mini-btn tab-btn active" onclick="switchTab('map')"     style="font-size:15px; padding:6px 12px;">MAP</button>
-                    <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:15px; padding:6px 12px;">LAB (強化)</button>
-                    <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:15px; padding:6px 12px;">ARCHIVE</button>
+                    <button id="tabMap"     class="mini-btn tab-btn active" onclick="switchTab('map')"     style="font-size:15px; padding:6px 12px;">地 図</button>
+                    <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:15px; padding:6px 12px;">強 化</button>
+                    <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:15px; padding:6px 12px;">記 録</button>
                 </div>
 
                 <!-- MAPタブ -->
                 <div id="panelMap" class="base-panel">
                     <div class="log-entry" style="color: var(--text-dim); border:none; padding-bottom: 0;">
-                        >> クローン・ポッド接続。目標地点を選択せよ。
+                        勇者よ、どこへ向かう？
                     </div>
                     <div id="dungeonList" style="display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
@@ -87,50 +87,50 @@
                 <!-- LABタブ (永続強化) -->
                 <div id="panelLab" class="base-panel hidden">
                     <div class="log-entry" style="color: var(--accent-green); border:none;">
-                        >> 遺伝子操作ラボラトリ。<br>持ち帰った星屑(★)で基礎スペックを強化します。
+                        鍛冶屋へようこそ。<br>持ち帰ったゴールド(G)で、基礎能力を鍛えることができます。
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">細胞強化 (基礎HP UP)</div>
+                            <div style="color: var(--text-main)">体力強化 (最大HP UP)</div>
                             <div class="lab-desc">現在の初期HP: <span id="labHpDisp">30</span></div>
                         </div>
-                        <button id="btnUpgradeHp" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeHp()">強化 (★<span id="costHpDisp">10</span>)</button>
+                        <button id="btnUpgradeHp" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeHp()">強化 (G<span id="costHpDisp">10</span>)</button>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">筋力リミッター解除 (基礎ATK UP)</div>
+                            <div style="color: var(--text-main)">攻撃力強化 (基礎ATK UP)</div>
                             <div class="lab-desc">現在の初期ATK: <span id="labAtkDisp">2</span></div>
                         </div>
-                        <button id="btnUpgradeAtk" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeAtk()">強化 (★<span id="costAtkDisp">20</span>)</button>
+                        <button id="btnUpgradeAtk" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeAtk()">強化 (G<span id="costAtkDisp">20</span>)</button>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">外殻コーティング (基礎DEF UP)</div>
+                            <div style="color: var(--text-main)">防御力強化 (基礎DEF UP)</div>
                             <div class="lab-desc">現在の初期DEF: <span id="labDefDisp">0</span></div>
                         </div>
-                        <button id="btnUpgradeDef" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeDef()">強化 (★<span id="costDefDisp">15</span>)</button>
+                        <button id="btnUpgradeDef" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeDef()">強化 (G<span id="costDefDisp">15</span>)</button>
                     </div>
                 </div>
 
                 <!-- アーカイブタブ -->
                 <div id="panelArchive" class="base-panel hidden">
                     <div class="log-entry" style="color: var(--accent-cyan); border:none;">
-                        >> システム稼働記録。
+                        冒険の記録
                     </div>
                     <div style="color: var(--text-main); font-size: 16px; line-height: 2.0; padding: 10px;">
-                        総撃破数: <span id="statKills"   class="highlight-value">0</span> 体<br>
-                        無事帰還: <span id="statReturns" style="color:var(--accent-green)">0</span> 回<br>
-                        クローン全損: <span id="statDeaths" class="damage-text">0</span> 回<br>
+                        魔物討伐数: <span id="statKills"   class="highlight-value">0</span> 体<br>
+                        無事帰還:   <span id="statReturns" style="color:var(--accent-green)">0</span> 回<br>
+                        力尽きた数: <span id="statDeaths" class="damage-text">0</span> 回<br>
                     </div>
                     <div style="margin-top: auto; padding-top: 10px; border-top: 1px dashed #223344; text-align: right;">
-                        <button class="mini-btn" style="border-color: var(--danger-red); color: var(--danger-red); padding: 6px 10px;" onclick="resetSaveData(this)">>> メモリ初期化 (データ消去)</button>
+                        <button class="mini-btn" style="border-color: var(--danger-red); color: var(--danger-red); padding: 6px 10px;" onclick="resetSaveData(this)">冒険の記録を消去する</button>
                     </div>
                 </div>
             </div>
 
             <!-- 操作ボタン -->
             <div class="action-group">
-                <button id="exploreBtn" class="action-btn" disabled>［ 目 標 を 選 択 ］</button>
+                <button id="exploreBtn" class="action-btn" disabled>［ 行 き 先 を 選 べ ］</button>
                 <button id="returnBtn"  class="action-btn btn-return hidden">［ 戻 る ］</button>
             </div>
 
@@ -141,19 +141,19 @@
             <!-- インベントリ -->
             <div class="window-panel" style="flex-grow: 1; display: flex; flex-direction: column;">
                 <div class="inventory-header">
-                    <span>STORAGE</span>
-                    <span><span style="color:var(--accent-orange)">★星屑: <span id="stardustDisplay">0</span></span></span>
+                    <span>所 持 品</span>
+                    <span><span style="color:var(--accent-orange)">G: <span id="stardustDisplay">0</span></span></span>
                     <span><span id="itemCountDisplay">0</span> / 10</span>
                 </div>
                 <ul id="inventoryList" class="inventory-list">
-                    <li class="empty-text">空間は虚無に包まれている</li>
+                    <li class="empty-text">手ぶらの勇者。</li>
                 </ul>
             </div>
 
             <!-- 探索画面（ログ） -->
             <div id="exploreScene" class="window-panel log-area hidden">
                 <div id="logContent" class="log-content">
-                    <div class="log-entry" style="color: var(--text-dim);">システム起動。</div>
+                    <div class="log-entry" style="color: var(--text-dim);">冒険が始まる。</div>
                 </div>
             </div>
         </div>

@@ -65,7 +65,7 @@ function loadData() {
                 baseDefense = permBaseDef;
                 level = 1; exp = 0;
                 renderBaseScene();
-                addLog('<span class="damage-text">>> システムエラー。致命的な損傷から復旧しました。アイテムと星屑を喪失しました。</span>');
+                addLog('<span class="damage-text">>> 勇者は力尽きた状態で発見された。アイテムとゴールドを失っていた。</span>');
             } else {
                 // 探索の復元
                 activeDungeon  = dungeons[dIndex];
@@ -83,15 +83,15 @@ function loadData() {
                 if (battleState.active) {
                     updateIllustration(battleState.isBoss ? 'boss' : 'battle', battleState.enemy);
                     clearLog();
-                    addLog(`>> セーブデータを復元しました。<br><span class="event-text">戦闘を再開します...</span>`);
+                    addLog(`>> 冒険を再開した。<br><span class="event-text">戦闘が続いている...</span>`);
                 } else if (eventState.active) {
                     updateIllustration('event');
                     clearLog();
-                    addLog(`>> セーブデータを復元しました。<br><span class="event-text">>> 未知のコンソールを発見した。アクセスを要求している。</span>`);
+                    addLog(`>> 冒険を再開した。<br><span class="event-text">謎めいた祭壇が目の前にある。触れてみるか？</span>`);
                 } else {
                     updateIllustration('explore');
                     clearLog();
-                    addLog(`>> セーブデータを復元しました。<br><span class="event-text">探索を再開します...</span>`);
+                    addLog(`>> 冒険を再開した。<br><span class="event-text">ダンジョンの探索を続けよう。</span>`);
                 }
                 updateActionButtons();
             }

@@ -353,7 +353,7 @@ function switchTab(tab) {
 }
 
 function renderBaseScene() {
-    locationDisplay.textContent = '管制室';
+    locationDisplay.textContent = '村';
     floorDisplay.style.display  = 'none';
     switchTab('map');
 
@@ -368,7 +368,7 @@ function renderBaseScene() {
         const totalSteps = d.maxFloor * stepsToNextFloor;
         const btn        = document.createElement('button');
         btn.className    = `dungeon-btn ${i < currentProgress ? 'cleared' : ''}`;
-        btn.innerHTML    = `<span>Sec:${i + 1} ${d.name}</span><span style="font-size:13px; color:var(--text-dim)">全${totalSteps}歩</span>`;
+        btn.innerHTML    = `<span>${i + 1}. ${d.name}</span><span style="font-size:13px; color:var(--text-dim)">全${totalSteps}歩</span>`;
         btn.onclick      = () => tryEnterDungeon(i);  // explore.js で定義
         list.appendChild(btn);
     }

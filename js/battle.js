@@ -75,7 +75,7 @@ function executeBattleTurn() {
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
         starDust += dust;
 
-        logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を撃破した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">★星屑 +${dust}</span>`;
+        logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span>`;
         addLog(logMsg);
 
         checkLevelUp();
@@ -83,7 +83,7 @@ function executeBattleTurn() {
         if (battleState.isBoss) {
             if (dungeons.indexOf(activeDungeon) === currentProgress) currentProgress++;
             isBossDefeated = true;
-            addLog('<span class="event-text">>> 目標の排除を完了。これ以上の進攻は不可能だ。<br>……自力で入り口まで帰還せよ。</span>');
+            addLog('<span class="event-text">ボスを討伐した！これ以上進む道はない。<br>……自力で出口まで帰還せよ。</span>');
         }
 
         battleState.active = false;
@@ -111,7 +111,7 @@ function executeFlee() {
     clearLog();
 
     if (battleState.isBoss) {
-        addLog(`<span class="damage-text">ERR: 強力な重力場により逃走不可能！</span>`);
+        addLog(`<span class="damage-text">ボスとの戦い！逃げることはできない！</span>`);
         return;
     }
 
@@ -156,7 +156,7 @@ function checkLevelUp() {
         maxHp  += 8;
         currentHp = maxHp;
         baseAttack += 1;
-        addLog(`<span class="levelup-text">*** 存在位階上昇 (Level Up) ***<br>Lv.${level}へ到達。生体機能が修復され、出力が向上した。</span>`);
+        addLog(`<span class="levelup-text">★ レベルアップ！ ★<br>Lv.${level}に成長した！ HPが全回復し、力が増した！</span>`);
     }
 }
 
@@ -168,10 +168,10 @@ function gameOver() {
     exploreBtn.disabled    = true;
     returnBtn.disabled     = true;
     exploreBtn.textContent = 'SYSTEM REBOOT...';
-    addLog('<br><div class="death-text">致命的な損傷。生命活動を停止します。<br>......<br>君の旅はここで終わり、星の海に溶けた。</div><br>', '');
+    addLog('<br><div class="death-text">力尽きた……<br>......<br>勇者の旅は、ここで幕を閉じた。</div><br>', '');
 
     setTimeout(() => {
-        addLog('―― 新たなクローンボディへの意識のダウンロードが完了しました。<br><span class="damage-text">装備、アイテム、星屑をすべて喪失しました。</span>拠点から再開します。');
+        addLog('―― 勇者は村で目を覚ました。<br><span class="damage-text">装備、アイテム、ゴールドをすべて失った。</span>村から再出発しよう。');
         returnToBase(true);
     }, 3000);
 }
