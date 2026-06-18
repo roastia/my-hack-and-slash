@@ -780,4 +780,3 @@ function renderBaseScene() {
     exploreBtn.textContent = '［ 目 標 を 選 択 ］';
     returnBtn.classList.add('hidden');
 }
-       
