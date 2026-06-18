@@ -143,7 +143,7 @@ function executeReturnStep() {
         const baseEnemy = enemiesBase[Math.floor(Math.random() * enemiesBase.length)];
         const prefixes  = ['追跡する ', '待ち伏せていた ', '狂乱した '];
         const enName    = prefixes[Math.floor(Math.random() * prefixes.length)] + baseEnemy.name;
-        const scale     = (1 + activeDungeon.diff * 0.1) * (1 + (currentFloor - 1) * 0.1);
+        const scale     = (1 + activeDungeon.diff * 0.07) * (1 + (currentFloor - 1) * 0.07);
 
         addLog(isEscape
             ? '<< 空間の崩壊から逃れる途中、敵に阻まれた！'
@@ -151,8 +151,8 @@ function executeReturnStep() {
 
         startBattle(
             enName,
-            Math.floor(baseEnemy.hp  * scale * 1.1),
-            Math.floor(baseEnemy.atk * scale * 0.6) + 1,
+            Math.floor(baseEnemy.hp  * scale),
+            Math.floor(baseEnemy.atk * scale * 0.45) + 1,
             Math.floor(baseEnemy.exp * scale),
             false
         );
@@ -183,12 +183,12 @@ function executeReturnStep() {
 
 function spawnEnemy() {
     const baseEnemy = enemiesBase[Math.floor(Math.random() * enemiesBase.length)];
-    const scale     = (1 + activeDungeon.diff * 0.1) * (1 + (currentFloor - 1) * 0.1);
+    const scale     = (1 + activeDungeon.diff * 0.07) * (1 + (currentFloor - 1) * 0.07);
 
     startBattle(
         baseEnemy.name,
         Math.floor(baseEnemy.hp  * scale),
-        Math.floor(baseEnemy.atk * scale * 0.5) + 1,
+        Math.floor(baseEnemy.atk * scale * 0.38) + 1,
         Math.floor(baseEnemy.exp * scale),
         false
     );

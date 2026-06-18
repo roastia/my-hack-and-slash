@@ -91,7 +91,7 @@ function executeBattleTurn() {
         updateActionButtons();
     } else {
         // 敵の反撃
-        let enemyDmg = battleState.isBoss ? enemy.atk : calcEnemyDamage(enemy.atk);
+        let enemyDmg = calcEnemyDamage(enemy.atk);
         currentHp   -= enemyDmg;
         logMsg      += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
         addLog(logMsg);
