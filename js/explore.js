@@ -2,6 +2,32 @@
 // explore.js — 探索ロジック（進行・帰還・イベント）
 // =============================================================
 
+// ダンジョン選択時：初回ならストーリー表示、既訪問なら即開始
+let _pendingDungeonIndex = -1;
+
+function tryEnterDungeon(index) {
+    if (!visitedDungeons.includes(index) && dungeons[index].story) {
+        _pendingDungeonIndex = index;
+        const d = dungeons[index];
+        document.getElementById('storyLocation').textContent = `[ ${d.name} ]`;
+        document.getElementById('storyText').innerHTML =
+            d.story.replace(/\n/g, '<br>');
+        document.getElementById('storyModal').classList.remove('hidden');
+    } else {
+        startDungeon(index);
+    }
+}
+
+function closeStoryModal() {
+    document.getElementById('storyModal').classList.add('hidden');
+    if (_pendingDungeonIndex >= 0) {
+        visitedDungeons.push(_pendingDungeonIndex);
+        saveData();
+        startDungeon(_pendingDungeonIndex);
+        _pendingDungeonIndex = -1;
+    }
+}
+
 // ダンジョン開始
 function startDungeon(index) {
     activeDungeon  = dungeons[index];

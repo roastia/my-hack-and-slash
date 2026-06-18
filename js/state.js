@@ -26,8 +26,9 @@ let inventory  = [];
 const maxInventory = 10;
 
 // --- 探索状態 ---
-let currentProgress = 0;    // 解放済みダンジョン数
-let activeDungeon   = null; // 現在潜っているダンジョンオブジェクト
+let currentProgress  = 0;   // 解放済みダンジョン数
+let activeDungeon    = null; // 現在潜っているダンジョンオブジェクト
+let visitedDungeons  = [];   // 初回訪問済みダンジョンのインデックス一覧
 
 let currentFloor   = 1;
 let stepCount      = 0;

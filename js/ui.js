@@ -369,7 +369,7 @@ function renderBaseScene() {
         const btn        = document.createElement('button');
         btn.className    = `dungeon-btn ${i < currentProgress ? 'cleared' : ''}`;
         btn.innerHTML    = `<span>Sec:${i + 1} ${d.name}</span><span style="font-size:13px; color:var(--text-dim)">全${totalSteps}歩</span>`;
-        btn.onclick      = () => startDungeon(i);   // explore.js で定義
+        btn.onclick      = () => tryEnterDungeon(i);  // explore.js で定義
         list.appendChild(btn);
     }
 

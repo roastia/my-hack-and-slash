@@ -11,7 +11,7 @@ function saveData() {
         costHp, costAtk, costDef, stats,
         level, maxHp, currentHp, exp, nextExp,
         baseAttack, baseDefense,
-        equipment, inventory, currentProgress,
+        equipment, inventory, currentProgress, visitedDungeons,
         activeDungeonIndex: activeDungeon ? dungeons.indexOf(activeDungeon) : -1,
         currentFloor, stepCount, isBossDefeated, battleState, eventState
     };
@@ -49,6 +49,7 @@ function loadData() {
         equipment        = data.equipment        || { weapon: null, helm: null, armor: null, shield: null };
         inventory        = data.inventory        || [];
         currentProgress  = data.currentProgress  || 0;
+        visitedDungeons  = data.visitedDungeons  || [];
 
         const dIndex = data.activeDungeonIndex !== undefined ? data.activeDungeonIndex : -1;
 

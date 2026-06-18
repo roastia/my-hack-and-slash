@@ -160,6 +160,15 @@
 
     </div>
 
+    <!-- ストーリーモーダル（初回訪問時） -->
+    <div id="storyModal" class="story-modal hidden">
+        <div class="story-panel">
+            <div class="story-location" id="storyLocation"></div>
+            <div class="story-text" id="storyText"></div>
+            <button class="action-btn story-enter-btn" onclick="closeStoryModal()">[ 降 下 す る ]</button>
+        </div>
+    </div>
+
     <!-- スクリプト読み込み順序を守ること -->
     <script src="js/data.js"></script>
     <script src="js/state.js"></script>
