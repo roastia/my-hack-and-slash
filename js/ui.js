@@ -557,7 +557,11 @@ function clearLog() {
 
 function updateActionButtons() {
     if (!activeDungeon) {
-        exploreBtn.disabled = true;
+        exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}bled = true;
         exploreBtn.textContent = '［ 目 標 を 選 択 ］';
         returnBtn.classList.add('hidden');
         exploreBtn.classList.remove('btn-attack');
@@ -573,7 +577,11 @@ function updateActionButtons() {
     }
 
     if (eventState.active && eventState.type === 'console') {
-        exploreBtn.disabled = false;
+        exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}bled = false;
         exploreBtn.textContent = '［接続: HP半減/遺物］';
         returnBtn.classList.remove('hidden');
         returnBtn.disabled = false;
@@ -597,7 +605,11 @@ function updateActionButtons() {
     returnBtn.style.letterSpacing = '';
 
     if (battleState.active) {
-        exploreBtn.disabled = false;
+        exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}bled = false;
         exploreBtn.textContent = '［ 攻 撃 ］';
         exploreBtn.classList.add('btn-attack');
         returnBtn.classList.remove('hidden');
@@ -609,12 +621,20 @@ function updateActionButtons() {
         returnBtn.style.order = '2';
     } else {
         if (isBossDefeated) {
-            exploreBtn.disabled = true;
+            exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}bled = true;
             exploreBtn.textContent = '［ 最 深 部 ］';
             exploreBtn.style.order = '2';
             returnBtn.style.order = '1';
         } else {
-            exploreBtn.disabled = false;
+            exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}bled = false;
             exploreBtn.textContent = '［ 進 む ］';
             exploreBtn.style.order = '1';
             returnBtn.style.order = '2';
@@ -812,4 +832,8 @@ function renderBaseScene() {
         list.appendChild(btn);
     }
 
-    exploreBtn.disa
+    exploreBtn.disabled    = true;
+    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+    returnBtn.classList.add('hidden');
+    updateIllustration('base');
+}
