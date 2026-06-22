@@ -37,6 +37,11 @@ const progressBar       = document.getElementById('progressBar');
 function getTotalAttack() {
     let total = baseAttack;
     Object.values(equipment).forEach(eq => { if (eq && eq.atk) total += eq.atk; });
+    // 空腹ペナルティ
+    if (typeof hunger !== 'undefined') {
+        if (hunger <= 0)  total = Math.max(1, total - 3);
+        else if (hunger <= 25) total = Math.max(1, total - 1);
+    }
     return total;
 }
 
@@ -671,6 +676,18 @@ function updateUI() {
     stardustDisplay.textContent  = starDust;
     spiritDisplay.innerHTML      = getSpiritText(getTotalSpirits());
 
+    // 空腹バー
+    const hungerBar  = document.getElementById('hungerBarFill');
+    const hungerText = document.getElementById('hungerText');
+    if (hungerBar && hungerText) {
+        const hpct = Math.max(0, Math.min(100, (hunger / maxHunger) * 100));
+        hungerBar.style.width = hpct + '%';
+        if (hunger <= 0)       { hungerBar.style.background = 'var(--danger-red)';   hungerText.style.color = 'var(--danger-red)'; }
+        else if (hunger <= 25) { hungerBar.style.background = 'var(--accent-orange)'; hungerText.style.color = 'var(--accent-orange)'; }
+        else                   { hungerBar.style.background = '#c8a060';              hungerText.style.color = '#c8a060'; }
+        hungerText.textContent = hunger <= 0 ? '飢餓！' : hunger <= 25 ? '空腹…' : `${hunger}`;
+    }
+
     // 装備欄
     document.getElementById('eqWeapon').innerHTML = formatEq(equipment.weapon, 'atk');
     document.getElementById('eqHelm').innerHTML   = formatEq(equipment.helm,   'def');
@@ -697,16 +714,29 @@ function updateUI() {
             if (spText !== '無') statsText += `[${spText}]`;
 
             li.style.borderLeft = `3px solid ${r.color}`;
-            li.innerHTML = `
-                <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
-                    <span class="item-name" style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span>
-                    <span class="item-stats">${statsText}<span style="color:${r.color}; opacity:0.75; margin-left:6px;">${r.label}</span></span>
-                </div>
-                <div class="item-actions">
-                    <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>
-                    <button class="mini-btn btn-mix"   onclick="mixItem(${index})">合成</button>
-                </div>
-            `;
+            if (item.type === 'food') {
+                li.style.borderLeft = '3px solid #c8a060';
+                li.innerHTML = `
+                    <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
+                        <span class="item-name" style="color:#c8a060">🍖 ${item.name}</span>
+                        <span class="item-stats" style="color:#8a7050">満腹度 +${item.hunger}${item.hp ? ' / HP +' + item.hp : ''}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="mini-btn" style="border-color:#c8a060;color:#c8a060" onclick="eatFood(${index})">食べる</button>
+                    </div>
+                `;
+            } else {
+                li.innerHTML = `
+                    <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
+                        <span class="item-name" style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span>
+                        <span class="item-stats">${statsText}<span style="color:${r.color}; opacity:0.75; margin-left:6px;">${r.label}</span></span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>
+                        <button class="mini-btn btn-mix"   onclick="mixItem(${index})">合成</button>
+                    </div>
+                `;
+            }
             inventoryList.appendChild(li);
         });
     }

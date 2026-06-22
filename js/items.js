@@ -116,3 +116,29 @@ function getRarityInfo(item) {
     if (score >= 4)  return { label: '◇ 上 位', color: '#4ab848' };
     return                  { label: '  普 通', color: '#8a8070' };
 }
+
+// =============================================================
+// 食料操作
+// =============================================================
+
+function eatFood(index) {
+    const food = inventory[index];
+    if (!food || food.type !== 'food') return;
+
+    inventory.splice(index, 1);
+
+    const restored = Math.min(maxHunger - hunger, food.hunger);
+    hunger = Math.min(maxHunger, hunger + food.hunger);
+
+    let msg = `🍖 <span class="item-text">【${food.name}】</span> を食べた。満腹度 +${restored}`;
+
+    if (food.hp > 0) {
+        const healed = Math.min(maxHp - currentHp, food.hp);
+        currentHp = Math.min(maxHp, currentHp + food.hp);
+        msg += ` / HP +${healed}`;
+    }
+
+    addLog(msg);
+    updateUI();
+}
+

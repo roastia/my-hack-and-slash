@@ -35,6 +35,10 @@ let stepCount      = 0;
 let isBossDefeated = false;
 const stepsToNextFloor = 7;
 
+// --- 空腹システム ---
+let hunger    = 100;  // 現在の満腹度 (0-100)
+let maxHunger = 100;
+
 // --- バトル・イベント状態 ---
 let battleState = { active: false, enemy: null, isBoss: false, turn: 0 };
 let eventState  = { active: false, type: null };

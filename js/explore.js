@@ -42,6 +42,7 @@ function startDungeon(index) {
 
     battleState = { active: false, enemy: null, isBoss: false, turn: 0 };
     eventState  = { active: false, type: null };
+    hunger = maxHunger; // 空腹リセット
 
     clearLog();
     baseScene.classList.add('hidden');
@@ -130,6 +131,7 @@ function executeExploreStep() {
         updateIllustration('explore');
         addLog(nothings[Math.floor(Math.random() * nothings.length)]);
     }
+    if (applyHunger(5)) return;
     updateUI();
 }
 
@@ -202,6 +204,7 @@ function executeReturnStep() {
         const texts = isEscape ? escapeNothings : returnNothings;
         addLog(texts[Math.floor(Math.random() * texts.length)]);
     }
+    if (applyHunger(4)) return;
     updateUI();
 }
 
@@ -222,6 +225,19 @@ function spawnEnemy() {
 
 function findItem() {
     updateIllustration('item');
+
+    // 20% の確率で食料を発見
+    if (Math.random() < 0.20) {
+        const food = Object.assign({}, foodDatabase[Math.floor(Math.random() * foodDatabase.length)]);
+        food.type = 'food';
+        if (inventory.length < maxInventory) {
+            inventory.push(food);
+            addLog(`宝箱に <span style="color:#c8a060; font-weight:bold">🍖 【${food.name}】</span> が入っていた！`);
+        } else {
+            addLog(`🍖 【${food.name}】を発見したが、荷物が満杯で持てなかった。`);
+        }
+        return;
+    }
 
     const scale = Math.floor((1 + activeDungeon.diff * 0.3) * (1 + currentFloor * 0.2));
     const item  = generateItem(scale);
@@ -274,4 +290,24 @@ function resolveConsoleEvent(isConnect) {
         updateActionButtons();
         updateUI();
     }
+}
+
+// 空腹減少 & 飢餓チェック（各ステップ末尾で呼ぶ）
+function applyHunger(amount = 5) {
+    if (!activeDungeon) return;
+    hunger = Math.max(0, hunger - amount);
+
+    if (hunger === 0) {
+        const starvDmg = Math.max(1, Math.floor(maxHp * 0.08));
+        currentHp = Math.max(0, currentHp - starvDmg);
+        addLog(`<span class="damage-text">🍖 極度の飢餓で体力が奪われていく…… ${starvDmg} dmg！</span>`);
+        if (currentHp <= 0) {
+            currentHp = 0;
+            gameOver();
+            return true; // 死亡
+        }
+    } else if (hunger <= 25) {
+        addLog(`<span style="color:var(--accent-orange); font-size:12px;">…お腹が空いてきた。食料を探せ。</span>`);
+    }
+    return false;
 }
