@@ -731,6 +731,9 @@ function updateUI() {
 
     // 自動セーブ
     saveData();
+
+    // モバイルトップバー更新
+    if (typeof updateMobileTopBar === 'function') updateMobileTopBar();
 }
 
 // =============================================================
@@ -779,7 +782,4 @@ function renderBaseScene() {
         list.appendChild(btn);
     }
 
-    exploreBtn.disabled = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-}
+    exploreBtn.disa

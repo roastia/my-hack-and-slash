@@ -8,6 +8,17 @@
 </head>
 <body>
 
+    <!-- ========== モバイル上部ステータスバー ========== -->
+    <div id="mobileTopBar" class="mobile-only">
+        <span id="mobileLocDisplay">村</span>
+        <div id="mobileHpWrap">
+            <span class="mob-label">HP</span>
+            <div id="mobileHpBar"><div id="mobileHpFill"></div></div>
+            <span id="mobileHpText">30/30</span>
+        </div>
+        <span class="mob-gold">G:<span id="mobileGoldDisp">0</span></span>
+    </div>
+
     <div class="game-container">
 
         <!-- ================= 左パネル (ステータス) ================= -->
@@ -158,6 +169,19 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- ========== モバイルボトムナビ ========== -->
+    <div id="mobileBottomNav" class="mobile-only">
+        <button id="mnavAction" onclick="mobileSwitchView('action')" class="mob-tab-active">
+            <span class="nav-icon">⚔</span><span>探 索</span>
+        </button>
+        <button id="mnavInventory" onclick="mobileSwitchView('inventory')">
+            <span class="nav-icon">🎒</span><span>所持品</span>
+        </button>
+        <button id="mnavStatus" onclick="mobileSwitchView('status')">
+            <span class="nav-icon">👤</span><span>状 態</span>
+        </button>
     </div>
 
     <!-- ストーリーモーダル（初回訪問時） -->
