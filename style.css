@@ -400,3 +400,264 @@ body {
     98% { transform: skew(0deg); }
     100% { transform: skew(0deg); }
 }
+
+/* ============================================================
+   モバイル専用要素（デスクトップでは非表示）
+   ============================================================ */
+.mobile-only {
+    display: none !important;
+}
+
+/* ============================================================
+   スマホレイアウト (max-width: 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* ---- 基本リセット ---- */
+    body {
+        display: block !important;
+        height: 100dvh;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mobile-only {
+        display: flex !important;
+    }
+
+    /* ---- モバイル上部ステータスバー ---- */
+    #mobileTopBar {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 44px;
+        background: linear-gradient(180deg, #1a1005 0%, #0e0a06 100%);
+        border-bottom: 1px solid var(--border-color);
+        z-index: 200;
+        display: flex !important;
+        align-items: center;
+        padding: 0 10px;
+        gap: 8px;
+        box-sizing: border-box;
+    }
+
+    #mobileLocDisplay {
+        color: var(--accent-cyan);
+        font-weight: bold;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90px;
+        flex-shrink: 0;
+    }
+
+    #mobileHpWrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mob-label {
+        color: var(--text-dim);
+        font-size: 11px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    #mobileHpBar {
+        flex: 1;
+        height: 6px;
+        background: #1a1005;
+        border-radius: 3px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        min-width: 40px;
+    }
+
+    #mobileHpFill {
+        height: 100%;
+        background: var(--accent-green);
+        transition: width 0.3s, background 0.3s;
+        width: 100%;
+    }
+
+    #mobileHpText {
+        color: var(--accent-orange);
+        font-size: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .mob-gold {
+        color: var(--accent-orange);
+        font-size: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* ---- ボトムナビ ---- */
+    #mobileBottomNav {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 54px;
+        background: linear-gradient(180deg, #0e0a06 0%, #1a1005 100%);
+        border-top: 1px solid var(--border-color);
+        z-index: 200;
+        display: flex !important;
+        align-items: stretch;
+    }
+
+    #mobileBottomNav button {
+        flex: 1;
+        background: none;
+        border: none;
+        border-right: 1px solid var(--border-color);
+        color: var(--text-dim);
+        font-family: inherit;
+        font-size: 11px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        cursor: pointer;
+        transition: color 0.15s, background 0.15s;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #mobileBottomNav button:last-child {
+        border-right: none;
+    }
+
+    #mobileBottomNav button.mob-tab-active {
+        color: var(--accent-cyan);
+        background: rgba(212, 168, 48, 0.08);
+    }
+
+    #mobileBottomNav .nav-icon {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    /* ---- ゲームコンテナ ---- */
+    .game-container {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
+        position: fixed !important;
+        top: 44px !important;
+        bottom: 54px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        gap: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    /* ---- 中央パネル（常時表示） ---- */
+    .center-panel {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 !important;
+        min-height: 0 !important;
+        gap: 0 !important;
+        overflow: hidden !important;
+        height: 100% !important;
+    }
+
+    .viewport-area {
+        flex-shrink: 0 !important;
+        height: 160px !important;
+        min-height: 0 !important;
+    }
+
+    #baseScene {
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    #exploreScene {
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* ---- 操作ボタン ---- */
+    .action-group {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        gap: 8px !important;
+        padding: 6px 8px !important;
+        background: var(--panel-bg) !important;
+        border-top: 1px solid var(--border-color) !important;
+        box-sizing: border-box !important;
+    }
+
+    .action-btn {
+        flex: 1 !important;
+        padding: 12px 4px !important;
+        font-size: 14px !important;
+        letter-spacing: 2px !important;
+    }
+
+    /* ---- 左・右パネルをフルスクリーンオーバーレイ化 ---- */
+    .left-panel, .right-panel {
+        display: none !important;
+        position: fixed !important;
+        top: 44px !important;
+        bottom: 54px !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 100 !important;
+        flex-direction: column !important;
+        height: auto !important;
+        background: var(--bg-color) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+        gap: 8px !important;
+    }
+
+    .left-panel.mob-active,
+    .right-panel.mob-active {
+        display: flex !important;
+    }
+
+    /* ---- その他調整 ---- */
+    .equip-grid {
+        grid-template-columns: 1fr !important;
+        font-size: 12px;
+    }
+
+    .inventory-list li {
+        font-size: 12px;
+    }
+
+    .story-panel {
+        max-width: 100%;
+        padding: 20px 16px;
+    }
+}
