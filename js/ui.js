@@ -558,40 +558,32 @@ function clearLog() {
 function updateActionButtons() {
     if (!activeDungeon) {
         exploreBtn.disabled    = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-    updateIllustration('base');
-}bled = true;
         exploreBtn.textContent = '［ 目 標 を 選 択 ］';
         returnBtn.classList.add('hidden');
         exploreBtn.classList.remove('btn-attack');
         returnBtn.classList.remove('btn-flee');
         exploreScene.classList.remove('battle-mode-bg');
         exploreBtn.style.order = '1';
-        returnBtn.style.order = '2';
-        exploreBtn.style.fontSize = '';
+        returnBtn.style.order  = '2';
+        exploreBtn.style.fontSize     = '';
         exploreBtn.style.letterSpacing = '';
-        returnBtn.style.fontSize = '';
-        returnBtn.style.letterSpacing = '';
+        returnBtn.style.fontSize      = '';
+        returnBtn.style.letterSpacing  = '';
         return;
     }
 
     if (eventState.active && eventState.type === 'console') {
-        exploreBtn.disabled    = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-    updateIllustration('base');
-}bled = false;
+        exploreBtn.disabled    = false;
         exploreBtn.textContent = '［接続: HP半減/遺物］';
         returnBtn.classList.remove('hidden');
-        returnBtn.disabled = false;
-        returnBtn.textContent = '［ 無視する ］';
+        returnBtn.disabled     = false;
+        returnBtn.textContent  = '［ 無視する ］';
         exploreBtn.style.order = '1';
-        returnBtn.style.order = '2';
-        exploreBtn.style.fontSize = '16px';
+        returnBtn.style.order  = '2';
+        exploreBtn.style.fontSize      = '16px';
         exploreBtn.style.letterSpacing = '1px';
-        returnBtn.style.fontSize = '16px';
-        returnBtn.style.letterSpacing = '2px';
+        returnBtn.style.fontSize       = '16px';
+        returnBtn.style.letterSpacing  = '2px';
         exploreBtn.classList.remove('btn-attack');
         returnBtn.classList.remove('btn-flee');
         exploreScene.classList.remove('battle-mode-bg');
@@ -599,54 +591,44 @@ function updateActionButtons() {
     }
 
     // スタイルリセット
-    exploreBtn.style.fontSize = '';
+    exploreBtn.style.fontSize      = '';
     exploreBtn.style.letterSpacing = '';
-    returnBtn.style.fontSize = '';
-    returnBtn.style.letterSpacing = '';
+    returnBtn.style.fontSize       = '';
+    returnBtn.style.letterSpacing  = '';
 
     if (battleState.active) {
-        exploreBtn.disabled    = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-    updateIllustration('base');
-}bled = false;
+        exploreBtn.disabled    = false;
         exploreBtn.textContent = '［ 攻 撃 ］';
         exploreBtn.classList.add('btn-attack');
         returnBtn.classList.remove('hidden');
-        returnBtn.disabled = false;
+        returnBtn.disabled    = false;
         returnBtn.textContent = '［ 逃 走 ］';
         returnBtn.classList.add('btn-flee');
         exploreScene.classList.add('battle-mode-bg');
         exploreBtn.style.order = '1';
-        returnBtn.style.order = '2';
+        returnBtn.style.order  = '2';
     } else {
         if (isBossDefeated) {
             exploreBtn.disabled    = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-    updateIllustration('base');
-}bled = true;
             exploreBtn.textContent = '［ 最 深 部 ］';
             exploreBtn.style.order = '2';
-            returnBtn.style.order = '1';
+            returnBtn.style.order  = '1';
         } else {
-            exploreBtn.disabled    = true;
-    exploreBtn.textContent = '［ 目 標 を 選 択 ］';
-    returnBtn.classList.add('hidden');
-    updateIllustration('base');
-}bled = false;
+            exploreBtn.disabled    = false;
             exploreBtn.textContent = '［ 進 む ］';
             exploreBtn.style.order = '1';
-            returnBtn.style.order = '2';
+            returnBtn.style.order  = '2';
         }
         exploreBtn.classList.remove('btn-attack');
         returnBtn.classList.remove('hidden');
-        returnBtn.disabled = false;
+        returnBtn.disabled    = false;
         returnBtn.textContent = '［ 戻 る ］';
         returnBtn.classList.remove('btn-flee');
         exploreScene.classList.remove('battle-mode-bg');
     }
 }
+
+
 
 // =============================================================
 // メインUI更新
