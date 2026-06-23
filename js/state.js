@@ -40,6 +40,10 @@ const stepsToNextFloor = 7;
 let hunger    = 100;
 let maxHunger = 100;  // 道具屋スキルで拡張可能
 
+// --- 戦闘スキル習得状況 ---
+// { skillId: { learned: true, uses: 0 } }
+let skillBook = {};
+
 // --- バトル・イベント状態 ---
 let battleState = { active: false, enemy: null, isBoss: false, turn: 0 };
 let eventState  = { active: false, type: null };

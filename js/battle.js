@@ -1,5 +1,5 @@
 // =============================================================
-// battle.js — ATBバトルシステム
+// battle.js — ATBバトルシステム（スキル対応版）
 // =============================================================
 
 function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed) {
@@ -14,6 +14,8 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
         enemyAtb:    0,
         playerSpeed: pSpd,
         enemySpeed:  eSpd,
+        guardActive: false,
+        guardMult:   1.0,
     };
 
     updateIllustration(isBoss ? 'boss' : 'battle', battleState.enemy);
@@ -26,8 +28,8 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
 }
 
 // プレイヤーのダメージ計算（クリット・精霊込み）
-function calcPlayerDamage() {
-    let atk      = getTotalAttack();
+function calcPlayerDamage(atkOverride) {
+    let atk      = atkOverride !== undefined ? atkOverride : getTotalAttack();
     let critRate = getCritRate() / 100;
     let isCrit   = Math.random() < critRate;
     let dmg      = isCrit ? Math.floor(atk * 1.5) : atk;
@@ -59,13 +61,14 @@ function calcEnemyDamage(atk) {
 }
 
 // ATBシミュレーション：プレイヤーのターンが来るまでティックを進める
-// 途中で敵が先手を取った場合はダメージを与える
+// atbCost: 必要ATB (スキルで変動)
 // 戻り値: true = ゲームオーバー発生
-function tickUntilPlayerTurn() {
+function tickUntilPlayerTurn(atbCost) {
+    atbCost = atbCost || 100;
     const MAX_ENEMY_HITS = 6;
     let enemyHits = 0;
 
-    while (battleState.playerAtb < 100) {
+    while (battleState.playerAtb < atbCost) {
         battleState.playerAtb += battleState.playerSpeed;
         battleState.enemyAtb  += battleState.enemySpeed;
 
@@ -83,35 +86,99 @@ function tickUntilPlayerTurn() {
             updateUI();
         }
     }
-    battleState.playerAtb -= 100;
+    battleState.playerAtb -= atbCost;
     return false;
 }
 
-// 攻撃ボタン押下
-function executeBattleTurn() {
+// ================================================================
+// 攻撃・スキル実行
+// skillId: 'normal' / 'powerStrike' / 'rapidStrike' / 'healingWave' / 'guardStance'
+// ================================================================
+function executeBattleTurn(skillId) {
+    skillId = skillId || 'normal';
     clearLog();
     battleState.turn++;
-    let enemy = battleState.enemy;
 
-    // ゲージが溜まっていない場合はティックを進める
-    if (battleState.playerAtb < 100) {
-        if (tickUntilPlayerTurn()) return;
+    const skill    = skillId !== 'normal' ? combatSkills.find(s => s.id === skillId) : null;
+    const atbCost  = skill ? Math.round(100 * skill.atbMultiplier) : 100;
+    let enemy      = battleState.enemy;
+
+    // ATBが足りなければティックを進める
+    if (battleState.playerAtb < atbCost) {
+        if (tickUntilPlayerTurn(atbCost)) return;
     } else {
-        battleState.playerAtb -= 100;
+        battleState.playerAtb -= atbCost;
     }
 
-    // プレイヤー攻撃
-    let myDmgData = calcPlayerDamage();
-    enemy.hp = Math.max(0, enemy.hp - myDmgData.total);
+    let logMsg = '';
+    let enemyDied = false;
 
-    let logMsg = `<span class="attack-text">>> ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
+    // ── スキル実行 ──
+    if (skill) {
+        const skillLvBefore = getSkillLevel(skillId);
+        skillBook[skillId].uses++;
+        const skillLvAfter  = getSkillLevel(skillId);
+        const skillLv       = skillLvAfter;
 
-    let heal = Math.floor(myDmgData.total * (getStealRate() / 100));
-    if (heal > 0) {
-        currentHp = Math.min(maxHp, currentHp + heal);
-        logMsg += ` <span class="event-text">(吸収 +${heal})</span>`;
+        // レベルアップ通知
+        if (skillLvAfter > skillLvBefore) {
+            addLog(`<span class="levelup-text">✦ スキル「${skill.name}」がLv${skillLvAfter}に上昇した！</span>`);
+        }
+
+        if (skillId === 'powerStrike') {
+            // 渾身の一撃：高倍率1ヒット
+            const mult   = skill.dmgMults[skillLv - 1];
+            const rawAtk = getTotalAttack();
+            const dmg    = Math.max(1, Math.floor(rawAtk * mult * (0.9 + Math.random() * 0.2)));
+            enemy.hp     = Math.max(0, enemy.hp - dmg);
+            logMsg = `<span class="attack-text">💥 渾身の一撃！ ${dmg} dmgを与えた！ (Lv${skillLv} × ${mult.toFixed(1)})</span>`;
+            const heal = Math.floor(dmg * (getStealRate() / 100));
+            if (heal > 0) { currentHp = Math.min(maxHp, currentHp + heal); logMsg += ` <span class="event-text">(吸収 +${heal})</span>`; }
+
+        } else if (skillId === 'rapidStrike') {
+            // 連撃：複数回ヒット
+            const hits    = skill.hitsPerLevel[skillLv - 1];
+            const hitMult = skill.hitMult;
+            const rawAtk  = getTotalAttack();
+            let dmgParts  = [];
+            for (let i = 0; i < hits; i++) {
+                const d  = Math.max(1, Math.floor(rawAtk * hitMult * (0.85 + Math.random() * 0.3)));
+                enemy.hp = Math.max(0, enemy.hp - d);
+                dmgParts.push(d);
+            }
+            const total = dmgParts.reduce((a, b) => a + b, 0);
+            logMsg = `<span class="attack-text">⚔ ${hits}連撃！ [${dmgParts.join('+')}] 計 ${total} dmg！ (Lv${skillLv})</span>`;
+
+        } else if (skillId === 'healingWave') {
+            // 回復術：HP回復
+            const healPct = skill.healPcts[skillLv - 1];
+            const healAmt = Math.max(1, Math.floor(maxHp * healPct));
+            currentHp     = Math.min(maxHp, currentHp + healAmt);
+            logMsg = `<span class="event-text">✦ 回復術！ HP +${healAmt} 回復した！ (Lv${skillLv} / ${Math.round(healPct*100)}%)</span>`;
+
+        } else if (skillId === 'guardStance') {
+            // 鉄壁：次の被ダメを軽減
+            const defMult = skill.defMults[skillLv - 1];
+            battleState.guardActive = true;
+            battleState.guardMult   = defMult;
+            logMsg = `<span class="event-text">🛡 鉄壁の構え！ 次の被ダメを ${Math.round((1 - defMult) * 100)}% 軽減！ (Lv${skillLv})</span>`;
+        }
+
+        saveData();
+
+    } else {
+        // ── 通常攻撃 ──
+        let myDmgData = calcPlayerDamage();
+        enemy.hp = Math.max(0, enemy.hp - myDmgData.total);
+        logMsg   = `<span class="attack-text">>> ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
+        const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
+        if (heal > 0) {
+            currentHp = Math.min(maxHp, currentHp + heal);
+            logMsg   += ` <span class="event-text">(吸収 +${heal})</span>`;
+        }
     }
 
+    // ── 撃破判定 ──
     if (enemy.hp <= 0) {
         stats.kills++;
         exp      += enemy.exp;
@@ -144,14 +211,23 @@ function executeBattleTurn() {
         battleState.active = false;
         updateIllustration('explore');
         updateActionButtons();
+
     } else {
-        // 攻撃後に敵ATBが溜まっていれば反撃
+        // ── 敵の反撃 ──
         battleState.enemyAtb += battleState.enemySpeed;
         if (battleState.enemyAtb >= 100) {
             battleState.enemyAtb -= 100;
             let enemyDmg = calcEnemyDamage(enemy.atk);
-            currentHp   -= enemyDmg;
-            logMsg      += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
+
+            if (battleState.guardActive) {
+                const reduced = Math.max(1, Math.floor(enemyDmg * battleState.guardMult));
+                logMsg += `<br><span class="damage-text"><< 敵の反撃！ 🛡 鉄壁！ ${reduced} dmgに軽減！</span>`;
+                currentHp -= reduced;
+                battleState.guardActive = false;
+            } else {
+                logMsg += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
+                currentHp -= enemyDmg;
+            }
         }
         addLog(logMsg);
         updateIllustration(battleState.isBoss ? 'boss' : 'battle', enemy);

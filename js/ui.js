@@ -604,16 +604,40 @@ function updateActionButtons() {
 
     if (battleState.active) {
         exploreBtn.disabled    = false;
-        exploreBtn.textContent = '［ 攻 撃 ］';
+        exploreBtn.textContent = '通常攻撃';
         exploreBtn.classList.add('btn-attack');
         returnBtn.classList.remove('hidden');
         returnBtn.disabled    = false;
-        returnBtn.textContent = '［ 逃 走 ］';
+        returnBtn.textContent = '逃走';
         returnBtn.classList.add('btn-flee');
         exploreScene.classList.add('battle-mode-bg');
         exploreBtn.style.order = '1';
-        returnBtn.style.order  = '2';
+        returnBtn.style.order  = '99';
+
+        // スキルボタン列を表示
+        const skillRow = document.getElementById('skillBtnRow');
+        if (skillRow) {
+            skillRow.innerHTML = '';
+            skillRow.classList.remove('hidden');
+            const learned = combatSkills.filter(s => skillBook[s.id] && skillBook[s.id].learned);
+            learned.forEach(skill => {
+                const lv      = getSkillLevel(skill.id);
+                const entry   = skillBook[skill.id];
+                const next    = getSkillNextThreshold(skill.id);
+                const tooltip = next
+                    ? `Lv${lv}  使用:${entry.uses}/${next}`
+                    : `Lv${lv} MAX`;
+                const btn = document.createElement('button');
+                btn.className = 'skill-action-btn';
+                btn.title     = tooltip;
+                btn.innerHTML = `${skill.icon}<span class="sk-name">${skill.name}</span><span class="sk-lv">Lv${lv}</span>`;
+                btn.onclick   = () => executeBattleTurn(skill.id);
+                skillRow.appendChild(btn);
+            });
+        }
     } else {
+        const skillRow = document.getElementById('skillBtnRow');
+        if (skillRow) skillRow.classList.add('hidden');
         if (isBossDefeated) {
             exploreBtn.disabled    = true;
             exploreBtn.textContent = '［ 最 深 部 ］';

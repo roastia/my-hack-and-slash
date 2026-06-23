@@ -236,6 +236,75 @@ const enemiesBase = [
 
 
 
+
+// =============================================================
+// 戦闘スキルデータ
+// =============================================================
+const combatSkills = [
+    {
+        id: 'powerStrike',
+        name: '渾身の一撃',
+        icon: '💥',
+        atbMultiplier: 1.4,   // 通常より遅い（強力）
+        shopCost: 80,
+        desc: '力を込めた一撃。Lvが上がるほど威力増加。',
+        levelThresholds: [0, 10, 30, 60, 100],
+        dmgMults: [1.8, 2.2, 2.7, 3.2, 4.0],
+    },
+    {
+        id: 'rapidStrike',
+        name: '連撃',
+        icon: '⚔',
+        atbMultiplier: 0.75,  // 通常より速い（連続）
+        shopCost: 80,
+        desc: '素早い連続攻撃。Lvが上がるほど連撃数増加。',
+        levelThresholds: [0, 10, 30, 60, 100],
+        hitsPerLevel: [2, 2, 3, 3, 4],
+        hitMult: 0.55,
+    },
+    {
+        id: 'healingWave',
+        name: '回復術',
+        icon: '✦',
+        atbMultiplier: 1.0,
+        shopCost: 100,
+        desc: 'HPを回復する。Lvが上がるほど回復量増加。',
+        levelThresholds: [0, 10, 30, 60, 100],
+        healPcts: [0.15, 0.20, 0.25, 0.32, 0.42],
+    },
+    {
+        id: 'guardStance',
+        name: '鉄壁',
+        icon: '🛡',
+        atbMultiplier: 0.9,
+        shopCost: 80,
+        desc: '次の敵攻撃を大幅に軽減。Lvで効果増加。',
+        levelThresholds: [0, 10, 30, 60, 100],
+        defMults: [0.5, 0.4, 0.3, 0.2, 0.1], // 被ダメ倍率
+    },
+];
+
+function getSkillLevel(skillId) {
+    const entry = typeof skillBook !== 'undefined' ? skillBook[skillId] : null;
+    if (!entry || !entry.learned) return 0;
+    const skill = combatSkills.find(s => s.id === skillId);
+    if (!skill) return 1;
+    let lv = 1;
+    for (let i = 0; i < skill.levelThresholds.length; i++) {
+        if (entry.uses >= skill.levelThresholds[i]) lv = i + 1;
+    }
+    return Math.min(5, lv);
+}
+
+function getSkillNextThreshold(skillId) {
+    const entry = typeof skillBook !== 'undefined' ? skillBook[skillId] : null;
+    if (!entry) return 10;
+    const skill = combatSkills.find(s => s.id === skillId);
+    if (!skill) return 10;
+    const lv = getSkillLevel(skillId);
+    return lv < 5 ? skill.levelThresholds[lv] : null;
+}
+
 // =============================================================
 // 道具屋アイテム
 // =============================================================
@@ -266,6 +335,15 @@ const shopItems = [
       effect: { permBaseAtk: 6 },  desc: '基礎 ATK +6（永続）' },
     { name: '不動の大盾書',     category: 'skill', cost: 150,
       effect: { permBaseDef: 6 },  desc: '基礎 DEF +6（永続）' },
+    // ── 戦闘スキル書 ───────────────────────────────────────────
+    { name: '渾身の一撃の書', category: 'combat_skill', cost: 80,  skillId: 'powerStrike',
+      desc: '戦闘スキル「渾身の一撃」を習得' },
+    { name: '連撃の書',       category: 'combat_skill', cost: 80,  skillId: 'rapidStrike',
+      desc: '戦闘スキル「連撃」を習得' },
+    { name: '回復術の書',     category: 'combat_skill', cost: 100, skillId: 'healingWave',
+      desc: '戦闘スキル「回復術」を習得' },
+    { name: '鉄壁の書',       category: 'combat_skill', cost: 80,  skillId: 'guardStance',
+      desc: '戦闘スキル「鉄壁」を習得' },
 ];
 
 // =============================================================

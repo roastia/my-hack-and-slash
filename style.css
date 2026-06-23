@@ -695,3 +695,70 @@ body {
     flex-shrink: 0;
     font-family: 'Courier New', monospace;
 }
+
+/* ============================================================
+   戦闘スキルボタン
+   ============================================================ */
+.skill-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 0;
+    width: 100%;
+}
+
+.skill-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(90, 40, 140, 0.25);
+    border: 1px solid var(--accent-magenta);
+    border-radius: 4px;
+    color: var(--accent-magenta);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.skill-action-btn:hover {
+    background: rgba(160, 80, 216, 0.35);
+    transform: translateY(-1px);
+}
+
+.skill-action-btn:active {
+    transform: translateY(0);
+}
+
+.skill-action-btn .sk-name {
+    font-size: 13px;
+}
+
+.skill-action-btn .sk-lv {
+    font-size: 11px;
+    opacity: 0.75;
+    margin-left: 2px;
+}
+
+/* バトル中の通常攻撃・逃走ボタンをコンパクトに */
+.action-group .btn-attack {
+    font-size: 15px !important;
+    letter-spacing: 2px !important;
+    flex: 1;
+}
+
+.action-group .btn-flee {
+    font-size: 14px !important;
+    letter-spacing: 1px !important;
+    flex: 0 0 auto;
+    min-width: 80px;
+}
+
+@media (max-width: 768px) {
+    .skill-action-btn {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}

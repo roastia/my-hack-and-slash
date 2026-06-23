@@ -7,7 +7,7 @@ let resetConfirmTimer = null;
 
 function saveData() {
     const data = {
-        starDust, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed,
+        starDust, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed, skillBook,
         costHp, costAtk, costDef, stats,
         level, maxHp, currentHp, exp, nextExp,
         baseAttack, baseDefense,
@@ -40,6 +40,7 @@ function loadData() {
         costAtk      = data.costAtk      || 20;
         costDef      = data.costDef      || 15;
         stats        = data.stats        || { kills: 0, deaths: 0, returns: 0 };
+        skillBook    = data.skillBook    || {};
 
         level        = data.level        || 1;
         maxHp        = data.maxHp        || 30;
