@@ -226,10 +226,13 @@ body {
 /* アクションボタン（中央パネル下部） */
 .action-group {
     display: flex;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
     width: 100%;
-    height: 60px;
+    min-height: 60px;
+    height: auto;
     flex-shrink: 0;
+    align-content: flex-end;
 }
 
 .action-btn {
@@ -703,8 +706,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 6px 0;
+    padding: 4px 0 2px;
     width: 100%;
+    flex-basis: 100%;   /* 必ず1行を占有 */
+    order: -1;           /* 常に最上段 */
 }
 
 .skill-action-btn {
@@ -743,22 +748,40 @@ body {
 }
 
 /* バトル中の通常攻撃・逃走ボタンをコンパクトに */
+/* バトル中の通常攻撃ボタン：横幅を大きく取る */
 .action-group .btn-attack {
-    font-size: 15px !important;
-    letter-spacing: 2px !important;
-    flex: 1;
+    font-size: 18px !important;
+    letter-spacing: 3px !important;
+    flex: 3 1 0 !important;
+    min-height: 56px;
+    min-width: 0;
 }
 
+/* 逃走ボタン：コンパクトに右寄せ */
 .action-group .btn-flee {
     font-size: 14px !important;
     letter-spacing: 1px !important;
-    flex: 0 0 auto;
-    min-width: 80px;
+    flex: 1 1 0 !important;
+    min-height: 56px;
+    min-width: 70px;
+    max-width: 100px;
+}
+
+/* スキル行が表示されるときのaction-groupの高さ */
+.skill-btn-row:not(.hidden) ~ * {
+    /* スキル行のすぐ下に配置 */
 }
 
 @media (max-width: 768px) {
     .skill-action-btn {
         font-size: 12px;
         padding: 5px 10px;
+    }
+    .action-group .btn-attack {
+        font-size: 16px !important;
+        min-height: 50px;
+    }
+    .action-group .btn-flee {
+        min-height: 50px;
     }
 }

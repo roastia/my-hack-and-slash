@@ -618,22 +618,28 @@ function updateActionButtons() {
         const skillRow = document.getElementById('skillBtnRow');
         if (skillRow) {
             skillRow.innerHTML = '';
-            skillRow.classList.remove('hidden');
             const learned = combatSkills.filter(s => skillBook[s.id] && skillBook[s.id].learned);
-            learned.forEach(skill => {
-                const lv      = getSkillLevel(skill.id);
-                const entry   = skillBook[skill.id];
-                const next    = getSkillNextThreshold(skill.id);
-                const tooltip = next
-                    ? `Lv${lv}  使用:${entry.uses}/${next}`
-                    : `Lv${lv} MAX`;
-                const btn = document.createElement('button');
-                btn.className = 'skill-action-btn';
-                btn.title     = tooltip;
-                btn.innerHTML = `${skill.icon}<span class="sk-name">${skill.name}</span><span class="sk-lv">Lv${lv}</span>`;
-                btn.onclick   = () => executeBattleTurn(skill.id);
-                skillRow.appendChild(btn);
-            });
+            if (learned.length > 0) {
+                skillRow.classList.remove('hidden');
+                skillRow.style.display = 'flex';
+                learned.forEach(skill => {
+                    const lv      = getSkillLevel(skill.id);
+                    const entry   = skillBook[skill.id];
+                    const next    = getSkillNextThreshold(skill.id);
+                    const tooltip = next
+                        ? `Lv${lv}  使用:${entry.uses}/${next}`
+                        : `Lv${lv} MAX`;
+                    const btn = document.createElement('button');
+                    btn.className = 'skill-action-btn';
+                    btn.title     = tooltip;
+                    btn.innerHTML = `${skill.icon}<span class="sk-name">${skill.name}</span><span class="sk-lv">Lv${lv}</span>`;
+                    btn.onclick   = () => executeBattleTurn(skill.id);
+                    skillRow.appendChild(btn);
+                });
+            } else {
+                skillRow.classList.add('hidden');
+                skillRow.style.display = '';
+            }
         }
     } else {
         const skillRow = document.getElementById('skillBtnRow');
