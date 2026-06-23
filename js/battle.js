@@ -210,7 +210,7 @@ function checkLevelUp() {
     if (exp >= nextExp) {
         level++;
         exp     = exp - nextExp;
-        nextExp = Math.floor(nextExp * 1.6);
+        nextExp = Math.floor(nextExp * 2.0);
         maxHp  += 8;
         currentHp = maxHp;
         baseAttack += 1;

@@ -43,10 +43,27 @@
                     </div>
                 </div>
 
-                <div class="status-row">
-                    <span>HP: <span id="currentHpDisplay" class="highlight-value">30</span> / <span id="maxHpDisplay">30</span></span>
-                    <span>EXP: <span id="expDisplay">0</span> / <span id="nextExpDisplay">10</span></span>
+                <!-- HP ゲージ -->
+                <div class="gauge-row">
+                    <span class="gauge-label" style="color:var(--accent-green);">HP</span>
+                    <div class="gauge-track">
+                        <div id="hpBarFill" class="gauge-fill" style="width:100%; background:var(--accent-green);"></div>
+                    </div>
+                    <span id="hpGaugeText" class="gauge-text" style="color:var(--accent-green);">30/30</span>
                 </div>
+                <!-- EXP ゲージ -->
+                <div class="gauge-row">
+                    <span class="gauge-label" style="color:var(--accent-magenta);">EXP</span>
+                    <div class="gauge-track">
+                        <div id="expBarFill" class="gauge-fill" style="width:0%; background:var(--accent-magenta);"></div>
+                    </div>
+                    <span id="expGaugeText" class="gauge-text" style="color:var(--accent-magenta);">0/30</span>
+                </div>
+                <!-- 隠し要素（他JSから参照） -->
+                <span id="currentHpDisplay" style="display:none">30</span>
+                <span id="maxHpDisplay"     style="display:none">30</span>
+                <span id="expDisplay"       style="display:none">0</span>
+                <span id="nextExpDisplay"   style="display:none">30</span>
                 <div class="status-row">
                     <span>ATK: <span id="attackDisplay" class="highlight-value">2</span></span>
                     <span>DEF: <span id="defenseDisplay" class="highlight-value">0</span></span>
@@ -109,9 +126,10 @@
             <!-- マップ（拠点）画面 -->
             <div id="baseScene" class="window-panel" style="flex-grow: 1; height: 0; display: flex; flex-direction: column;">
                 <div class="inventory-header" style="justify-content: flex-start; gap: 12px; margin-bottom: 16px;">
-                    <button id="tabMap"     class="mini-btn tab-btn active" onclick="switchTab('map')"     style="font-size:15px; padding:6px 12px;">地 図</button>
-                    <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:15px; padding:6px 12px;">強 化</button>
-                    <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:15px; padding:6px 12px;">記 録</button>
+                    <button id="tabMap"     class="mini-btn tab-btn active" onclick="switchTab('map')"     style="font-size:14px; padding:6px 10px;">地 図</button>
+                    <button id="tabShop"   class="mini-btn tab-btn"        onclick="switchTab('shop')"   style="font-size:14px; padding:6px 10px;">道具屋</button>
+                    <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:14px; padding:6px 10px;">強 化</button>
+                    <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
                 </div>
 
                 <!-- MAPタブ -->
@@ -121,6 +139,9 @@
                     </div>
                     <div id="dungeonList" style="display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
+
+                <!-- 道具屋タブ -->
+                <div id="panelShop" class="base-panel hidden"></div>
 
                 <!-- LABタブ (永続強化) -->
                 <div id="panelLab" class="base-panel hidden">
@@ -229,6 +250,7 @@
     <script src="js/battle.js"></script>
     <script src="js/explore.js"></script>
     <script src="js/lab.js"></script>
+    <script src="js/shop.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

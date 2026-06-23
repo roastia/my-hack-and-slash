@@ -35,10 +35,11 @@ function startDungeon(index) {
     stepCount      = 0;
     isBossDefeated = false;
 
-    level = 1; exp = 0; nextExp = 10;
-    maxHp = currentHp = permMaxHp;
-    baseAttack  = permBaseAtk;
+    // level/exp は永続（リセットしない）
+    maxHp = currentHp = permMaxHp + (level - 1) * 8;
+    baseAttack  = permBaseAtk + (level - 1);
     baseDefense = permBaseDef;
+    baseSpeed   = 10 + (level - 1);
 
     battleState = { active: false, enemy: null, isBoss: false, turn: 0 };
     eventState  = { active: false, type: null };
@@ -80,10 +81,11 @@ function returnToBase(isDead = false) {
         stats.returns++;
     }
 
-    currentHp = maxHp = permMaxHp;
-    baseAttack  = permBaseAtk;
+    // 帰還時はlevel/expを維持
+    maxHp = currentHp = permMaxHp + (level - 1) * 8;
+    baseAttack  = permBaseAtk + (level - 1);
     baseDefense = permBaseDef;
-    level = 1; exp = 0;
+    baseSpeed   = 10 + (level - 1);
 
     renderBaseScene();
     updateUI();

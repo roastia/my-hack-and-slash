@@ -19,7 +19,7 @@ let costDef = 15;
 let stats = { kills: 0, deaths: 0, returns: 0 };
 
 // --- ラン中パラメータ（ダンジョン開始時にリセット） ---
-let level = 1, maxHp = 30, currentHp = 30, exp = 0, nextExp = 10;
+let level = 1, maxHp = 30, currentHp = 30, exp = 0, nextExp = 30;
 let baseAttack = 2, baseDefense = 0;
 
 let equipment = { weapon: null, helm: null, armor: null, shield: null };
@@ -37,8 +37,8 @@ let isBossDefeated = false;
 const stepsToNextFloor = 7;
 
 // --- 空腹システム ---
-let hunger    = 100;  // 現在の満腹度 (0-100)
-let maxHunger = 100;
+let hunger    = 100;
+let maxHunger = 100;  // 道具屋スキルで拡張可能
 
 // --- バトル・イベント状態 ---
 let battleState = { active: false, enemy: null, isBoss: false, turn: 0 };

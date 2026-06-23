@@ -235,6 +235,39 @@ const enemiesBase = [
 
 
 
+
+// =============================================================
+// 道具屋アイテム
+// =============================================================
+const shopItems = [
+    // ── 食料 ──────────────────────────────────────────────────
+    { name: 'パン',             category: 'food',  cost: 15,
+      food: { name: 'パン',             type: 'food', hunger: 25, hp: 0,  desc: '素朴な村のパン。' } },
+    { name: '干し肉',           category: 'food',  cost: 25,
+      food: { name: '干し肉',           type: 'food', hunger: 40, hp: 0,  desc: '旅人の定番携帯食。' } },
+    { name: '薬草スープ',       category: 'food',  cost: 35,
+      food: { name: '薬草スープ',       type: 'food', hunger: 35, hp: 8,  desc: '体も癒す薬草煮込み。' } },
+    { name: '冒険者の携帯食',   category: 'food',  cost: 50,
+      food: { name: '冒険者の携帯食',   type: 'food', hunger: 50, hp: 0,  desc: '高カロリー保存食。' } },
+    { name: '聖水の滴',         category: 'food',  cost: 80,
+      food: { name: '聖水の滴',         type: 'food', hunger: 60, hp: 20, desc: '精霊の加護。空腹とHPを癒す。' } },
+    // ── スキル書 ───────────────────────────────────────────────
+    { name: '戦士の心得書',     category: 'skill', cost: 80,
+      effect: { permBaseAtk: 3 },  desc: '基礎 ATK +3（永続）' },
+    { name: '守護の誓い書',     category: 'skill', cost: 80,
+      effect: { permBaseDef: 3 },  desc: '基礎 DEF +3（永続）' },
+    { name: '疾風の秘伝書',     category: 'skill', cost: 100,
+      effect: { baseSpeed: 3 },    desc: '基礎 SPD +3（永続）' },
+    { name: '鋼の肉体書',       category: 'skill', cost: 100,
+      effect: { permMaxHp: 25 },   desc: '最大 HP +25（永続）' },
+    { name: '大食漢の秘法書',   category: 'skill', cost: 60,
+      effect: { maxHunger: 20 },   desc: '満腹度上限 +20（永続）' },
+    { name: '達人の剣術書',     category: 'skill', cost: 150,
+      effect: { permBaseAtk: 6 },  desc: '基礎 ATK +6（永続）' },
+    { name: '不動の大盾書',     category: 'skill', cost: 150,
+      effect: { permBaseDef: 6 },  desc: '基礎 DEF +6（永続）' },
+];
+
 // =============================================================
 // 食料データベース
 // =============================================================

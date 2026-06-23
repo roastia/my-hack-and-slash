@@ -677,6 +677,25 @@ function updateUI() {
     levelDisplay.textContent     = level;
     expDisplay.textContent       = exp;
     nextExpDisplay.textContent   = nextExp;
+
+    // HP ゲージ
+    const hpFill = document.getElementById('hpBarFill');
+    const hpText = document.getElementById('hpGaugeText');
+    if (hpFill && hpText) {
+        const hpPct = maxHp > 0 ? Math.max(0, Math.min(100, (currentHp / maxHp) * 100)) : 0;
+        hpFill.style.width = hpPct + '%';
+        hpFill.style.background = hpPct > 50 ? 'var(--accent-green)' : hpPct > 25 ? 'var(--accent-orange)' : 'var(--danger-red)';
+        hpText.textContent = currentHp + '/' + maxHp;
+        hpText.style.color = hpPct > 50 ? 'var(--accent-green)' : hpPct > 25 ? 'var(--accent-orange)' : 'var(--danger-red)';
+    }
+    // EXP ゲージ
+    const expFill = document.getElementById('expBarFill');
+    const expText = document.getElementById('expGaugeText');
+    if (expFill && expText) {
+        const expPct = nextExp > 0 ? Math.min(100, (exp / nextExp) * 100) : 0;
+        expFill.style.width = expPct + '%';
+        expText.textContent = exp + '/' + nextExp;
+    }
     attackDisplay.textContent    = getTotalAttack();
     defenseDisplay.textContent   = getTotalDef();
     critDisplay.textContent      = getCritRate();
@@ -813,6 +832,14 @@ function switchTab(tab) {
         document.getElementById('tabLab').classList.add('active');
         document.getElementById('panelLab').classList.remove('hidden');
         updateIllustration('lab');
+    }
+    if (tab === 'shop') {
+        const tabShop = document.getElementById('tabShop');
+        if (tabShop) tabShop.classList.add('active');
+        const panelShop = document.getElementById('panelShop');
+        if (panelShop) panelShop.classList.remove('hidden');
+        if (typeof renderShop === 'function') renderShop();
+        updateIllustration('base');
     }
     if (tab === 'archive') {
         document.getElementById('tabArchive').classList.add('active');
