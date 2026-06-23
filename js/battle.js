@@ -185,7 +185,13 @@ function executeBattleTurn(skillId) {
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
         starDust += dust;
 
-        logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span>`;
+        // 武勲: ボスは多め、通常は難易度比例
+        const meritGain = battleState.isBoss
+            ? (8 + activeDungeon.diff * 2)
+            : Math.max(1, Math.floor(activeDungeon.diff * 0.5 + currentFloor * 0.3 + Math.random() * 2));
+        battleMerit += meritGain;
+
+        logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span> / <span style="color:#88ccff">武勲 +${meritGain}</span>`;
         addLog(logMsg);
         checkLevelUp();
 

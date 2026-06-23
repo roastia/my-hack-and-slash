@@ -732,6 +732,7 @@ function updateUI() {
     if (document.getElementById('speedDisplay')) document.getElementById('speedDisplay').textContent = getTotalSpeed();
     stealDisplay.textContent     = getStealRate();
     stardustDisplay.textContent  = starDust;
+    const _meritEl = document.getElementById('meritDisplay'); if (_meritEl) _meritEl.textContent = battleMerit;
     spiritDisplay.innerHTML      = getSpiritText(getTotalSpirits());
 
     // 空腹バー

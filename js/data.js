@@ -336,13 +336,13 @@ const shopItems = [
     { name: '不動の大盾書',     category: 'skill', cost: 150,
       effect: { permBaseDef: 6 },  desc: '基礎 DEF +6（永続）' },
     // ── 戦闘スキル書 ───────────────────────────────────────────
-    { name: '渾身の一撃の書', category: 'combat_skill', cost: 80,  skillId: 'powerStrike',
+    { name: '渾身の一撃の書', category: 'combat_skill', meritCost: 15, skillId: 'powerStrike',
       desc: '戦闘スキル「渾身の一撃」を習得' },
-    { name: '連撃の書',       category: 'combat_skill', cost: 80,  skillId: 'rapidStrike',
+    { name: '連撃の書',       category: 'combat_skill', meritCost: 15, skillId: 'rapidStrike',
       desc: '戦闘スキル「連撃」を習得' },
-    { name: '回復術の書',     category: 'combat_skill', cost: 100, skillId: 'healingWave',
+    { name: '回復術の書',     category: 'combat_skill', meritCost: 20, skillId: 'healingWave',
       desc: '戦闘スキル「回復術」を習得' },
-    { name: '鉄壁の書',       category: 'combat_skill', cost: 80,  skillId: 'guardStance',
+    { name: '鉄壁の書',       category: 'combat_skill', meritCost: 15, skillId: 'guardStance',
       desc: '戦闘スキル「鉄壁」を習得' },
 ];
 

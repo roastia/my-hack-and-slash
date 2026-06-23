@@ -60,8 +60,8 @@ function renderShop() {
     // ── 戦闘スキル書セクション ──
     const csHeader = document.createElement('div');
     csHeader.className = 'log-entry';
-    csHeader.style.cssText = 'color:#a0c8ff; border:none; padding-top:8px; padding-bottom:4px; font-size:14px;';
-    csHeader.textContent = '⚔ 戦闘スキル書';
+    csHeader.style.cssText = 'color:#88ccff; border:none; padding-top:8px; padding-bottom:2px; font-size:14px;';
+    csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span><br><span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
     panel.appendChild(csHeader);
 
     shopItems.filter(s => s.category === 'combat_skill').forEach((item) => {
@@ -70,7 +70,7 @@ function renderShop() {
         const div     = document.createElement('div');
         div.className = 'lab-item';
         div.style.cssText = 'align-items:center;';
-        const canBuy  = !learned && starDust >= item.cost;
+        const canBuy  = !learned && battleMerit >= item.meritCost;
 
         let statusHtml = '';
         if (learned) {
@@ -83,13 +83,13 @@ function renderShop() {
         div.innerHTML = `
             <div style="flex:1;">
                 <div style="color:var(--text-main); font-size:14px;">${skill ? skill.icon : ''} ${item.name}</div>
-                <div class="lab-desc" style="color:#a0c8ff;">${item.desc}</div>
+                <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
                 ${statusHtml}
             </div>
-            <button class="mini-btn" style="font-size:13px; padding:5px 10px; border-color:#a0c8ff; color:#a0c8ff;"
+            <button class="mini-btn" style="font-size:13px; padding:5px 10px; border-color:#88ccff; color:#88ccff;"
                 onclick="buyShopCombatSkill(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
-                ${learned ? '習得済' : '購入 (G ' + item.cost + ')'}
+                ${learned ? '習得済' : '⚔ ' + item.meritCost + ' 武勲'}
             </button>`;
         panel.appendChild(div);
     });
@@ -133,14 +133,14 @@ function buyShopCombatSkill(index) {
         addLog('<span class="damage-text">このスキルはすでに習得している。</span>');
         return;
     }
-    if (starDust < item.cost) {
-        addLog('<span class="damage-text">ゴールドが足りない。</span>');
+    if (battleMerit < item.meritCost) {
+        addLog(`<span class="damage-text">武勲が足りない。（必要: ${item.meritCost} / 所持: ${battleMerit}）</span>`);
         return;
     }
-    starDust -= item.cost;
+    battleMerit -= item.meritCost;
     skillBook[item.skillId] = { learned: true, uses: 0 };
     const skill = combatSkills.find(s => s.id === item.skillId);
-    addLog(`⚔ <span style="color:#a0c8ff">【${item.name}】</span> を習得した！ バトル中に「${skill ? skill.name : item.skillId}」が使えるようになった！ <span style="color:var(--accent-orange)">-G${item.cost}</span>`);
+    addLog(`⚔ <span style="color:#88ccff">【${item.name}】</span> を習得した！ バトル中に「${skill ? skill.name : item.skillId}」が使えるようになった！ <span style="color:#88ccff">-武勲${item.meritCost}</span>`);
     saveData();
     renderShop();
     updateUI();

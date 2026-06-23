@@ -9,6 +9,7 @@ let baseSpeed    = 10;   // 素早さ基礎値
 let permBaseAtk  = 2;
 let permBaseDef  = 0;
 let starDust     = 0;   // 通貨（星屑）
+let battleMerit  = 0;   // 武勲：戦闘スキル購入に使う
 
 // LAB強化コスト
 let costHp  = 10;

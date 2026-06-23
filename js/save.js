@@ -7,7 +7,7 @@ let resetConfirmTimer = null;
 
 function saveData() {
     const data = {
-        starDust, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed, skillBook,
+        starDust, battleMerit, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed, skillBook,
         costHp, costAtk, costDef, stats,
         level, maxHp, currentHp, exp, nextExp,
         baseAttack, baseDefense,
@@ -30,6 +30,7 @@ function loadData() {
         const data = JSON.parse(saved);
 
         starDust     = data.starDust     || 0;
+        battleMerit  = data.battleMerit  || 0;
         hunger       = data.hunger       !== undefined ? data.hunger : 100;
         maxHunger    = data.maxHunger    || 100;
         baseSpeed    = data.baseSpeed    || 10;
