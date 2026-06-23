@@ -1,17 +1,26 @@
 // =============================================================
-// battle.js — ターン制バトルシステム
+// battle.js — ATBバトルシステム
 // =============================================================
 
-function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss) {
+function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed) {
+    const pSpd = getTotalSpeed();
+    const eSpd = enemySpeed || 8;
     battleState = {
-        active: true,
-        enemy:  { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp },
-        isBoss: isBoss,
-        turn:   0
+        active:      true,
+        enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp },
+        isBoss:      isBoss,
+        turn:        0,
+        playerAtb:   0,
+        enemyAtb:    0,
+        playerSpeed: pSpd,
+        enemySpeed:  eSpd,
     };
 
     updateIllustration(isBoss ? 'boss' : 'battle', battleState.enemy);
-    addLog(`<span class="${isBoss ? 'boss-text' : 'attack-text'}">${enemyName} が立ちはだかった！</span>`);
+    const spdCmp = pSpd >= eSpd
+        ? `<span style="color:var(--accent-cyan)">▲ 素早さ有利</span>`
+        : `<span style="color:var(--danger-red)">▼ 素早さ不利</span>`;
+    addLog(`<span class="${isBoss ? 'boss-text' : 'attack-text'}">${enemyName} が立ちはだかった！</span> ${spdCmp}<br><span style="color:var(--text-dim);font-size:12px">SPD 勇者:${pSpd} / 敵:${eSpd}</span>`);
     updateActionButtons();
     updateUI();
 }
@@ -49,11 +58,47 @@ function calcEnemyDamage(atk) {
     return Math.max(1, rawDmg - getTotalDef());
 }
 
-// 攻撃ボタン押下時の1ターン処理
+// ATBシミュレーション：プレイヤーのターンが来るまでティックを進める
+// 途中で敵が先手を取った場合はダメージを与える
+// 戻り値: true = ゲームオーバー発生
+function tickUntilPlayerTurn() {
+    const MAX_ENEMY_HITS = 6;
+    let enemyHits = 0;
+
+    while (battleState.playerAtb < 100) {
+        battleState.playerAtb += battleState.playerSpeed;
+        battleState.enemyAtb  += battleState.enemySpeed;
+
+        if (battleState.enemyAtb >= 100 && enemyHits < MAX_ENEMY_HITS) {
+            battleState.enemyAtb -= 100;
+            enemyHits++;
+            let dmg = calcEnemyDamage(battleState.enemy.atk);
+            currentHp = Math.max(0, currentHp - dmg);
+            addLog(`<span class="damage-text">⚡ ${battleState.enemy.name}が先手！ ${dmg} dmgを受けた！</span>`);
+            if (currentHp <= 0) {
+                currentHp = 0;
+                gameOver();
+                return true;
+            }
+            updateUI();
+        }
+    }
+    battleState.playerAtb -= 100;
+    return false;
+}
+
+// 攻撃ボタン押下
 function executeBattleTurn() {
     clearLog();
-    let enemy = battleState.enemy;
     battleState.turn++;
+    let enemy = battleState.enemy;
+
+    // ゲージが溜まっていない場合はティックを進める
+    if (battleState.playerAtb < 100) {
+        if (tickUntilPlayerTurn()) return;
+    } else {
+        battleState.playerAtb -= 100;
+    }
 
     // プレイヤー攻撃
     let myDmgData = calcPlayerDamage();
@@ -61,7 +106,6 @@ function executeBattleTurn() {
 
     let logMsg = `<span class="attack-text">>> ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
 
-    // HP吸収
     let heal = Math.floor(myDmgData.total * (getStealRate() / 100));
     if (heal > 0) {
         currentHp = Math.min(maxHp, currentHp + heal);
@@ -69,7 +113,6 @@ function executeBattleTurn() {
     }
 
     if (enemy.hp <= 0) {
-        // 勝利
         stats.kills++;
         exp      += enemy.exp;
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
@@ -77,14 +120,11 @@ function executeBattleTurn() {
 
         logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span>`;
         addLog(logMsg);
-
         checkLevelUp();
 
         if (battleState.isBoss) {
             if (dungeons.indexOf(activeDungeon) === currentProgress) currentProgress++;
             isBossDefeated = true;
-
-            // ボス撃破時のレアドロップ
             const bossScale = activeDungeon.diff * 2 + currentFloor * 2 + 8;
             const bossItem  = generateItem(bossScale);
             const bonus     = Math.floor(activeDungeon.diff * 1.5) + 3;
@@ -98,7 +138,6 @@ function executeBattleTurn() {
             } else {
                 addLog(`<span class="levelup-text">✦ ボスは <span class="item-text">［${bossItem.name}］</span> を落としたが、荷物が満杯で持てなかった！</span>`);
             }
-
             addLog('<span class="event-text">ボスを討伐した！これ以上進む道はない。<br>……自力で出口まで帰還せよ。</span>');
         }
 
@@ -106,12 +145,15 @@ function executeBattleTurn() {
         updateIllustration('explore');
         updateActionButtons();
     } else {
-        // 敵の反撃
-        let enemyDmg = calcEnemyDamage(enemy.atk);
-        currentHp   -= enemyDmg;
-        logMsg      += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
+        // 攻撃後に敵ATBが溜まっていれば反撃
+        battleState.enemyAtb += battleState.enemySpeed;
+        if (battleState.enemyAtb >= 100) {
+            battleState.enemyAtb -= 100;
+            let enemyDmg = calcEnemyDamage(enemy.atk);
+            currentHp   -= enemyDmg;
+            logMsg      += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
+        }
         addLog(logMsg);
-
         updateIllustration(battleState.isBoss ? 'boss' : 'battle', enemy);
 
         if (currentHp <= 0) {
@@ -140,7 +182,7 @@ function executeFlee() {
             if (currentFloor > 1) {
                 currentFloor--;
                 stepCount = stepsToNextFloor - 1;
-                addLog(`<div class="floor-text"><< Sector: ${currentFloor} へ後退。</div>`);
+                addLog(`<div class="floor-text"><< B${currentFloor}F へ後退。</div>`);
             } else {
                 stepCount = 0;
             }
@@ -172,7 +214,8 @@ function checkLevelUp() {
         maxHp  += 8;
         currentHp = maxHp;
         baseAttack += 1;
-        addLog(`<span class="levelup-text">★ レベルアップ！ ★<br>Lv.${level}に成長した！ HPが全回復し、力が増した！</span>`);
+        baseSpeed  += 1;
+        addLog(`<span class="levelup-text">★ レベルアップ！ ★<br>Lv.${level}に成長した！ HPが全回復し、力と素早さが増した！</span>`);
     }
 }
 

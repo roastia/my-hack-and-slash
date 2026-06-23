@@ -63,6 +63,12 @@ function getStealRate() {
     return total;
 }
 
+function getTotalSpeed() {
+    let total = baseSpeed;
+    Object.values(equipment).forEach(eq => { if (eq && eq.spd) total += eq.spd; });
+    return Math.max(1, total);
+}
+
 function getTotalSpirits() {
     let total = {};
     Object.values(equipment).forEach(eq => {
@@ -674,6 +680,7 @@ function updateUI() {
     attackDisplay.textContent    = getTotalAttack();
     defenseDisplay.textContent   = getTotalDef();
     critDisplay.textContent      = getCritRate();
+    if (document.getElementById('speedDisplay')) document.getElementById('speedDisplay').textContent = getTotalSpeed();
     stealDisplay.textContent     = getStealRate();
     stardustDisplay.textContent  = starDust;
     spiritDisplay.innerHTML      = getSpiritText(getTotalSpirits());
@@ -760,6 +767,27 @@ function updateUI() {
     document.getElementById('statKills').textContent   = stats.kills;
     document.getElementById('statReturns').textContent = stats.returns;
     document.getElementById('statDeaths').textContent  = stats.deaths;
+
+    // ATBゲージ更新
+    const atbBarsEl = document.getElementById('atbBars');
+    if (atbBarsEl && battleState.active) {
+        atbBarsEl.classList.remove('hidden');
+        const pPct = Math.min(100, battleState.playerAtb || 0);
+        const ePct = Math.min(100, battleState.enemyAtb  || 0);
+        document.getElementById('playerAtbFill').style.width = pPct + '%';
+        document.getElementById('enemyAtbFill').style.width  = ePct + '%';
+        document.getElementById('playerSpdDisp').textContent = 'SPD ' + (battleState.playerSpeed || 10);
+        document.getElementById('enemySpdDisp').textContent  = 'SPD ' + (battleState.enemySpeed  || 8);
+        const nameEl = document.getElementById('enemyAtbName');
+        if (nameEl && battleState.enemy) nameEl.textContent = battleState.enemy.name.slice(0, 5);
+        // ゲージ満タン時に攻撃ボタンを光らせる
+        const btn = document.getElementById('exploreBtn');
+        if (btn) btn.style.boxShadow = pPct >= 100 ? '0 0 12px var(--accent-cyan)' : '';
+    } else if (atbBarsEl) {
+        atbBarsEl.classList.add('hidden');
+        const btn = document.getElementById('exploreBtn');
+        if (btn) btn.style.boxShadow = '';
+    }
 
     // 自動セーブ
     saveData();

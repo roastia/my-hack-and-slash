@@ -5,6 +5,7 @@
 
 // --- 永続パラメータ（LABで強化される値） ---
 let permMaxHp    = 30;
+let baseSpeed    = 10;   // 素早さ基礎値
 let permBaseAtk  = 2;
 let permBaseDef  = 0;
 let starDust     = 0;   // 通貨（星屑）

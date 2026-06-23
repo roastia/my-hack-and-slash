@@ -102,7 +102,7 @@ function executeExploreStep() {
             updateUI();
         } else {
             const boss = activeDungeon.boss;
-            startBattle(boss.name, boss.hp, boss.atk, boss.exp, true);
+            startBattle(boss.name, boss.hp, boss.atk, boss.exp, true, boss.speed || 9);
         }
         return;
     }
@@ -182,7 +182,8 @@ function executeReturnStep() {
             Math.floor(baseEnemy.hp  * scale),
             Math.floor(baseEnemy.atk * scale * 0.45) + 1,
             Math.floor(baseEnemy.exp * scale),
-            false
+            false,
+            baseEnemy.speed || 8
         );
     } else if (r < 45) {
         if (Math.random() < 0.5) {
@@ -219,7 +220,8 @@ function spawnEnemy() {
         Math.floor(baseEnemy.hp  * scale),
         Math.floor(baseEnemy.atk * scale * 0.38) + 1,
         Math.floor(baseEnemy.exp * scale),
-        false
+        false,
+        baseEnemy.speed || 8
     );
 }
 
