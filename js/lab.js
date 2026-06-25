@@ -35,3 +35,45 @@ function upgradeDef() {
         updateUI();
     }
 }
+
+function upgradeMedalAp() {
+    if (starDust >= costMedalAp) {
+        starDust     -= costMedalAp;
+        medalApLimit += 5;
+        costMedalAp   = Math.floor(costMedalAp * 2.0);
+        addLog(`>> メダルAPの上限が拡張された！ AP上限: ${medalApLimit}`, 'log-entry mix-text');
+        updateUI();
+        renderLab();
+    }
+}
+
+function upgradeRange() {
+    const cost = 25 + baseRange * 15;
+    if (starDust >= cost) {
+        starDust  -= cost;
+        baseRange += 2;
+        addLog(`>> 遠隔技術を鍛えた。遠隔ATKが上昇した！`, 'log-entry mix-text');
+        updateUI();
+        renderLab();
+    } else {
+        addLog(`<span class="damage-text">ゴールドが足りない。（必要: G${cost}）</span>`);
+    }
+}
+
+function repairBase() {
+    if (baseCondition >= 100) {
+        addLog(`>> 拠点は既に万全の状態だ。`);
+        return;
+    }
+    if (starDust < costRepairBase) {
+        addLog(`<span class="damage-text">ゴールドが足りない。（必要: G${costRepairBase}）</span>`);
+        return;
+    }
+    starDust -= costRepairBase;
+    const repairAmt = Math.min(100 - baseCondition, 25);
+    baseCondition += repairAmt;
+    costRepairBase = Math.max(10, Math.floor(costRepairBase * (baseCondition < 50 ? 1.0 : 1.3)));
+    addLog(`>> 拠点を修繕した。コンディション: ${baseCondition}/100`, 'log-entry mix-text');
+    updateUI();
+    renderLab();
+}

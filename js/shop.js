@@ -143,6 +143,11 @@ function renderShop() {
             </button>`;
         panel.appendChild(div);
     });
+
+    // ── メダルセクション ──
+    const medalDiv = document.createElement('div');
+    medalDiv.innerHTML = renderMedalSection();
+    panel.appendChild(medalDiv);
 }
 
 function buyShopFood(index) {
@@ -215,4 +220,62 @@ function buyShopMaterial(index) {
     materials[item.mat] = (materials[item.mat] || 0) + 1;
     addLog(`🌿 <span style="color:#aaddaa">【${item.mat}】</span> を購入した。 <span style="color:var(--accent-orange)">-G${item.cost}</span>`);
     renderShop(); updateUI();
+}
+
+// ================================================================
+// メダルセクション描画（renderShop から呼ばれる）
+// ================================================================
+function renderMedalSection() {
+    let apUsed = getMedalApUsed();
+    let html = `
+        <div class="shop-section-header" style="margin-top:16px;">
+            🏅 神メダル &nbsp;<span style="color:#aaddff; font-size:12px; opacity:0.8">（武勲で購入・着脱）</span><br>
+            <span style="font-size:12px; color:#88ccff;">AP: <b>${apUsed}/${medalApLimit}</b> &nbsp;|&nbsp; 所持武勲: <b>${battleMerit}</b></span>
+        </div>
+        <div class="medal-grid">`;
+    for (let i = 0; i < medalCatalog.length; i++) {
+        const m = medalCatalog[i];
+        const equipped = equippedMedals.includes(m.id);
+        const canEquip = !equipped && (apUsed + m.apCost <= medalApLimit);
+        const purchased = true; // 購入と装備を同時に行う方式
+        const btnLabel = equipped ? '✅ 外す' : `⚔ ${m.meritCost} 武勲`;
+        const btnClass = equipped ? 'btn-equipped' : (canEquip && battleMerit >= m.meritCost ? 'btn-attack' : '');
+        html += `
+            <div class="medal-card ${equipped ? 'medal-equipped' : ''}">
+                <span class="medal-name">${m.name}</span>
+                <span class="medal-desc">${m.desc}</span>
+                <span class="medal-ap" style="color:#aa88ff;">AP: ${m.apCost}</span>
+                <button class="mini-btn ${btnClass}" onclick="toggleMedal(${i})"
+                    ${!equipped && (!canEquip || battleMerit < m.meritCost) ? 'disabled' : ''}
+                >${btnLabel}</button>
+            </div>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+function toggleMedal(index) {
+    const m = medalCatalog[index];
+    if (!m) return;
+    if (equippedMedals.includes(m.id)) {
+        // 外す
+        equippedMedals = equippedMedals.filter(id => id !== m.id);
+        addLog(`🏅 【${m.name}】を外した。`);
+    } else {
+        // 装備
+        if (battleMerit < m.meritCost) {
+            addLog(`<span class="damage-text">武勲が足りない。（必要: ${m.meritCost} / 所持: ${battleMerit}）</span>`);
+            return;
+        }
+        if (getMedalApUsed() + m.apCost > medalApLimit) {
+            addLog(`<span class="damage-text">APが足りない！（必要: ${m.apCost} / 残: ${medalApLimit - getMedalApUsed()}）</span>`);
+            return;
+        }
+        battleMerit -= m.meritCost;
+        equippedMedals.push(m.id);
+        addLog(`🏅 【${m.name}】を装備した！ ${m.desc} <span style="color:#88ccff;">-武勲${m.meritCost}</span>`);
+    }
+    saveData();
+    renderShop();
+    updateUI();
 }

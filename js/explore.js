@@ -76,8 +76,22 @@ function returnToBase(isDead = false) {
         inventory = [];
         starDust  = 0;
         materials = {};
+        // 死亡時は拠点が大きく劣化
+        const deathDecay = 8 + Math.floor(Math.random() * 8);
+        baseCondition = Math.max(0, baseCondition - deathDecay);
     } else {
         stats.returns++;
+        // 帰還時もランダムに拠点が劣化
+        if (Math.random() < 0.4) {
+            const decay = 2 + Math.floor(Math.random() * 5);
+            baseCondition = Math.max(0, baseCondition - decay);
+        }
+    }
+    // 拠点劣化ログ
+    if (baseCondition <= 30 && baseCondition > 0) {
+        addLog(`<span style="color:var(--danger-red); font-size:12px;">⚠ 拠点コンディション低下中…(${baseCondition}/100) 修繕が必要だ。</span>`);
+    } else if (baseCondition === 0) {
+        addLog(`<span style="color:var(--danger-red); font-weight:bold;">💀 拠点が荒廃した！ 各種能力にペナルティが生じている。</span>`);
     }
 
     maxHp = currentHp = permMaxHp + (level - 1) * 8;
@@ -137,7 +151,11 @@ function fightStack() {
         ? enemyStack[0].name
         : `${enemyStack[0].name} ほか${count - 1}体`;
 
+    // 戦闘突入でSP半減（移動残量の50%のみ持ち込み可）
+    const spBefore = sp;
+    sp = Math.floor(sp / 2);
     addLog(`<span class="boss-text">⚡ スタック戦闘開始！ ${count}体の敵と一括対決！</span>`);
+    addLog(`<span style="color:#aa88ff; font-size:11px;">⚠ 戦闘突入時SP半減: ${spBefore} → ${sp}</span>`);
     if (count >= 3) addLog(`<span class="damage-text">多数の敵が押し寄せる…極めて危険だ！</span>`);
 
     enemyStack = [];
@@ -169,6 +187,8 @@ function executeExploreStep() {
             fightStack(); return;
         }
         const boss = activeDungeon.boss;
+        const spBeforeBoss = sp; sp = Math.floor(sp / 2);
+        addLog(`<span style="color:#aa88ff; font-size:11px;">⚠ ボス戦突入でSP半減: ${spBeforeBoss} → ${sp}</span>`);
         startBattle(boss.name, boss.hp, boss.atk, boss.exp, true, boss.speed || 9, boss.magicAtk || 0);
         return;
     }
@@ -414,6 +434,10 @@ function drainSP(amount, reason) {
 // 空腹減少
 function applyHunger(amount = 5) {
     if (!activeDungeon) return;
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.hungerReduce) amount = Math.ceil(amount * me.hungerReduce);
+    }
     hunger = Math.max(0, hunger - amount);
     if (hunger === 0) {
         const starvDmg = Math.max(1, Math.floor(maxHp * 0.08));
@@ -429,6 +453,10 @@ function applyHunger(amount = 5) {
 // 渇き減少
 function applyThirst(amount = 3) {
     if (!activeDungeon) return;
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.thirstReduce) amount = Math.ceil(amount * me.thirstReduce);
+    }
     thirst = Math.max(0, thirst - amount);
     if (thirst === 0) {
         const dehydrDmg = Math.max(1, Math.floor(maxHp * 0.05));

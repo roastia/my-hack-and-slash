@@ -47,37 +47,85 @@ function getTotalAttack() {
         if (thirst <= 0)  total = Math.max(1, total - 3);
         else if (thirst <= 25) total = Math.max(1, total - 1);
     }
+    // メダル効果
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.atkMult) total = Math.floor(total * me.atkMult);
+    }
+    // 拠点荒廃ペナルティ
+    if (typeof baseCondition !== 'undefined' && baseCondition === 0) {
+        total = Math.max(1, Math.floor(total * 0.8));
+    }
     return total;
+}
+
+// 遠隔武器かどうか判定
+function isRangeWeapon() {
+    return equipment.weapon && equipment.weapon.rangeWeapon === true;
+}
+
+// 遠隔攻撃合計（弓装備時: baseAttack + baseRange + メダル）
+function getTotalRangeAttack() {
+    let total = baseAttack + (typeof baseRange !== 'undefined' ? baseRange : 0);
+    if (equipment.weapon && equipment.weapon.atk) total += equipment.weapon.atk;
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.atkMult)   total = Math.floor(total * me.atkMult);
+        if (me.rangeMult) total = Math.floor(total * me.rangeMult);
+    }
+    if (typeof hunger !== 'undefined' && hunger <= 0)   total = Math.max(1, total - 3);
+    if (typeof thirst !== 'undefined' && thirst <= 0)   total = Math.max(1, total - 3);
+    return Math.max(1, total);
 }
 
 // 精神ステータス合計（魔法防御・バフ倍率）
 function getTotalSpirit() {
     let total = typeof baseSpirit !== 'undefined' ? baseSpirit : 0;
     Object.values(equipment).forEach(eq => { if (eq && eq.spirit) total += eq.spirit; });
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.spiritBonus) total += me.spiritBonus;
+    }
     return total;
 }
 
 function getTotalDef() {
     let total = baseDefense;
     Object.values(equipment).forEach(eq => { if (eq && eq.def) total += eq.def; });
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.defBonus) total += me.defBonus;
+    }
     return total;
 }
 
 function getCritRate() {
     let total = 0;
     Object.values(equipment).forEach(eq => { if (eq && eq.crit) total += eq.crit; });
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.critBonus) total += me.critBonus;
+    }
     return total;
 }
 
 function getStealRate() {
     let total = 0;
     Object.values(equipment).forEach(eq => { if (eq && eq.steal) total += eq.steal; });
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.drainBonus) total += me.drainBonus;
+    }
     return total;
 }
 
 function getTotalSpeed() {
     let total = baseSpeed;
     Object.values(equipment).forEach(eq => { if (eq && eq.spd) total += eq.spd; });
+    if (typeof getMedalEffects === 'function') {
+        const me = getMedalEffects();
+        if (me.spdBonus) total += me.spdBonus;
+    }
     return Math.max(1, total);
 }
 
@@ -887,6 +935,34 @@ function updateUI() {
     document.getElementById('costDefDisp').textContent = costDef;
     document.getElementById('btnUpgradeDef').disabled  = starDust < costDef;
 
+    // 拠点コンディション UI
+    const condEl = document.getElementById('labBaseCondDisp');
+    const repairCostEl = document.getElementById('costRepairDisp');
+    const btnRepair = document.getElementById('btnRepairBase');
+    if (condEl) {
+        condEl.textContent = typeof baseCondition !== 'undefined' ? baseCondition : 100;
+        condEl.style.color = baseCondition <= 30 ? 'var(--danger-red)' : baseCondition <= 60 ? 'var(--accent-orange)' : 'var(--accent-green)';
+    }
+    if (repairCostEl) repairCostEl.textContent = typeof costRepairBase !== 'undefined' ? costRepairBase : 20;
+    if (btnRepair) btnRepair.disabled = starDust < (typeof costRepairBase !== 'undefined' ? costRepairBase : 20);
+
+    // 遠隔 UI
+    const rangeEl = document.getElementById('labRangeDisp');
+    const costRangeEl = document.getElementById('costRangeDisp');
+    const btnRange = document.getElementById('btnUpgradeRange');
+    if (rangeEl) rangeEl.textContent = typeof baseRange !== 'undefined' ? baseRange : 0;
+    const rangeCost = 25 + (typeof baseRange !== 'undefined' ? baseRange : 0) * 15;
+    if (costRangeEl) costRangeEl.textContent = rangeCost;
+    if (btnRange) btnRange.disabled = starDust < rangeCost;
+
+    // メダルAP UI
+    const apEl = document.getElementById('labApDisp');
+    const apUsedEl = document.getElementById('labApUsedDisp');
+    const apCostEl = document.getElementById('costMedalApDisp');
+    if (apEl) apEl.textContent = medalApLimit;
+    if (apUsedEl && typeof getMedalApUsed === 'function') apUsedEl.textContent = getMedalApUsed();
+    if (apCostEl) apCostEl.textContent = costMedalAp;
+
     // アーカイブ UI
     document.getElementById('statKills').textContent   = stats.kills;
     document.getElementById('statReturns').textContent = stats.returns;
@@ -955,6 +1031,7 @@ function switchTab(tab) {
         document.getElementById('tabArchive').classList.add('active');
         document.getElementById('panelArchive').classList.remove('hidden');
         updateIllustration('base');
+        if (typeof renderSaveSlots === 'function') renderSaveSlots();
     }
     if (tab === 'craft') {
         const tc = document.getElementById('tabCraft');

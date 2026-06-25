@@ -53,6 +53,7 @@ let maxThirst = 100;
 // --- 拡張ステータス ---
 let baseMagic  = 0;   // 魔法攻撃・精神ステータス（道具屋スキルで上昇）
 let baseSpirit = 0;   // 精神（魔法防御 + バフ乗算）
+let baseRange  = 0;   // 遠隔攻撃力（弓・遠距離武器に適用）
 
 // --- テンションシステム ---
 let tension = 1;      // 1=通常 / 2=高揚 / 3=狂乱
@@ -67,6 +68,15 @@ let materials = {};   // { '薬草': 3, '鉄くず': 2, ... }
 // { skillId: { learned: true, uses: 0 } }
 let skillBook = {};
 
+// --- 拠点劣化システム ---
+let baseCondition = 100;  // 拠点コンディション (0-100)
+let costRepairBase = 20;  // 修繕コスト
+
 // --- バトル・イベント状態 ---
 let battleState = { active: false, enemy: null, isBoss: false, turn: 0 };
 let eventState  = { active: false, type: null };
+
+// --- AP制メダルシステム ---
+let equippedMedals = [];   // 装備中のメダルID配列
+let medalApLimit   = 10;   // AP上限（LABで拡張可能）
+let costMedalAp    = 30;   // AP拡張コスト（starDust）

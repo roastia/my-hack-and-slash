@@ -193,9 +193,12 @@ function executeBattleTurn(skillId) {
 
     } else {
         // ── 通常攻撃 ──
-        let myDmgData = calcPlayerDamage();
+        const isRange = typeof isRangeWeapon === 'function' && isRangeWeapon();
+        const atkOverride = isRange ? (typeof getTotalRangeAttack === 'function' ? getTotalRangeAttack() : undefined) : undefined;
+        let myDmgData = calcPlayerDamage(atkOverride);
         enemy.hp = Math.max(0, enemy.hp - myDmgData.total);
-        logMsg   = `<span class="attack-text">>> ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
+        const atkLabel = isRange ? '🏹 射撃！' : '>>';
+        logMsg   = `<span class="attack-text">${atkLabel} ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
         const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
         if (heal > 0) {
             currentHp = Math.min(maxHp, currentHp + heal);
@@ -217,6 +220,15 @@ function executeBattleTurn(skillId) {
         const bonusExp = Math.floor(enemy.exp * (tensionExpMult - 1.0));
         exp += bonusExp;
         if (bonusExp > 0) logMsg += ` <span style="color:var(--accent-magenta); font-size:11px">[テンションボーナス EXP+${bonusExp}]</span>`;
+        // メダルEXP倍率
+        if (typeof getMedalEffects === 'function') {
+            const me = getMedalEffects();
+            if (me.expMult && me.expMult > 1) {
+                const medalExpBonus = Math.floor(enemy.exp * (me.expMult - 1));
+                exp += medalExpBonus;
+                logMsg += ` <span style="color:#aaddaa; font-size:11px">[賢者の章 EXP+${medalExpBonus}]</span>`;
+            }
+        }
 
         // 武勲: ボスは多め、通常は難易度比例
         const meritGain = battleState.isBoss

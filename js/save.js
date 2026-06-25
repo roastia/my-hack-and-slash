@@ -2,13 +2,58 @@
 // save.js — セーブ・ロード・リセット
 // =============================================================
 
-const SAVE_KEY = 'rs_hns_save';
+let currentSlot = localStorage.getItem('rs_hns_current_slot') || '1';
+let SAVE_KEY = 'rs_hns_save_' + currentSlot;
 let resetConfirmTimer = null;
+
+function selectSlot(slot) {
+    currentSlot = String(slot);
+    localStorage.setItem('rs_hns_current_slot', currentSlot);
+    SAVE_KEY = 'rs_hns_save_' + currentSlot;
+    // 状態リセット
+    loadData();
+    renderBaseScene();
+    updateUI();
+    renderSaveSlots();
+    addLog(`>> セーブスロット ${currentSlot} を選択した。`);
+}
+
+function getSlotPreview(slot) {
+    const saved = localStorage.getItem('rs_hns_save_' + slot);
+    if (!saved) return null;
+    try {
+        const d = JSON.parse(saved);
+        return { level: d.level || 1, kills: (d.stats && d.stats.kills) || 0, progress: d.currentProgress || 0 };
+    } catch { return null; }
+}
+
+function renderSaveSlots() {
+    const el = document.getElementById('saveSlotPanel');
+    if (!el) return;
+    let html = '<div style="color:var(--accent-cyan); font-size:13px; margin-bottom:6px;">セーブスロット選択</div>';
+    for (let i = 1; i <= 3; i++) {
+        const prev = getSlotPreview(i);
+        const isActive = String(i) === currentSlot;
+        const label = prev
+            ? `Lv.${prev.level} / 討伐${prev.kills}体 / 進行度${prev.progress}`
+            : '空のスロット';
+        html += `<button class="mini-btn" style="display:block; width:100%; margin-bottom:4px; text-align:left;
+            border-color:${isActive ? 'var(--accent-cyan)' : '#443'};
+            color:${isActive ? 'var(--accent-cyan)' : 'var(--text-dim)'};
+            font-size:12px; padding:5px 8px;"
+            onclick="selectSlot(${i})">スロット${i}: ${label}${isActive ? ' ◀ 使用中' : ''}</button>`;
+    }
+    el.innerHTML = html;
+}
 
 function saveData() {
     const data = {
         starDust, battleMerit, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed, skillBook,
-        sp, maxSp, thirst, maxThirst, baseMagic, baseSpirit, tension, materials, enemyStack,
+        sp, maxSp, thirst, maxThirst, baseMagic, baseSpirit, baseRange, tension, materials, enemyStack,
+        equippedMedals, medalApLimit, costMedalAp,
+        baseCondition, costRepairBase,
+        fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
+        fishingRodUpgradeCost: fishingState ? fishingState.rodUpgradeCost : 30,
         costHp, costAtk, costDef, stats,
         level, maxHp, currentHp, exp, nextExp,
         baseAttack, baseDefense,
@@ -49,9 +94,19 @@ function loadData() {
         maxThirst    = data.maxThirst    || 100;
         baseMagic    = data.baseMagic    || 0;
         baseSpirit   = data.baseSpirit   || 0;
+        baseRange    = data.baseRange    || 0;
         tension      = data.tension      || 1;
-        materials    = data.materials    || {};
-        enemyStack   = [];  // セーブ後はスタックリセット
+        materials      = data.materials      || {};
+        enemyStack     = [];  // セーブ後はスタックリセット
+        equippedMedals = data.equippedMedals  || [];
+        medalApLimit   = data.medalApLimit    || 10;
+        costMedalAp    = data.costMedalAp     || 30;
+        baseCondition  = data.baseCondition   !== undefined ? data.baseCondition : 100;
+        costRepairBase = data.costRepairBase   || 20;
+        if (typeof fishingState !== 'undefined') {
+            fishingState.rodLevel = data.fishingRodLevel || 1;
+            fishingState.rodUpgradeCost = data.fishingRodUpgradeCost || 30;
+        }
 
         level        = data.level        || 1;
         maxHp        = data.maxHp        || 30;

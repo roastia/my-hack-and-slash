@@ -845,3 +845,37 @@ body {
     background: rgba(216, 48, 48, 0.15);
     font-weight: bold;
 }
+
+/* === メダルシステム === */
+.medal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    padding: 6px 0;
+}
+.medal-card {
+    background: rgba(80,50,120,0.15);
+    border: 1px solid #443366;
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+}
+.medal-card.medal-equipped {
+    background: rgba(100,60,180,0.30);
+    border-color: #aa88ff;
+    box-shadow: 0 0 6px rgba(160,100,255,0.3);
+}
+.medal-name { color: var(--text-main); font-weight: bold; font-size: 13px; }
+.medal-desc { color: var(--accent-green); font-size: 11px; }
+.medal-ap   { font-size: 11px; }
+.btn-equipped { border-color: #aa88ff; color: #aa88ff; }
+.shop-section-header {
+    color: var(--accent-cyan);
+    border-top: 1px dashed #334;
+    padding-top: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+}

@@ -127,15 +127,15 @@ const itemsDatabase = [
     { name: '魔法の杖',           type: 'weapon', atk:  3, crit:  4 },
     { name: '聖なる槍',           type: 'weapon', atk:  7, steal: 5 },
     { name: '黒の鎌',             type: 'weapon', atk:  6, steal: 6 },
-    { name: '鉄の弓',             type: 'weapon', atk:  4, crit:  3 },
+    { name: '鉄の弓',             type: 'weapon', atk:  4, crit:  3, rangeWeapon: true },
     { name: '賢者の杖',           type: 'weapon', atk:  5, crit:  5 },
     { name: '竜骨の槍',           type: 'weapon', atk:  9 },
     { name: '暗殺者の短剣',       type: 'weapon', atk:  2, steal: 8 },
-    { name: '炎の弓',             type: 'weapon', atk:  8, crit:  4 },
-    { name: 'エルフの弓矢',       type: 'weapon', atk:  6, crit:  6 },
+    { name: '炎の弓',             type: 'weapon', atk:  8, crit:  4, rangeWeapon: true },
+    { name: 'エルフの弓矢',       type: 'weapon', atk:  6, crit:  6, rangeWeapon: true },
     { name: '黄金の剣',           type: 'weapon', atk: 10, steal: 6 },
     { name: '破滅の大鎌',         type: 'weapon', atk: 12, steal: 7 },
-    { name: '神話の弓',           type: 'weapon', atk: 11, crit:  7 },
+    { name: '神話の弓',           type: 'weapon', atk: 11, crit:  7, rangeWeapon: true },
     { name: '世界樹の枝',         type: 'weapon', atk: 16, steal: 8 },
     // 兜 (20)
     { name: '皮の帽子',   type: 'helm', def:  1 },
@@ -350,3 +350,46 @@ const escapeNothings = [
     '炎の中を駆け抜けた。これが今日最後の試練だ。',
     '全てが崩れ去る中、ただ一つの出口だけが光り続けている。',
 ];
+
+// =============================================================
+// メダルカタログ（AP制着脱可能パッシブ強化パーツ）
+// =============================================================
+const medalCatalog = [
+    { id: 'medal_atk',    name: '武神の章',   apCost: 4, meritCost: 20, desc: 'ATK +25%',      effects: { atkMult: 1.25 } },
+    { id: 'medal_def',    name: '鉄城の章',   apCost: 2, meritCost: 10, desc: 'DEF +4',         effects: { defBonus: 4 } },
+    { id: 'medal_hp',     name: '鋼鉄の章',   apCost: 3, meritCost: 15, desc: '最大HP +20%',    effects: { hpMult: 1.2 } },
+    { id: 'medal_sp',     name: '精霊の章',   apCost: 2, meritCost: 12, desc: '最大SP +30',      effects: { spBonus: 30 } },
+    { id: 'medal_spd',    name: '迅風の章',   apCost: 4, meritCost: 25, desc: 'SPD +6',          effects: { spdBonus: 6 } },
+    { id: 'medal_spirit', name: '霊魂の章',   apCost: 3, meritCost: 15, desc: '精神 +6',         effects: { spiritBonus: 6 } },
+    { id: 'medal_crit',   name: '鋭刃の章',   apCost: 4, meritCost: 20, desc: 'クリ率 +12%',    effects: { critBonus: 12 } },
+    { id: 'medal_exp',    name: '賢者の章',   apCost: 3, meritCost: 18, desc: 'EXP +40%',        effects: { expMult: 1.4 } },
+    { id: 'medal_drain',  name: '吸命の章',   apCost: 5, meritCost: 30, desc: '吸血率 +8%',      effects: { drainBonus: 8 } },
+    { id: 'medal_thirst', name: '砂漠の章',   apCost: 2, meritCost: 8,  desc: '渇き消費 -40%',   effects: { thirstReduce: 0.6 } },
+    { id: 'medal_hunger', name: '飽食の章',   apCost: 2, meritCost: 8,  desc: '空腹消費 -40%',   effects: { hungerReduce: 0.6 } },
+    { id: 'medal_range',  name: '弓神の章',   apCost: 4, meritCost: 22, desc: '遠隔ATK +30%',    effects: { rangeMult: 1.3 } },
+];
+
+// 装備中メダルのエフェクトを合算して返す
+function getMedalEffects() {
+    const result = {};
+    for (const id of equippedMedals) {
+        const m = medalCatalog.find(x => x.id === id);
+        if (!m) continue;
+        for (const [k, v] of Object.entries(m.effects)) {
+            if (k.endsWith('Mult') || k.endsWith('Reduce')) {
+                result[k] = (result[k] || 1) * v;
+            } else {
+                result[k] = (result[k] || 0) + v;
+            }
+        }
+    }
+    return result;
+}
+
+// 現在使用中のAP合計
+function getMedalApUsed() {
+    return equippedMedals.reduce((sum, id) => {
+        const m = medalCatalog.find(x => x.id === id);
+        return sum + (m ? m.apCost : 0);
+    }, 0);
+}

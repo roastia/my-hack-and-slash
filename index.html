@@ -151,6 +151,7 @@
                     <button id="tabShop"   class="mini-btn tab-btn"        onclick="switchTab('shop')"   style="font-size:14px; padding:6px 10px;">道具屋</button>
                     <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:14px; padding:6px 10px;">強 化</button>
                     <button id="tabCraft"   class="mini-btn tab-btn"        onclick="switchTab('craft')"   style="font-size:14px; padding:6px 10px;">工 房</button>
+                    <button id="tabFish"    class="mini-btn tab-btn"        onclick="openFishing()"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
                     <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
                 </div>
 
@@ -191,13 +192,38 @@
                         </div>
                         <button id="btnUpgradeDef" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeDef()">強化 (G<span id="costDefDisp">15</span>)</button>
                     </div>
+                    <div class="lab-item">
+                        <div>
+                            <div style="color: var(--text-main)">遠隔技術強化 (遠隔ATK UP)</div>
+                            <div class="lab-desc">遠隔ATK: <span id="labRangeDisp">0</span> ／ 弓装備時に適用</div>
+                        </div>
+                        <button id="btnUpgradeRange" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeRange()">強化 (G<span id="costRangeDisp">25</span>)</button>
+                    </div>
+                    <div class="lab-item" style="border-top:1px dashed #334; margin-top:8px; padding-top:8px;">
+                        <div>
+                            <div style="color:var(--danger-red)">🏚 拠点修繕</div>
+                            <div class="lab-desc">コンディション: <span id="labBaseCondDisp">100</span>/100</div>
+                        </div>
+                        <button id="btnRepairBase" class="mini-btn" style="border-color:var(--danger-red);color:var(--danger-red); font-size:13px; padding:6px 12px;" onclick="repairBase()">修繕 (G<span id="costRepairDisp">20</span>)</button>
+                    </div>
+                    <div class="lab-item" style="border-top:1px dashed #334; margin-top:8px; padding-top:8px;">
+                        <div>
+                            <div style="color:#aa88ff">🏅 メダルAP上限拡張</div>
+                            <div class="lab-desc">現在のAP上限: <span id="labApDisp">10</span> / 装備AP: <span id="labApUsedDisp">0</span></div>
+                        </div>
+                        <button class="mini-btn" style="border-color:#aa88ff;color:#aa88ff; font-size:13px; padding:6px 12px;" onclick="upgradeMedalAp()">拡張 (G<span id="costMedalApDisp">30</span>)</button>
+                    </div>
                 </div>
 
                 <!-- 工房タブ -->
                 <div id="panelCraft" class="base-panel hidden"></div>
 
+                <!-- 釣りパネル（オーバーレイ） -->
+                <div id="fishingPanel" class="base-panel hidden" style="position:absolute; top:0; left:0; right:0; background:var(--bg-panel); z-index:10; padding:12px; border:1px solid var(--accent-cyan); border-radius:8px;"></div>
+
                 <!-- アーカイブタブ -->
                 <div id="panelArchive" class="base-panel hidden">
+                    <div id="saveSlotPanel" style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #334;"></div>
                     <div class="log-entry" style="color: var(--accent-cyan); border:none;">
                         冒険の記録
                     </div>
@@ -297,6 +323,7 @@
     <script src="js/explore.js"></script>
     <script src="js/lab.js"></script>
     <script src="js/craft.js"></script>
+    <script src="js/fishing.js"></script>
     <script src="js/shop.js"></script>
     <script src="js/main.js"></script>
 </body>
