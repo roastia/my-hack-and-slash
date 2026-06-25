@@ -879,3 +879,77 @@ body {
     margin-top: 4px;
     font-size: 14px;
 }
+
+/* === モバイルUI修正 === */
+
+/* タブ行の横スクロール（6ボタン対応） */
+#baseTabRow {
+    scrollbar-width: none;
+}
+#baseTabRow::-webkit-scrollbar { display: none; }
+#baseTabRow .tab-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* 釣りパネル：デスクトップはオーバーレイ、モバイルはfixed */
+.fishing-panel-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: var(--bg-panel);
+    z-index: 10;
+    padding: 12px;
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    /* タブボタンをコンパクトに */
+    #baseTabRow .tab-btn {
+        font-size: 12px !important;
+        padding: 5px 8px !important;
+        letter-spacing: 0 !important;
+    }
+
+    /* 釣りパネルをfixedオーバーレイに */
+    .fishing-panel-overlay {
+        position: fixed !important;
+        top: 44px !important;
+        bottom: 54px !important;
+        left: 0 !important;
+        right: 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        overflow-y: auto !important;
+        z-index: 150 !important;
+    }
+
+    /* メダルグリッド：モバイルでは2列に制限 */
+    .medal-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* メダルカードのフォントを小さく */
+    .medal-card {
+        font-size: 11px !important;
+        padding: 6px !important;
+    }
+    .medal-name { font-size: 12px !important; }
+
+    /* スタックパネルのフォント */
+    .stack-panel {
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+    }
+
+    /* スキルボタン行のラップ */
+    .skill-btn-row {
+        gap: 4px !important;
+        padding: 4px 6px !important;
+    }
+    .skill-btn-row .mini-btn {
+        font-size: 11px !important;
+        padding: 4px 6px !important;
+    }
+}
