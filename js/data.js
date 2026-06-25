@@ -393,3 +393,55 @@ function getMedalApUsed() {
         return sum + (m ? m.apCost : 0);
     }, 0);
 }
+
+// ============================================================
+// DNA突然変異カタログ
+// req: { type: '種族名', count: 必要討伐数 }
+// effects: getMedalEffectsと同じキー体系 + hpMult, hpRegen, skillSpCost
+// ============================================================
+const mutationCatalog = [
+    { id: 'mut_slime',   name: '粘液装甲',   icon: '🟢', req: { type: '粘体族',  count: 30 }, desc: 'DEF+15%',             effects: { defBonus: 0.15 } },
+    { id: 'mut_goblin',  name: '小鬼の俊足', icon: '🟡', req: { type: '小鬼族',  count: 25 }, desc: 'SPD+15%',             effects: { spdBonus: 0.15 } },
+    { id: 'mut_undead',  name: '不死の意志', icon: '💀', req: { type: '不死族',  count: 20 }, desc: '最大HP+25%',           effects: { hpMult: 1.25 } },
+    { id: 'mut_beast',   name: '野獣の牙',   icon: '🐺', req: { type: '獣族',    count: 25 }, desc: 'ATK+15%',             effects: { atkMult: 1.15 } },
+    { id: 'mut_dragon',  name: '竜鱗化',     icon: '🐉', req: { type: '竜族',    count: 5  }, desc: 'ATK+20% DEF+20%',    effects: { atkMult: 1.20, defBonus: 0.20 } },
+    { id: 'mut_demon',   name: '悪魔の知恵', icon: '😈', req: { type: '悪魔族',  count: 15 }, desc: 'スキルSP消費-30%',     effects: { skillSpCost: 0.70 } },
+    { id: 'mut_insect',  name: '虫の外骨格', icon: '🦂', req: { type: '虫族',    count: 30 }, desc: 'DEF+20%',             effects: { defBonus: 0.20 } },
+    { id: 'mut_spirit',  name: '霊体融合',   icon: '👻', req: { type: '邪霊族',  count: 20 }, desc: '精霊力+20',           effects: { spiritBonus: 20 } },
+    { id: 'mut_machine', name: '機械強化',   icon: '⚙️', req: { type: '機械族',  count: 20 }, desc: 'ATK+10% DEF+10%',    effects: { atkMult: 1.10, defBonus: 0.10 } },
+    { id: 'mut_plant',   name: '植物回生',   icon: '🌿', req: { type: '植物族',  count: 25 }, desc: '歩行ごとHP+2回復',     effects: { hpRegen: 2 } },
+    { id: 'mut_ogre',    name: '鬼力覚醒',   icon: '👹', req: { type: '鬼族',    count: 25 }, desc: 'ATK+20%',             effects: { atkMult: 1.20 } },
+    { id: 'mut_reptile', name: '爬虫の皮',   icon: '🦎', req: { type: '爬虫族',  count: 30 }, desc: 'DEF+10% 盗み率+10%',  effects: { defBonus: 0.10, drainBonus: 0.10 } },
+    { id: 'mut_beastman',name: '獣人の血',   icon: '🐗', req: { type: '獣人族',  count: 20 }, desc: 'ATK+10% SPD+10%',    effects: { atkMult: 1.10, spdBonus: 0.10 } },
+    { id: 'mut_bird',    name: '風の翼',     icon: '🦅', req: { type: '鳥族',    count: 25 }, desc: 'SPD+25%',             effects: { spdBonus: 0.25 } },
+    { id: 'mut_stone',   name: '岩の肉体',   icon: '🪨', req: { type: '石族',    count: 15 }, desc: 'DEF+30%',             effects: { defBonus: 0.30 } },
+];
+
+// 変異効果を合算して返す
+function getMutationEffects() {
+    const me = { atkMult:1, defBonus:0, spdBonus:0, drainBonus:0, critBonus:0, spiritBonus:0, hpMult:1, hpRegen:0, skillSpCost:1 };
+    mutations.forEach(id => {
+        const m = mutationCatalog.find(x => x.id === id);
+        if (!m) return;
+        if (m.effects.atkMult)     me.atkMult     *= m.effects.atkMult;
+        if (m.effects.defBonus)    me.defBonus    += m.effects.defBonus;
+        if (m.effects.spdBonus)    me.spdBonus    += m.effects.spdBonus;
+        if (m.effects.drainBonus)  me.drainBonus  += m.effects.drainBonus;
+        if (m.effects.critBonus)   me.critBonus   += m.effects.critBonus;
+        if (m.effects.spiritBonus) me.spiritBonus += m.effects.spiritBonus;
+        if (m.effects.hpMult)      me.hpMult      *= m.effects.hpMult;
+        if (m.effects.hpRegen)     me.hpRegen     += m.effects.hpRegen;
+        if (m.effects.skillSpCost) me.skillSpCost *= m.effects.skillSpCost;
+    });
+    return me;
+}
+
+// ============================================================
+// 拠点トラップカタログ
+// ============================================================
+const trapCatalog = [
+    { id: 'trap_spike',  name: 'スパイクトラップ', icon: '⚔️', cost: 15, dmgBase: 35, uses: 2, ignoresDef: false, desc: '物理35ダメ×2回' },
+    { id: 'trap_magic',  name: '魔法陣トラップ',   icon: '✨', cost: 25, dmgBase: 60, uses: 1, ignoresDef: true,  desc: '魔法60ダメ×1回（防御無視）' },
+    { id: 'trap_poison', name: '毒霧トラップ',     icon: '☠️', cost: 18, dmgBase: 20, uses: 3, ignoresDef: false, desc: '毒20ダメ×3回' },
+    { id: 'trap_needle', name: '針山トラップ',     icon: '🪡', cost: 10, dmgBase: 15, uses: 4, ignoresDef: false, desc: '15ダメ×4回（使い捨て多め）' },
+];

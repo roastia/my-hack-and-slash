@@ -52,6 +52,8 @@ function saveData() {
         sp, maxSp, thirst, maxThirst, baseMagic, baseSpirit, baseRange, tension, materials, enemyStack,
         equippedMedals, medalApLimit, costMedalAp,
         baseCondition, costRepairBase,
+        dnaCounts, mutations, mutationSlots,
+        traps,
         fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
         fishingRodUpgradeCost: fishingState ? fishingState.rodUpgradeCost : 30,
         costHp, costAtk, costDef, stats,
@@ -103,6 +105,10 @@ function loadData() {
         costMedalAp    = data.costMedalAp     || 30;
         baseCondition  = data.baseCondition   !== undefined ? data.baseCondition : 100;
         costRepairBase = data.costRepairBase   || 20;
+        dnaCounts      = data.dnaCounts        || {};
+        mutations      = data.mutations        || [];
+        mutationSlots  = data.mutationSlots    || 3;
+        traps          = data.traps            || [];
         if (typeof fishingState !== 'undefined') {
             fishingState.rodLevel = data.fishingRodLevel || 1;
             fishingState.rodUpgradeCost = data.fishingRodUpgradeCost || 30;

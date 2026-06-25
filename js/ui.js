@@ -52,6 +52,11 @@ function getTotalAttack() {
         const me = getMedalEffects();
         if (me.atkMult) total = Math.floor(total * me.atkMult);
     }
+    // 変異効果
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.atkMult && mu.atkMult !== 1) total = Math.floor(total * mu.atkMult);
+    }
     // 拠点荒廃ペナルティ
     if (typeof baseCondition !== 'undefined' && baseCondition === 0) {
         total = Math.max(1, Math.floor(total * 0.8));
@@ -86,6 +91,10 @@ function getTotalSpirit() {
         const me = getMedalEffects();
         if (me.spiritBonus) total += me.spiritBonus;
     }
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.spiritBonus) total += mu.spiritBonus;
+    }
     return total;
 }
 
@@ -95,6 +104,10 @@ function getTotalDef() {
     if (typeof getMedalEffects === 'function') {
         const me = getMedalEffects();
         if (me.defBonus) total += me.defBonus;
+    }
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.defBonus) total += mu.defBonus;
     }
     return total;
 }
@@ -106,6 +119,10 @@ function getCritRate() {
         const me = getMedalEffects();
         if (me.critBonus) total += me.critBonus;
     }
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.critBonus) total += mu.critBonus;
+    }
     return total;
 }
 
@@ -116,6 +133,10 @@ function getStealRate() {
         const me = getMedalEffects();
         if (me.drainBonus) total += me.drainBonus;
     }
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.drainBonus) total += mu.drainBonus;
+    }
     return total;
 }
 
@@ -125,6 +146,10 @@ function getTotalSpeed() {
     if (typeof getMedalEffects === 'function') {
         const me = getMedalEffects();
         if (me.spdBonus) total += me.spdBonus;
+    }
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.spdBonus) total += mu.spdBonus;
     }
     return Math.max(1, total);
 }
@@ -1039,6 +1064,22 @@ function switchTab(tab) {
         const pc = document.getElementById('panelCraft');
         if (pc) pc.classList.remove('hidden');
         if (typeof renderCraft === 'function') renderCraft();
+        updateIllustration('base');
+    }
+    if (tab === 'dna') {
+        const td = document.getElementById('tabDna');
+        if (td) td.classList.add('active');
+        const pd = document.getElementById('panelDna');
+        if (pd) pd.classList.remove('hidden');
+        if (typeof renderDnaPanel === 'function') renderDnaPanel();
+        updateIllustration('base');
+    }
+    if (tab === 'trap') {
+        const tt = document.getElementById('tabTrap');
+        if (tt) tt.classList.add('active');
+        const pt = document.getElementById('panelTrap');
+        if (pt) pt.classList.remove('hidden');
+        if (typeof renderTrapPanel === 'function') renderTrapPanel();
         updateIllustration('base');
     }
 }

@@ -128,7 +128,10 @@ function updateStackPanel() {
     panel.innerHTML = `
         <span style="color:${risk}; font-weight:bold;">${riskText} 敵スタック: ${count}体</span>
         <span style="color:var(--text-dim); font-size:11px; display:block; margin-top:2px;">${names}</span>
-        <button class="mini-btn btn-attack stack-fight-btn" onclick="fightStack()">⚔ 一括戦闘 (${count}体)</button>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+            <button class="mini-btn btn-attack stack-fight-btn" onclick="fightStack()">⚔ 一括戦闘 (${count}体)</button>
+            ${count >= 4 ? `<button class="mini-btn" style="border-color:var(--accent-orange);color:var(--accent-orange);" onclick="chainExplosion()">⚡ 連鎖爆発 (SP-20)</button>` : ''}
+        </div>
     `;
 }
 
@@ -139,29 +142,92 @@ function fightStack() {
     if (enemyStack.length === 0) return;
     clearLog();
 
-    const count    = enemyStack.length;
-    const totalHp  = enemyStack.reduce((s, e) => s + e.hp, 0);
-    const avgAtk   = Math.ceil(enemyStack.reduce((s, e) => s + e.atk, 0) / count);
-    const bonusAtk = Math.floor(avgAtk * (count - 1) * 0.2);
-    const totalExp = Math.floor(enemyStack.reduce((s, e) => s + e.exp, 0) * Math.pow(1.1, count - 1));
-    const maxSpd   = Math.max(...enemyStack.map(e => e.speed));
+    const count       = enemyStack.length;
+    let   totalHp     = enemyStack.reduce((s, e) => s + e.hp, 0);
+    const avgAtk      = Math.ceil(enemyStack.reduce((s, e) => s + e.atk, 0) / count);
+    const bonusAtk    = Math.floor(avgAtk * (count - 1) * 0.2);
+    const totalExp    = Math.floor(enemyStack.reduce((s, e) => s + e.exp, 0) * Math.pow(1.1, count - 1));
+    const maxSpd      = Math.max(...enemyStack.map(e => e.speed));
     const magicAtkAvg = Math.floor(enemyStack.reduce((s, e) => s + (e.magicAtk||0), 0) / count);
 
     const name = count === 1
         ? enemyStack[0].name
         : `${enemyStack[0].name} ほか${count - 1}体`;
 
-    // 戦闘突入でSP半減（移動残量の50%のみ持ち込み可）
+    // DNA追跡用に種族リストを保存
+    const dnaTypes = enemyStack.map(e => e.type || null);
+
+    // SP半減
     const spBefore = sp;
     sp = Math.floor(sp / 2);
     addLog(`<span class="boss-text">⚡ スタック戦闘開始！ ${count}体の敵と一括対決！</span>`);
     addLog(`<span style="color:#aa88ff; font-size:11px;">⚠ 戦闘突入時SP半減: ${spBefore} → ${sp}</span>`);
     if (count >= 3) addLog(`<span class="damage-text">多数の敵が押し寄せる…極めて危険だ！</span>`);
 
+    // トラップ発動（戦闘前先制ダメージ）
+    if (typeof traps !== 'undefined' && traps.length > 0) {
+        let trapDmgTotal = 0;
+        const usedNames = [];
+        traps = traps.filter(trap => {
+            if (trap.usesLeft <= 0) return false;
+            const dmg = trap.ignoresDef ? trap.dmgBase : Math.max(1, trap.dmgBase - Math.floor(avgAtk * 0.1));
+            totalHp = Math.max(1, totalHp - dmg);
+            trapDmgTotal += dmg;
+            usedNames.push(trap.name);
+            trap.usesLeft--;
+            return trap.usesLeft > 0;
+        });
+        if (trapDmgTotal > 0) {
+            addLog(`<span style="color:var(--accent-orange)">🪤 トラップ発動！ [${usedNames.join('・')}] → 敵に合計 <b>${trapDmgTotal}</b> ダメージ！</span>`);
+            if (typeof renderTrapPanel === 'function') renderTrapPanel();
+        }
+    }
+
     enemyStack = [];
     updateStackPanel();
 
-    startBattle(name, totalHp, avgAtk + bonusAtk, totalExp, false, maxSpd, magicAtkAvg);
+    startBattle(name, totalHp, avgAtk + bonusAtk, totalExp, false, maxSpd, magicAtkAvg, dnaTypes);
+}
+
+// ================================================================
+// 連鎖爆発（スタック4体以上で発動可能）
+// ================================================================
+function chainExplosion() {
+    const count = enemyStack.length;
+    if (count < 4) { addLog('<span class="damage-text">スタックが4体以上いないと使えない！</span>'); return; }
+    const spCost = 20;
+    if (sp < spCost) { addLog(`<span class="damage-text">SPが足りない！ (必要SP: ${spCost})</span>`); return; }
+
+    sp -= spCost;
+    clearLog();
+
+    const myAtk = typeof getTotalAttack === 'function' ? getTotalAttack() : baseAttack;
+    let chainDmg = myAtk * 3;
+    let totalDmg = 0;
+    let log = `<span style="color:var(--accent-orange); font-weight:bold;">⚡ 連鎖爆発発動！ (SP-${spCost})</span><br>`;
+
+    enemyStack.forEach((e, i) => {
+        const dmg = Math.max(1, Math.floor(chainDmg * (0.85 + Math.random() * 0.3)));
+        const actual = Math.min(dmg, e.hp);
+        e.hp -= actual;
+        totalDmg += actual;
+        log += `${i === 0 ? '💥' : '🔥'} ${e.name}に <b>${actual}</b> dmg${e.hp <= 0 ? ' <span style="color:var(--accent-green)">撃破！</span>' : ` (残HP:${e.hp})`}<br>`;
+        chainDmg *= 0.75;
+    });
+
+    const before = enemyStack.length;
+    enemyStack = enemyStack.filter(e => e.hp > 0);
+    const killed = before - enemyStack.length;
+    if (killed > 0) {
+        if (typeof stats !== 'undefined') stats.kills = (stats.kills || 0) + killed;
+        log += `<span class="attack-text">連鎖で ${killed}体 を消滅させた！ EXP等は加算なし。</span><br>`;
+    }
+    log += `<span style="color:var(--text-dim); font-size:12px">合計ダメージ: ${totalDmg}</span>`;
+    addLog(log);
+
+    updateStackPanel();
+    updateUI();
+    saveData();
 }
 
 // ================================================================
@@ -221,6 +287,12 @@ function executeExploreStep() {
 
     if (applyHunger(5)) return;
     if (applyThirst(3)) return;
+
+    // 変異：植物回生 HP自然回復
+    if (typeof getMutationEffects === 'function') {
+        const mu = getMutationEffects();
+        if (mu.hpRegen && mu.hpRegen > 0) hp = Math.min(maxHp, hp + mu.hpRegen);
+    }
 
     // 自動戦闘: スタック上限
     if (enemyStack.length >= 5) {

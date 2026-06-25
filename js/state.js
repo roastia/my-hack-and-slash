@@ -80,3 +80,12 @@ let eventState  = { active: false, type: null };
 let equippedMedals = [];   // 装備中のメダルID配列
 let medalApLimit   = 10;   // AP上限（LABで拡張可能）
 let costMedalAp    = 30;   // AP拡張コスト（starDust）
+
+// --- DNA突然変異システム ---
+let dnaCounts     = {};   // { '種族名': 討伐数 }
+let mutations     = [];   // 装備中の変異ID配列（最大 mutationSlots 個）
+let mutationSlots = 3;    // 変異装備スロット上限
+
+// --- 拠点トラップ ---
+let traps    = [];        // 設置中のトラップ配列 { id, name, dmgBase, usesLeft, ignoresDef }
+const MAX_TRAPS = 3;      // 同時設置上限

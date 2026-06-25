@@ -152,6 +152,8 @@
                     <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:14px; padding:6px 10px;">強 化</button>
                     <button id="tabCraft"   class="mini-btn tab-btn"        onclick="switchTab('craft')"   style="font-size:14px; padding:6px 10px;">工 房</button>
                     <button id="tabFish"    class="mini-btn tab-btn"        onclick="openFishing()"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
+                    <button id="tabDna"     class="mini-btn tab-btn"        onclick="switchTab('dna')"     style="font-size:14px; padding:6px 10px;">🧬 変 異</button>
+                    <button id="tabTrap"    class="mini-btn tab-btn"        onclick="switchTab('trap')"    style="font-size:14px; padding:6px 10px;">🪤 罠</button>
                     <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
                 </div>
 
@@ -220,6 +222,12 @@
 
                 <!-- 釣りパネル（オーバーレイ） -->
                 <div id="fishingPanel" class="base-panel hidden fishing-panel-overlay"></div>
+
+                <!-- DNA変異タブ -->
+                <div id="panelDna" class="base-panel hidden"></div>
+
+                <!-- 拠点トラップタブ -->
+                <div id="panelTrap" class="base-panel hidden"></div>
 
                 <!-- アーカイブタブ -->
                 <div id="panelArchive" class="base-panel hidden">
@@ -312,19 +320,4 @@
     <script src="data/enemies.js"></script>
     <script src="data/dungeons.js"></script>
     <script src="data/food.js"></script>
-    <script src="data/shop.js"></script>
-    <script src="data/recipes.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/save.js"></script>
-    <script src="js/items.js"></script>
-    <script src="js/battle.js"></script>
-    <script src="js/explore.js"></script>
-    <script src="js/lab.js"></script>
-    <script src="js/craft.js"></script>
-    <script src="js/fishing.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/main.js"></script>
-</body>
-</html>
+    <scri

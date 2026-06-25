@@ -2,9 +2,10 @@
 // battle.js — ATBバトルシステム（スキル対応版）
 // =============================================================
 
-function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed, enemyMagicAtk) {
+function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed, enemyMagicAtk, pendingTypes) {
     const pSpd = getTotalSpeed();
     const eSpd = enemySpeed || 8;
+    window._pendingDnaTypes = pendingTypes || [];
     battleState = {
         active:      true,
         enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp, magicAtk: enemyMagicAtk || 0 },
@@ -210,6 +211,11 @@ function executeBattleTurn(skillId) {
     if (enemy.hp <= 0) {
         stats.kills++;
         exp      += enemy.exp;
+        // DNA追跡
+        if (typeof dnaCounts !== 'undefined' && window._pendingDnaTypes && window._pendingDnaTypes.length > 0) {
+            window._pendingDnaTypes.forEach(t => { if (t) dnaCounts[t] = (dnaCounts[t] || 0) + 1; });
+            window._pendingDnaTypes = [];
+        }
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
         starDust += dust;
 
