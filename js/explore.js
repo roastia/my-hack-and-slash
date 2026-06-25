@@ -598,14 +598,18 @@ function renderAutoRow() {
     const sp2   = autoExploreSpeed === 700;
     const sp3   = autoExploreSpeed === 350;
 
+    const selStyle  = 'background:#60cdff;color:#111;border-color:#60cdff;font-weight:bold;box-shadow:0 0 8px rgba(96,205,255,0.6);';
+    const exStyle   = 'background:#6ccb5f;color:#111;border-color:#6ccb5f;font-weight:bold;box-shadow:0 0 8px rgba(108,203,95,0.6);';
+    const batStyle  = 'background:#ffa040;color:#111;border-color:#ffa040;font-weight:bold;box-shadow:0 0 8px rgba(255,165,0,0.6);';
+    const offStyle  = '';
     row.innerHTML = `
-        <button class="auto-btn ${exOn ? 'on' : ''}" onclick="toggleAutoExplore()">
+        <button class="auto-btn" style="${exOn ? exStyle : offStyle}" onclick="toggleAutoExplore()">
             ${exOn ? '⏸ 自動停止' : '▶ 自動探索'}
         </button>
-        <button class="auto-btn ${sp1 ? 'speed-on' : ''}" onclick="setAutoSpeed(1200)">×1</button>
-        <button class="auto-btn ${sp2 ? 'speed-on' : ''}" onclick="setAutoSpeed(700)">×2</button>
-        <button class="auto-btn ${sp3 ? 'speed-on' : ''}" onclick="setAutoSpeed(350)">×3</button>
-        <button class="auto-btn ${batOn ? 'battle-on' : ''}" onclick="toggleAutoBattle()" style="margin-left:4px;">
+        <button class="auto-btn" style="${sp1 ? selStyle : offStyle}" onclick="setAutoSpeed(1200)">×1</button>
+        <button class="auto-btn" style="${sp2 ? selStyle : offStyle}" onclick="setAutoSpeed(700)">×2</button>
+        <button class="auto-btn" style="${sp3 ? selStyle : offStyle}" onclick="setAutoSpeed(350)">×3</button>
+        <button class="auto-btn" style="margin-left:4px;${batOn ? batStyle : offStyle}" onclick="toggleAutoBattle()">
             ${batOn ? '⚔ 戦闘AUTO' : '⚔ AUTO'}
         </button>
     `;

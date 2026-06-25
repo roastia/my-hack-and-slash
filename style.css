@@ -1228,25 +1228,28 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main)
 }
 /* 自動探索トグル ON */
 .auto-btn.on {
-    border-color: var(--accent-green);
-    color: #111;
-    background: var(--accent-green);
+    border-color: var(--accent-green) !important;
+    color: #111 !important;
+    background: var(--accent-green) !important;
+    background-color: var(--accent-green) !important;
     font-weight: bold;
-    box-shadow: 0 0 8px rgba(108,203,95,0.45);
+    box-shadow: 0 0 10px rgba(108,203,95,0.6);
 }
 /* 速度選択 ON: 塗りつぶし＋文字色反転で一目瞭然 */
 .auto-btn.speed-on {
-    border-color: var(--accent-cyan);
-    color: #111;
-    background: var(--accent-cyan);
+    border-color: var(--accent-cyan) !important;
+    color: #111 !important;
+    background: var(--accent-cyan) !important;
+    background-color: var(--accent-cyan) !important;
     font-weight: bold;
-    box-shadow: 0 0 8px rgba(96,205,255,0.45);
+    box-shadow: 0 0 10px rgba(96,205,255,0.6);
 }
 /* オートバトル ON */
 .auto-btn.battle-on {
-    border-color: var(--accent-orange);
-    color: #111;
-    background: var(--accent-orange);
+    border-color: var(--accent-orange) !important;
+    color: #111 !important;
+    background: var(--accent-orange) !important;
+    background-color: var(--accent-orange) !important;
     font-weight: bold;
-    box-shadow: 0 0 8px rgba(255,165,0,0.45);
+    box-shadow: 0 0 10px rgba(255,165,0,0.6);
 }
