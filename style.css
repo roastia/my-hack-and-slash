@@ -1,422 +1,891 @@
+/* ============================================================
+   Windows 11 Design System — My Hack & Slash
+   ============================================================ */
+
 :root {
-    --bg-color:      #050302;
-    --panel-bg:      #0e0a06;
-    --border-color:  #5a4418;
-    --text-main:     #f0e8c0;
-    --text-dim:      #7a6840;
-    --accent-cyan:   #d4a830;   /* gold  */
-    --accent-orange: #e07828;   /* flame */
-    --accent-magenta:#a050d8;   /* magic */
-    --accent-green:  #4ab848;   /* forest */
-    --danger-red:    #d83030;
+    /* Win11 Dark palette */
+    --bg-color:        #1c1c1c;
+    --panel-bg:        #2b2b2b;
+    --panel-bg-alt:    #323232;
+    --panel-bg-high:   #3a3a3a;
+    --surface-fill:    rgba(255,255,255,0.060);
+    --surface-fill-s:  rgba(255,255,255,0.085);
+    --surface-fill-t:  rgba(255,255,255,0.033);
+    --border-color:    rgba(255,255,255,0.083);
+    --border-alt:      rgba(255,255,255,0.15);
+
+    /* Text */
+    --text-main:     rgba(255,255,255,0.956);
+    --text-dim:      rgba(255,255,255,0.545);
+    --text-disabled: rgba(255,255,255,0.363);
+
+    /* Accent — Win11 Blue + game colors */
+    --accent-cyan:    #60cdff;   /* Win11 accent blue (light) */
+    --accent-blue:    #0078d4;   /* Win11 accent blue (dark) */
+    --accent-orange:  #ffd700;   /* Gold / reward */
+    --accent-magenta: #c6b0f5;   /* Magic / purple */
+    --accent-green:   #6ccb5f;   /* Success / HP */
+    --danger-red:     #ff5c5c;   /* Danger */
+
+    /* Shadows — Win11 elevation levels */
+    --shadow-1: 0 1px 3px rgba(0,0,0,0.28), 0 0 1px rgba(0,0,0,0.20);
+    --shadow-2: 0 4px 8px rgba(0,0,0,0.36), 0 0 1px rgba(0,0,0,0.24);
+    --shadow-3: 0 8px 20px rgba(0,0,0,0.44), 0 0 1px rgba(0,0,0,0.28);
+
+    /* Border radii */
+    --radius-xs: 3px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Typography */
+    --font-ui:   'Segoe UI Variable Display', 'Segoe UI Variable', 'Segoe UI',
+                 'Yu Gothic UI', 'Meiryo UI', 'Meiryo', system-ui, sans-serif;
+    --font-mono: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
 }
 
-body {
-    font-family: 'MS PMincho', 'Hiragino Mincho Pro', serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    touch-action: manipulation;
+}
+
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    overscroll-behavior: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image:
-        radial-gradient(ellipse at 50% 30%, #1a1005 0%, transparent 70%),
-        linear-gradient(180deg, #0a0604 0%, #050302 100%);
-    background-size: 100% 100%, 100% 100%;
-    height: 100vh;
-    box-sizing: border-box;
-    overflow: hidden;
 }
 
-/* ワイド画面向けの3カラムグリッドレイアウト */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
+
+/* Selectable log text */
+#battleLog, #baseLog, .log-entry {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* ============================================================
+   Game Layout — 3-column grid
+   ============================================================ */
 .game-container {
-    width: 96vw;
-    height: 92vh;
+    width: 98vw;
+    height: 96vh;
     max-width: 1600px;
-    max-height: 900px;
+    max-height: 960px;
     display: grid;
-    grid-template-columns: 340px 1fr 420px;
-    gap: 20px;
-}
-
-.left-panel, .center-panel, .right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-    overflow: hidden;
-}
-
-.window-panel {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 0 10px rgba(180, 120, 20, 0.06);
-    padding: 16px;
-    border-radius: 2px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- 左パネル（ステータス） --- */
-.status-area {
-    font-family: 'Courier New', 'MS PGothic', monospace;
-    font-size: 15px;
+    grid-template-columns: 300px 1fr 380px;
     gap: 8px;
-    border-top: 3px solid var(--accent-cyan);
+}
+
+.left-panel,
+.right-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    overflow-y: auto;
+    min-height: 0;
+    height: 100%;
+}
+
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Window panel (generic card) */
+.window-panel {
+    background: var(--surface-fill);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================
+   Status Area (left panel)
+   ============================================================ */
+.status-area {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    gap: 4px;
+    background: var(--surface-fill);
+    border: 1px solid var(--border-color);
+    border-top: 2px solid var(--accent-blue);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
 }
 
 .status-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px dashed #3a2c10;
-    padding-bottom: 6px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+}
+.status-row:last-child { border-bottom: none; }
+
+.highlight-value {
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+.depth-display {
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-size: 1.15em;
+    font-family: var(--font-mono);
 }
 
-.status-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-.highlight-value { color: var(--accent-orange); font-weight: bold; }
-.depth-display { color: var(--accent-cyan); font-weight: bold; font-size: 1.2em; }
-
+/* Equipment */
 .equip-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 8px;
-    border-top: 1px dotted #3a2c10;
-    padding-top: 10px;
-    margin-top: 6px;
-    color: var(--accent-green);
-    font-size: 14px;
+    gap: 4px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+    margin-top: 4px;
 }
 
-/* --- 中央パネル（イラスト） --- */
+.equip-grid div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    background: var(--surface-fill);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    color: var(--accent-cyan);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Viewport (scene / illustration area)
+   ============================================================ */
 .viewport-area {
     flex-grow: 1;
     height: 0;
-    background-color: #060401;
-    background-image:
-        linear-gradient(rgba(100, 70, 20, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(100, 70, 20, 0.06) 1px, transparent 1px);
-    background-size: 30px 30px;
+    background: linear-gradient(160deg, #0d1117 0%, #1a2035 60%, #0d1117 100%);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     position: relative;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-    border-radius: 2px;
+    box-shadow: var(--shadow-2), inset 0 0 40px rgba(0,0,0,0.6);
 }
 
 .viewport-content svg {
     width: 70%;
     height: 70%;
-    max-height: 450px;
-    filter: drop-shadow(0 0 10px currentColor);
-    animation: glitch 3s infinite alternate;
+    max-height: 440px;
+    filter: drop-shadow(0 0 8px currentColor);
+    animation: glitch 4s infinite alternate;
 }
 
-/* --- 右パネル（インベントリ） --- */
-.inventory-header {
-    font-size: 16px;
-    color: var(--accent-cyan);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    font-family: 'MS PGothic', sans-serif;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.inventory-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    font-size: 15px;
-    flex-grow: 1;
-    height: 0;
-    overflow-y: auto;
-    font-family: 'MS PGothic', sans-serif;
-    padding-right: 5px;
-}
-
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--bg-color); border-left: 1px solid var(--border-color); }
-::-webkit-scrollbar-thumb { background: var(--border-color); }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
-
-.inventory-list li {
-    padding: 10px 8px;
-    border-bottom: 1px dotted #3a2a08;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.2s;
-}
-
-.inventory-list li:hover { background-color: rgba(212, 168, 48, 0.06); }
-
-.item-name { flex-grow: 1; color: var(--text-main); font-size: 16px;}
-.item-stats { font-size: 13px; color: var(--text-dim); margin-right: 12px;}
-.item-actions { display: flex; gap: 6px; }
-
-.mini-btn {
-    padding: 5px 10px;
-    font-size: 13px;
-    background-color: transparent;
-    border: 1px solid var(--text-dim);
-    color: var(--text-main);
+/* ============================================================
+   Buttons — Fluent Design System
+   ============================================================ */
+button {
+    font-family: var(--font-ui);
     cursor: pointer;
-    font-family: 'MS PGothic', sans-serif;
-    transition: 0.2s;
+    border: none;
+    outline: none;
+    transition: background 0.12s, color 0.12s, box-shadow 0.12s, transform 0.08s;
+    border-radius: var(--radius-sm);
+    line-height: 1.4;
 }
 
-.btn-equip { color: var(--accent-cyan); border-color: var(--accent-cyan); }
-.btn-equip:hover { background-color: rgba(212, 168, 48, 0.15); }
-.btn-mix { color: var(--accent-magenta); border-color: var(--accent-magenta); }
-.btn-mix:hover { background-color: rgba(160, 80, 216, 0.15); }
+/* Action buttons (explore / base) */
+.action-btn {
+    background: rgba(0,120,212,0.80);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 9px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset;
+    flex: 1;
+}
+.action-btn:hover {
+    background: rgba(0,120,212,1);
+    box-shadow: var(--shadow-1);
+}
+.action-btn:active {
+    background: #005fa3;
+    transform: scale(0.97);
+}
+.action-btn:disabled {
+    background: var(--surface-fill);
+    color: var(--text-disabled);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
 
-.tab-btn { border-color: var(--accent-cyan); color: var(--text-dim); }
-.tab-btn.active { background-color: rgba(212, 168, 48, 0.15); color: var(--accent-cyan); font-weight: bold;}
+.btn-return {
+    background: rgba(255,215,0,0.12) !important;
+    color: var(--accent-orange) !important;
+    border: 1px solid rgba(255,215,0,0.25) !important;
+}
+.btn-return:hover {
+    background: rgba(255,215,0,0.20) !important;
+}
 
-.empty-text {
-    color: var(--text-dim) !important;
-    text-align: center;
+/* Attack button */
+.btn-attack {
+    background: rgba(0,120,212,0.85) !important;
+    color: #fff !important;
     border: none !important;
-    justify-content: center !important;
-    font-style: italic;
-    padding-top: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    animation: pulse-blue 2s infinite;
+}
+.btn-attack:hover {
+    background: var(--accent-blue) !important;
+    box-shadow: var(--shadow-1) !important;
+    animation: none;
+}
+.btn-attack:active {
+    background: #005fa3 !important;
+    transform: scale(0.97) !important;
 }
 
-/* --- ログエリア（右パネル下部） --- */
-.log-area {
-    flex-grow: 1;
-    height: 0;
+/* Flee button */
+.btn-flee {
+    background: var(--surface-fill) !important;
+    color: var(--text-dim) !important;
+    border: 1px solid var(--border-color) !important;
+    font-size: 13px !important;
+}
+.btn-flee:hover {
+    background: var(--surface-fill-s) !important;
+    color: var(--text-main) !important;
+}
+.btn-flee:active {
+    transform: scale(0.97) !important;
+}
+
+/* Mini buttons */
+.mini-btn {
+    background: var(--surface-fill);
+    color: var(--text-dim);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xs);
+    padding: 3px 9px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.mini-btn:hover {
+    background: var(--surface-fill-s);
+    color: var(--text-main);
+}
+.btn-equip {
+    color: var(--accent-cyan) !important;
+    border-color: rgba(96,205,255,0.3) !important;
+}
+.btn-equip:hover {
+    background: rgba(96,205,255,0.10) !important;
+    border-color: var(--accent-cyan) !important;
+}
+.btn-mix {
+    color: var(--accent-magenta) !important;
+    border-color: rgba(198,176,245,0.3) !important;
+}
+.btn-mix:hover {
+    background: rgba(198,176,245,0.10) !important;
+    border-color: var(--accent-magenta) !important;
+}
+
+/* Tab buttons */
+.tab-btn {
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    border-radius: var(--radius-xs);
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.12s, background 0.12s;
+}
+.tab-btn:hover {
+    background: var(--surface-fill);
+    color: var(--text-main);
+}
+.tab-btn.active {
+    color: var(--accent-cyan) !important;
+    background: rgba(96,205,255,0.08);
+    box-shadow: 0 2px 0 var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* ============================================================
+   Gauge bars (HP / SP / EXP / ATB)
+   ============================================================ */
+.gauge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+}
+.gauge-label {
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 28px;
+    flex-shrink: 0;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.gauge-track {
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    overflow: hidden;
+}
+.gauge-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+.gauge-text {
+    font-size: 11px;
+    min-width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+}
+
+#hpFill    { background: var(--accent-green); }
+#spFill    { background: var(--accent-cyan); }
+#expFill   { background: var(--accent-magenta); }
+#atbFill   { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+.enemy-atb-fill { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+/* ============================================================
+   Explore & Base scene panels
+   ============================================================ */
+#exploreScene,
+#baseScene {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
-    font-size: 16px;
-    line-height: 1.6;
-    padding-right: 10px;
+    box-shadow: var(--shadow-1);
 }
 
-.log-content { display: flex; flex-direction: column; gap: 10px; }
-
-.log-entry {
-    padding-bottom: 10px;
-    border-bottom: 1px dotted #223344;
-    animation: fadeIn 0.4s ease-out;
-}
-
-.damage-text { color: var(--danger-red); }
-.attack-text { color: var(--accent-cyan); }
-.item-text { color: var(--accent-green); font-weight: bold; }
-.levelup-text { color: var(--accent-orange); font-weight: bold; }
-.floor-text { color: var(--accent-cyan); border-left: 3px solid var(--accent-cyan); padding-left: 10px; margin: 6px 0; font-weight: bold; }
-.mix-text { color: var(--accent-magenta); }
-.event-text { color: #ffffaa; }
-.boss-text { color: #ff0055; font-weight: bold; font-size: 1.2em; letter-spacing: 2px; }
-
-@keyframes fadeIn {
-    from { opacity: 0; filter: brightness(2); }
-    to { opacity: 1; filter: brightness(1); }
-}
-
-/* アクションボタン（中央パネル下部） */
+/* ============================================================
+   Action group (battle controls)
+   ============================================================ */
 .action-group {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    width: 100%;
-    min-height: 60px;
-    height: auto;
+    padding: 8px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     flex-shrink: 0;
+    box-shadow: var(--shadow-1);
+    width: 100%;
+    min-height: 56px;
+    height: auto;
     align-content: flex-end;
 }
+.action-group .btn-attack {
+    flex: 3 1 0 !important;
+    min-height: 48px;
+    font-size: 16px !important;
+    letter-spacing: 0.06em !important;
+}
+.action-group .btn-flee {
+    flex: 1 1 0 !important;
+    min-height: 48px;
+    max-width: 90px;
+}
 
-.action-btn {
-    background-color: transparent;
-    color: var(--accent-cyan);
-    border: 1px solid var(--accent-cyan);
-    font-size: 20px;
-    font-weight: bold;
+/* ============================================================
+   Skill Buttons
+   ============================================================ */
+.skill-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
+    width: 100%;
+    flex-basis: 100%;
+    order: -1;
+}
+.skill-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    background: rgba(198,176,245,0.07);
+    border: 1px solid rgba(198,176,245,0.22);
+    border-radius: var(--radius-sm);
+    color: var(--accent-magenta);
+    font-family: var(--font-ui);
+    font-size: 13px;
     cursor: pointer;
-    font-family: 'MS PMincho', serif;
-    letter-spacing: 4px;
-    transition: all 0.2s;
+    transition: background 0.12s, box-shadow 0.12s, transform 0.08s;
+    white-space: nowrap;
+}
+.skill-action-btn:hover {
+    background: rgba(198,176,245,0.14);
+    box-shadow: 0 0 0 1px rgba(198,176,245,0.3);
+}
+.skill-action-btn:active { transform: scale(0.97); }
+.skill-action-btn .sk-lv { font-size: 11px; opacity: 0.65; margin-left: 2px; }
+
+/* ============================================================
+   Battle log
+   ============================================================ */
+.log-area {
+    flex-grow: 1;
+    height: 0;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.65;
+    padding-right: 6px;
+}
+.log-content { display: flex; flex-direction: column; gap: 2px; }
+.log-entry {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    animation: fadeIn 0.3s ease-out;
+}
+.log-entry:last-child { border-bottom: none; }
+
+.damage-text   { color: var(--danger-red); font-weight: 700; }
+.attack-text   { color: var(--accent-cyan); }
+.item-text     { color: var(--accent-green); font-weight: 600; }
+.levelup-text  { color: var(--accent-orange); font-weight: 700; }
+.floor-text    {
+    color: var(--accent-cyan);
+    border-left: 2px solid var(--accent-cyan);
+    padding-left: 8px;
+    margin: 4px 0;
+    font-weight: 600;
+}
+.mix-text      { color: var(--accent-magenta); }
+.event-text    { color: #ffffaa; }
+.boss-text     { color: var(--danger-red); font-weight: 700; font-size: 1.1em; letter-spacing: 0.08em; }
+.heal-text     { color: var(--accent-green); }
+.crit-text     { color: var(--accent-orange); font-weight: 700; }
+.system-text   { color: var(--text-dim); font-style: italic; }
+.reward-text   { color: var(--accent-orange); }
+
+/* ============================================================
+   Inventory
+   ============================================================ */
+.inventory-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+.inventory-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    flex-grow: 1;
+    height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.inventory-list li {
+    padding: 6px 8px;
+    border-bottom: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-xs);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.1s;
+}
+.inventory-list li:hover {
+    background: var(--surface-fill);
+    border-color: var(--border-color);
+}
+.item-name { flex-grow: 1; color: var(--text-main); font-size: 13px; }
+.item-stats { font-size: 12px; color: var(--text-dim); margin-right: 8px; }
+.item-actions { display: flex; gap: 4px; }
+
+.empty-text {
+    color: var(--text-disabled) !important;
     text-align: center;
-    flex: 1;
+    border: none !important;
+    justify-content: center !important;
+    font-style: italic;
+    padding-top: 16px !important;
+    background: transparent !important;
 }
 
-.action-btn:hover {
-    background-color: rgba(212, 168, 48, 0.12);
-    box-shadow: 0 0 12px rgba(212, 168, 48, 0.35);
+/* ============================================================
+   Stack Panel (encounter warning)
+   ============================================================ */
+.stack-panel {
+    padding: 8px 12px;
+    background: rgba(255,92,92,0.06);
+    border: 1px solid rgba(255,92,92,0.22);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
 }
-.action-btn:disabled {
-    color: var(--text-dim);
-    border-color: var(--text-dim);
-    cursor: not-allowed;
-    box-shadow: none;
-    background-color: transparent;
-}
-
-.btn-return {
-    border-color: var(--accent-orange);
-    color: var(--accent-orange);
-}
-.btn-return:hover {
-    background-color: rgba(255, 102, 0, 0.1);
-    box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
-}
-
-/* --- バトル演出用スタイル --- */
-.btn-attack {
-    color: var(--danger-red) !important;
-    border-color: var(--danger-red) !important;
+.stack-fight-btn {
+    margin-top: 4px;
+    align-self: flex-start;
+    padding: 5px 14px !important;
+    font-size: 13px !important;
+    background: rgba(255,92,92,0.75) !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600 !important;
     animation: pulse-red 1.5s infinite;
 }
-.btn-attack:hover {
-    background-color: rgba(255, 51, 51, 0.1) !important;
-    box-shadow: 0 0 20px rgba(255, 51, 51, 0.5) !important;
+
+/* ============================================================
+   Tension Panel
+   ============================================================ */
+.tension-panel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--surface-fill);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+.tension-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-dim);
+    border-radius: var(--radius-xs);
+    padding: 3px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    transition: all 0.12s;
+}
+.tension-btn:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    background: rgba(96,205,255,0.08);
+}
+.tension-btn.tension-active {
+    border-color: var(--danger-red);
+    color: var(--danger-red);
+    background: rgba(255,92,92,0.10);
+    font-weight: 700;
 }
 
-.btn-flee {
-    color: #ffee00 !important;
-    border-color: #ffee00 !important;
-}
-.btn-flee:hover {
-    background-color: rgba(255, 238, 0, 0.1) !important;
-    box-shadow: 0 0 15px rgba(255, 238, 0, 0.3) !important;
-}
-
-@keyframes pulse-red {
-    0% { box-shadow: 0 0 5px rgba(255, 51, 51, 0.2); text-shadow: 0 0 2px rgba(255,51,51,0.5); }
-    50% { box-shadow: 0 0 15px rgba(255, 51, 51, 0.6); text-shadow: 0 0 8px rgba(255,51,51,1); }
-    100% { box-shadow: 0 0 5px rgba(255, 51, 51, 0.2); text-shadow: 0 0 2px rgba(255,51,51,0.5); }
-}
-
-.battle-mode-bg {
-    box-shadow: inset 0 0 40px rgba(255, 51, 51, 0.15) !important;
-    border-color: rgba(255, 51, 51, 0.5) !important;
-    transition: all 0.3s ease;
-}
-
-/* 拠点用スタイル */
+/* ============================================================
+   Base Panel (dungeon/shop/lab tabs)
+   ============================================================ */
 .base-panel {
     flex-grow: 1;
     height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding-right: 5px;
+    gap: 8px;
+    padding-right: 4px;
 }
 
+/* Tab row */
+#baseTabRow {
+    display: flex;
+    gap: 2px;
+    background: var(--panel-bg-alt);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+#baseTabRow::-webkit-scrollbar { display: none; }
+#baseTabRow .tab-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: var(--radius-xs);
+}
+
+/* Dungeon buttons */
 .dungeon-btn {
-    background-color: #0a0704;
+    background: var(--surface-fill);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    padding: 16px;
+    padding: 12px 14px;
     text-align: left;
     cursor: pointer;
-    font-family: 'MS PGothic', sans-serif;
-    font-size: 16px;
-    display: flex;
-    justify-content: space-between;
-}
-.dungeon-btn:hover { background-color: rgba(212, 168, 48, 0.10); border-color: var(--accent-cyan); color: var(--accent-cyan); }
-.dungeon-btn.cleared { border-color: #3a2c10; color: #6a5a30; }
-.dungeon-btn.cleared::after { content: "✓ 討伐済み"; color: var(--accent-green); font-size: 0.8em; }
-
-.lab-item {
-    border: 1px dashed var(--border-color);
-    padding: 14px;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    border-radius: var(--radius-md);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 15px;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    box-shadow: var(--shadow-1);
 }
-.lab-desc { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+.dungeon-btn:hover {
+    background: var(--surface-fill-s);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+.dungeon-btn.cleared {
+    border-color: rgba(255,255,255,0.06);
+    color: var(--text-disabled);
+    background: rgba(255,255,255,0.02);
+}
+.dungeon-btn.cleared::after {
+    content: "✓ 討伐済み";
+    color: var(--accent-green);
+    font-size: 11px;
+    font-weight: 600;
+}
 
-.hidden { display: none !important; }
+/* Lab items */
+.lab-item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    background: var(--surface-fill);
+    transition: background 0.12s;
+}
+.lab-item:hover { background: var(--surface-fill-s); }
+.lab-desc { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
 
-/* ===== ストーリーモーダル ===== */
+/* ============================================================
+   Shop Section Headers
+   ============================================================ */
+.shop-section-header {
+    color: var(--accent-cyan);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+    margin-top: 4px;
+}
+
+/* ============================================================
+   Medal System
+   ============================================================ */
+.medal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    padding: 4px 0;
+}
+.medal-card {
+    background: rgba(198,176,245,0.05);
+    border: 1px solid rgba(198,176,245,0.14);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    transition: background 0.12s;
+}
+.medal-card:hover { background: rgba(198,176,245,0.10); }
+.medal-card.medal-equipped {
+    background: rgba(198,176,245,0.16);
+    border-color: var(--accent-magenta);
+    box-shadow: 0 0 8px rgba(198,176,245,0.18);
+}
+.medal-name { color: var(--text-main); font-weight: 700; font-size: 13px; }
+.medal-desc { color: var(--accent-green); font-size: 11px; }
+.medal-ap   { font-size: 11px; color: var(--text-dim); }
+.btn-equipped {
+    border-color: var(--accent-magenta) !important;
+    color: var(--accent-magenta) !important;
+    background: rgba(198,176,245,0.10) !important;
+}
+
+/* ============================================================
+   Battle mode visual indicator
+   ============================================================ */
+.battle-mode-bg {
+    box-shadow: 0 0 0 1px rgba(255,92,92,0.25) inset !important;
+    border-color: rgba(255,92,92,0.25) !important;
+    transition: all 0.3s ease;
+}
+
+/* ============================================================
+   Fishing Panel
+   ============================================================ */
+.fishing-panel-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: var(--panel-bg);
+    z-index: 10;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-3);
+}
+
+/* ============================================================
+   Story Modal
+   ============================================================ */
 .story-modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.93);
+    background: rgba(0,0,0,0.80);
+    backdrop-filter: blur(16px) saturate(1.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
     z-index: 200;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.3s ease;
 }
 .story-modal.hidden { display: none; }
 
 .story-panel {
-    max-width: 560px;
+    max-width: 520px;
     width: 90%;
-    padding: 40px 44px;
-    border: 1px solid var(--accent-cyan);
-    box-shadow: 0 0 40px rgba(180, 120, 20, 0.30), inset 0 0 30px rgba(0,0,0,0.6);
-    background: rgba(4, 12, 22, 0.97);
+    padding: 36px 40px;
+    background: rgba(43,43,43,0.95);
+    border: 1px solid var(--border-alt);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
-    animation: fadeIn 0.5s ease;
+    gap: 22px;
+    animation: slideUp 0.3s ease;
 }
-
 .story-location {
     color: var(--accent-cyan);
-    font-family: 'Courier New', monospace;
-    font-size: 15px;
-    letter-spacing: 3px;
-    text-shadow: 0 0 8px rgba(212, 168, 48, 0.7);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     text-align: center;
 }
-
 .story-text {
     color: var(--text-main);
     font-size: 15px;
-    line-height: 2.1;
+    line-height: 2;
     text-align: center;
-    min-height: 80px;
     white-space: pre-wrap;
+    min-height: 60px;
 }
-
 .story-enter-btn {
-    width: auto;
-    min-width: 200px;
-    font-size: 15px;
-    letter-spacing: 4px;
+    min-width: 180px;
+    font-size: 14px;
+    letter-spacing: 0.06em;
     padding: 10px 24px;
 }
 
-/* スキュー（グリッチ）アニメーション定義 */
-@keyframes glitch {
-    0% { transform: skew(0deg); }
-    95% { transform: skew(0deg); }
-    96% { transform: skew(5deg) translateX(2px); }
-    97% { transform: skew(-5deg) translateX(-2px); }
-    98% { transform: skew(0deg); }
-    100% { transform: skew(0deg); }
-}
-
 /* ============================================================
-   モバイル専用要素（デスクトップでは非表示）
+   Utilities
    ============================================================ */
-.mobile-only {
-    display: none !important;
+.hidden { display: none !important; }
+h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main); }
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,92,92,0); }
+    50%       { box-shadow: 0 0 0 4px rgba(255,92,92,0.28); }
+}
+@keyframes pulse-blue {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,120,212,0); }
+    50%       { box-shadow: 0 0 0 3px rgba(0,120,212,0.35); }
+}
+@keyframes glitch {
+    0%, 92%, 100% { transform: skew(0deg); }
+    94%  { transform: skew(4deg) translateX(2px); }
+    97%  { transform: skew(-4deg) translateX(-2px); }
 }
 
 /* ============================================================
-   スマホレイアウト (max-width: 768px)
+   Mobile-only elements (hidden on desktop)
+   ============================================================ */
+.mobile-only { display: none !important; }
+
+/* ============================================================
+   MOBILE LAYOUT  (max-width: 768px)
    ============================================================ */
 @media (max-width: 768px) {
 
-    /* ---- 基本リセット ---- */
     body {
         display: block !important;
         height: 100dvh;
@@ -425,16 +894,14 @@ body {
         margin: 0;
     }
 
-    .mobile-only {
-        display: flex !important;
-    }
+    .mobile-only { display: flex !important; }
 
-    /* ---- モバイル上部ステータスバー ---- */
+    /* ---- Top status bar ---- */
     #mobileTopBar {
         position: fixed;
         top: 0; left: 0; right: 0;
         height: 44px;
-        background: linear-gradient(180deg, #1a1005 0%, #0e0a06 100%);
+        background: var(--panel-bg);
         border-bottom: 1px solid var(--border-color);
         z-index: 200;
         display: flex !important;
@@ -446,7 +913,7 @@ body {
 
     #mobileLocDisplay {
         color: var(--accent-cyan);
-        font-weight: bold;
+        font-weight: 700;
         font-size: 12px;
         white-space: nowrap;
         overflow: hidden;
@@ -472,24 +939,25 @@ body {
 
     #mobileHpBar {
         flex: 1;
-        height: 6px;
-        background: #1a1005;
-        border-radius: 3px;
+        height: 5px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 100px;
         overflow: hidden;
-        border: 1px solid var(--border-color);
         min-width: 40px;
     }
 
     #mobileHpFill {
         height: 100%;
         background: var(--accent-green);
+        border-radius: 100px;
         transition: width 0.3s, background 0.3s;
         width: 100%;
     }
 
     #mobileHpText {
-        color: var(--accent-orange);
+        color: var(--text-main);
         font-size: 12px;
+        font-family: var(--font-mono);
         white-space: nowrap;
         flex-shrink: 0;
     }
@@ -497,16 +965,17 @@ body {
     .mob-gold {
         color: var(--accent-orange);
         font-size: 12px;
+        font-family: var(--font-mono);
         white-space: nowrap;
         flex-shrink: 0;
     }
 
-    /* ---- ボトムナビ ---- */
+    /* ---- Bottom nav ---- */
     #mobileBottomNav {
         position: fixed;
         bottom: 0; left: 0; right: 0;
         height: 54px;
-        background: linear-gradient(180deg, #0e0a06 0%, #1a1005 100%);
+        background: var(--panel-bg);
         border-top: 1px solid var(--border-color);
         z-index: 200;
         display: flex !important;
@@ -519,26 +988,24 @@ body {
         border: none;
         border-right: 1px solid var(--border-color);
         color: var(--text-dim);
-        font-family: inherit;
-        font-size: 11px;
+        font-family: var(--font-ui);
+        font-size: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 2px;
         cursor: pointer;
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.12s, background 0.12s;
         padding: 0;
         -webkit-tap-highlight-color: transparent;
     }
 
-    #mobileBottomNav button:last-child {
-        border-right: none;
-    }
+    #mobileBottomNav button:last-child { border-right: none; }
 
     #mobileBottomNav button.mob-tab-active {
         color: var(--accent-cyan);
-        background: rgba(212, 168, 48, 0.08);
+        background: rgba(96,205,255,0.07);
     }
 
     #mobileBottomNav .nav-icon {
@@ -546,7 +1013,7 @@ body {
         line-height: 1;
     }
 
-    /* ---- ゲームコンテナ ---- */
+    /* ---- Game container ---- */
     .game-container {
         display: flex !important;
         flex-direction: column !important;
@@ -566,7 +1033,7 @@ body {
         overflow: hidden !important;
     }
 
-    /* ---- 中央パネル（常時表示） ---- */
+    /* ---- Center panel (always visible) ---- */
     .center-panel {
         display: flex !important;
         flex-direction: column !important;
@@ -581,6 +1048,7 @@ body {
         flex-shrink: 0 !important;
         height: 160px !important;
         min-height: 0 !important;
+        border-radius: 0 !important;
     }
 
     #baseScene {
@@ -607,25 +1075,35 @@ body {
         box-sizing: border-box !important;
     }
 
-    /* ---- 操作ボタン ---- */
+    /* ---- Action buttons ---- */
     .action-group {
         flex-shrink: 0 !important;
         display: flex !important;
-        gap: 8px !important;
+        gap: 6px !important;
         padding: 6px 8px !important;
-        background: var(--panel-bg) !important;
-        border-top: 1px solid var(--border-color) !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        box-shadow: none !important;
         box-sizing: border-box !important;
     }
 
     .action-btn {
         flex: 1 !important;
-        padding: 12px 4px !important;
+        padding: 10px 4px !important;
         font-size: 14px !important;
-        letter-spacing: 2px !important;
+        letter-spacing: 0.02em !important;
     }
 
-    /* ---- 左・右パネルをフルスクリーンオーバーレイ化 ---- */
+    .action-group .btn-attack {
+        font-size: 15px !important;
+        min-height: 48px;
+    }
+    .action-group .btn-flee {
+        min-height: 48px;
+    }
+
+    /* ---- Side panels → fullscreen overlays ---- */
     .left-panel, .right-panel {
         display: none !important;
         position: fixed !important;
@@ -641,6 +1119,9 @@ body {
         -webkit-overflow-scrolling: touch !important;
         padding: 8px !important;
         box-sizing: border-box !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
         gap: 8px !important;
     }
 
@@ -649,269 +1130,24 @@ body {
         display: flex !important;
     }
 
-    /* ---- その他調整 ---- */
-    .equip-grid {
-        grid-template-columns: 1fr !important;
-        font-size: 12px;
-    }
-
-    .inventory-list li {
-        font-size: 12px;
-    }
+    /* ---- Misc mobile adjustments ---- */
+    .equip-grid { grid-template-columns: 1fr !important; font-size: 12px; }
+    .inventory-list li { font-size: 12px; }
 
     .story-panel {
         max-width: 100%;
         padding: 20px 16px;
+        border-radius: var(--radius-lg);
     }
-}
 
-/* ゲージ行（HP / EXP） */
-.gauge-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 0;
-}
-.gauge-label {
-    font-size: 12px;
-    font-weight: bold;
-    min-width: 28px;
-    flex-shrink: 0;
-}
-.gauge-track {
-    flex: 1;
-    height: 7px;
-    background: #1a1005;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-.gauge-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.3s, background 0.3s;
-}
-.gauge-text {
-    font-size: 11px;
-    min-width: 48px;
-    text-align: right;
-    flex-shrink: 0;
-    font-family: 'Courier New', monospace;
-}
-
-/* ============================================================
-   戦闘スキルボタン
-   ============================================================ */
-.skill-btn-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 4px 0 2px;
-    width: 100%;
-    flex-basis: 100%;   /* 必ず1行を占有 */
-    order: -1;           /* 常に最上段 */
-}
-
-.skill-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    background: rgba(90, 40, 140, 0.25);
-    border: 1px solid var(--accent-magenta);
-    border-radius: 4px;
-    color: var(--accent-magenta);
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    white-space: nowrap;
-}
-
-.skill-action-btn:hover {
-    background: rgba(160, 80, 216, 0.35);
-    transform: translateY(-1px);
-}
-
-.skill-action-btn:active {
-    transform: translateY(0);
-}
-
-.skill-action-btn .sk-name {
-    font-size: 13px;
-}
-
-.skill-action-btn .sk-lv {
-    font-size: 11px;
-    opacity: 0.75;
-    margin-left: 2px;
-}
-
-/* バトル中の通常攻撃・逃走ボタンをコンパクトに */
-/* バトル中の通常攻撃ボタン：横幅を大きく取る */
-.action-group .btn-attack {
-    font-size: 18px !important;
-    letter-spacing: 3px !important;
-    flex: 3 1 0 !important;
-    min-height: 56px;
-    min-width: 0;
-}
-
-/* 逃走ボタン：コンパクトに右寄せ */
-.action-group .btn-flee {
-    font-size: 14px !important;
-    letter-spacing: 1px !important;
-    flex: 1 1 0 !important;
-    min-height: 56px;
-    min-width: 70px;
-    max-width: 100px;
-}
-
-/* スキル行が表示されるときのaction-groupの高さ */
-.skill-btn-row:not(.hidden) ~ * {
-    /* スキル行のすぐ下に配置 */
-}
-
-@media (max-width: 768px) {
-    .skill-action-btn {
-        font-size: 12px;
-        padding: 5px 10px;
-    }
-    .action-group .btn-attack {
-        font-size: 16px !important;
-        min-height: 50px;
-    }
-    .action-group .btn-flee {
-        min-height: 50px;
-    }
-}
-
-/* ============================================================
-   スタックパネル
-   ============================================================ */
-.stack-panel {
-    padding: 8px 12px;
-    background: rgba(180, 30, 10, 0.12);
-    border-top: 1px solid var(--danger-red);
-    border-bottom: 1px solid var(--danger-red);
-    font-size: 13px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-}
-
-.stack-fight-btn {
-    margin-top: 4px;
-    align-self: flex-start;
-    padding: 5px 14px !important;
-    font-size: 13px !important;
-    animation: pulse-red 1.5s infinite;
-}
-
-/* ============================================================
-   テンションパネル
-   ============================================================ */
-.tension-panel {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 10px;
-    background: rgba(20, 8, 35, 0.6);
-    border-top: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.tension-btn {
-    background: transparent;
-    border: 1px solid var(--text-dim);
-    color: var(--text-dim);
-    border-radius: 3px;
-    padding: 3px 10px;
-    font-size: 11px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-    transition: all 0.15s;
-}
-
-.tension-btn:hover {
-    border-color: var(--accent-orange);
-    color: var(--accent-orange);
-}
-
-.tension-btn.tension-active {
-    border-color: var(--danger-red);
-    color: var(--danger-red);
-    background: rgba(216, 48, 48, 0.15);
-    font-weight: bold;
-}
-
-/* === メダルシステム === */
-.medal-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    padding: 6px 0;
-}
-.medal-card {
-    background: rgba(80,50,120,0.15);
-    border: 1px solid #443366;
-    border-radius: 6px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 12px;
-}
-.medal-card.medal-equipped {
-    background: rgba(100,60,180,0.30);
-    border-color: #aa88ff;
-    box-shadow: 0 0 6px rgba(160,100,255,0.3);
-}
-.medal-name { color: var(--text-main); font-weight: bold; font-size: 13px; }
-.medal-desc { color: var(--accent-green); font-size: 11px; }
-.medal-ap   { font-size: 11px; }
-.btn-equipped { border-color: #aa88ff; color: #aa88ff; }
-.shop-section-header {
-    color: var(--accent-cyan);
-    border-top: 1px dashed #334;
-    padding-top: 8px;
-    margin-top: 4px;
-    font-size: 14px;
-}
-
-/* === モバイルUI修正 === */
-
-/* タブ行の横スクロール（6ボタン対応） */
-#baseTabRow {
-    scrollbar-width: none;
-}
-#baseTabRow::-webkit-scrollbar { display: none; }
-#baseTabRow .tab-btn {
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-/* 釣りパネル：デスクトップはオーバーレイ、モバイルはfixed */
-.fishing-panel-overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    background: var(--bg-panel);
-    z-index: 10;
-    padding: 12px;
-    border: 1px solid var(--accent-cyan);
-    border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-    /* タブボタンをコンパクトに */
+    /* Tab buttons compact */
     #baseTabRow .tab-btn {
-        font-size: 12px !important;
+        font-size: 11px !important;
         padding: 5px 8px !important;
         letter-spacing: 0 !important;
     }
 
-    /* 釣りパネルをfixedオーバーレイに */
+    /* Fishing panel → fixed overlay */
     .fishing-panel-overlay {
         position: fixed !important;
         top: 44px !important;
@@ -925,47 +1161,15 @@ body {
         z-index: 150 !important;
     }
 
-    /* メダルグリッド：モバイルでは2列に制限 */
-    .medal-grid {
-        grid-template-columns: 1fr 1fr !important;
-    }
-
-    /* メダルカードのフォントを小さく */
-    .medal-card {
-        font-size: 11px !important;
-        padding: 6px !important;
-    }
+    /* Medal grid 2-column on mobile */
+    .medal-grid { grid-template-columns: 1fr 1fr !important; }
+    .medal-card { font-size: 11px !important; padding: 7px !important; }
     .medal-name { font-size: 12px !important; }
 
-    /* スタックパネルのフォント */
-    .stack-panel {
-        font-size: 12px !important;
-        padding: 6px 8px !important;
-    }
+    /* Stack panel */
+    .stack-panel { font-size: 12px !important; padding: 6px 8px !important; }
 
-    /* スキルボタン行のラップ */
-    .skill-btn-row {
-        gap: 4px !important;
-        padding: 4px 6px !important;
-    }
-    .skill-btn-row .mini-btn {
-        font-size: 11px !important;
-        padding: 4px 6px !important;
-    }
-}
-
-/* === ダブルタップズーム防止 === */
-* {
-    touch-action: manipulation;
-}
-html, body {
-    -webkit-text-size-adjust: 100%;
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-}
-/* ログテキストはテキスト選択を許可 */
-#battleLog, #baseLog, .log-entry {
-    user-select: text;
-    -webkit-user-select: text;
+    /* Skill buttons row */
+    .skill-btn-row { gap: 4px !important; padding: 4px 6px !important; }
+    .skill-action-btn { font-size: 12px; padding: 5px 10px; }
 }
