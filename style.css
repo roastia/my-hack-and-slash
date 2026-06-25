@@ -953,3 +953,19 @@ body {
         padding: 4px 6px !important;
     }
 }
+
+/* === ダブルタップズーム防止 === */
+* {
+    touch-action: manipulation;
+}
+html, body {
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+/* ログテキストはテキスト選択を許可 */
+#battleLog, #baseLog, .log-entry {
+    user-select: text;
+    -webkit-user-select: text;
+}
