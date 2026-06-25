@@ -22,24 +22,12 @@ const fishCatalog = [
 function openFishing() {
     fishingState.active = true;
     fishingState.phase  = 'idle';
-    // モバイル時は中央パネルを隠してフィッシングパネルを前面に
-    if (window.matchMedia('(max-width: 768px)').matches) {
-        const centerPanel = document.querySelector('.center-panel');
-        if (centerPanel) centerPanel.style.display = 'none';
-        document.querySelector('.left-panel') && document.querySelector('.left-panel').classList.remove('mob-active');
-        document.querySelector('.right-panel') && document.querySelector('.right-panel').classList.remove('mob-active');
-    }
     renderFishing();
 }
 
 function closeFishing() {
     fishingState.active = false;
     fishingState.phase  = 'idle';
-    // モバイル時は中央パネルを戻す
-    if (window.matchMedia('(max-width: 768px)').matches) {
-        const centerPanel = document.querySelector('.center-panel');
-        if (centerPanel) centerPanel.style.display = '';
-    }
     const panel = document.getElementById('fishingPanel');
     if (panel) panel.classList.add('hidden');
     renderBaseScene();
