@@ -41,6 +41,28 @@ const stepsToNextFloor = 7;
 let hunger    = 100;
 let maxHunger = 100;  // 道具屋スキルで拡張可能
 
+
+// --- SPシステム（探索・戦闘スキル共有）---
+let sp    = 100;
+let maxSp = 100;
+
+// --- 渇きシステム ---
+let thirst    = 100;
+let maxThirst = 100;
+
+// --- 拡張ステータス ---
+let baseMagic  = 0;   // 魔法攻撃・精神ステータス（道具屋スキルで上昇）
+let baseSpirit = 0;   // 精神（魔法防御 + バフ乗算）
+
+// --- テンションシステム ---
+let tension = 1;      // 1=通常 / 2=高揚 / 3=狂乱
+
+// --- スタック・エンカウント ---
+let enemyStack = [];  // { name, hp, maxHp, atk, exp, speed, type, magicAtk }
+
+// --- 素材ストック ---
+let materials = {};   // { '薬草': 3, '鉄くず': 2, ... }
+
 // --- 戦闘スキル習得状況 ---
 // { skillId: { learned: true, uses: 0 } }
 let skillBook = {};

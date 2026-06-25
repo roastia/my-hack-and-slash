@@ -142,3 +142,34 @@ function eatFood(index) {
     updateUI();
 }
 
+
+// 水を飲む
+function drinkWater(index) {
+    const item = inventory[index];
+    if (!item || item.type !== 'water') return;
+    thirst = Math.min(maxThirst, thirst + (item.thirstRestore || 0));
+    if (item.sp) sp = Math.min(maxSp, sp + item.sp);
+    inventory.splice(index, 1);
+    addLog(`💧 <span style="color:#88ccff">【${item.name}】</span> を飲んだ。渇き +${item.thirstRestore}${item.sp ? ' / SP +' + item.sp : ''}`);
+    updateUI();
+    saveData();
+}
+
+// SP回復ポーション使用
+function useSpPotion(index) {
+    const item = inventory[index];
+    if (!item || item.type !== 'sp_potion') return;
+    sp = Math.min(maxSp, sp + (item.spRestore || 0));
+    inventory.splice(index, 1);
+    addLog(`✦ <span style="color:#c080ff">【${item.name}】</span> を使った。SP +${item.spRestore}`);
+    updateUI();
+    saveData();
+}
+
+// テンション変更
+function setTension(t) {
+    tension = Math.max(1, Math.min(3, t));
+    const labels = ['通常', '高揚', '狂乱'];
+    addLog(`<span style="color:var(--accent-orange)">テンション → ${labels[tension-1]}！ (×${[1.0,1.3,1.8][tension-1]} EXP)</span>`);
+    updateUI();
+}

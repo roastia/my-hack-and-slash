@@ -157,85 +157,61 @@ const dungeons = [
 
 
 const enemiesBase = [
-    // ── 弱敵 (hp 2-7, atk 1-3) ──────────────────────────────
-    { name: 'スライム',         hp:  2, exp:  1, atk:  1 , speed: 6 },
-    { name: 'おおありくい',     hp:  3, exp:  2, atk:  1 , speed: 8 },
-    { name: 'こうもり',         hp:  4, exp:  2, atk:  2 , speed: 14 },
-    { name: 'ゴブリン',         hp:  3, exp:  2, atk:  3 , speed: 10 },
-    { name: 'どくきのこ',       hp:  5, exp:  2, atk:  1 , speed: 4 },
-    { name: 'スライムもどき',   hp:  4, exp:  3, atk:  2 , speed: 6 },
-    { name: 'ドラキー',         hp:  6, exp:  2, atk:  2 , speed: 13 },
-    { name: 'おばけネズミ',     hp:  5, exp:  2, atk:  2 , speed: 12 },
-    { name: 'みずわらし',       hp:  7, exp:  3, atk:  3 , speed: 9 },
-    { name: 'うごくせきぞう',   hp:  4, exp:  3, atk:  2 , speed: 5 },
-    { name: 'ぶよぶよ',         hp:  4, exp:  3, atk:  2 , speed: 5 },
-    { name: 'はぐれスライム',   hp:  3, exp:  2, atk:  1 , speed: 7 },
-    // ── 中敵 (hp 8-18, atk 3-6) ──────────────────────────────
-    { name: 'オーク兵',         hp:  8, exp:  4, atk:  3 , speed: 7 },
-    { name: 'スケルトン',       hp:  6, exp:  3, atk:  4 , speed: 9 },
-    { name: 'ゾンビ',           hp: 10, exp:  5, atk:  4 , speed: 5 },
-    { name: '毒トカゲ',         hp: 12, exp:  6, atk:  3 , speed: 10 },
-    { name: 'マミー',           hp:  9, exp:  5, atk:  5 , speed: 6 },
-    { name: '不良品ゴーレム',   hp: 11, exp:  5, atk:  4 , speed: 6 },
-    { name: 'くさったしかばね', hp:  7, exp:  4, atk:  4 , speed: 5 },
-    { name: '亡霊騎士',         hp: 13, exp:  7, atk:  3 , speed: 9 },
-    { name: 'バブルスライム',   hp: 14, exp:  7, atk:  5 , speed: 7 },
-    { name: 'どくバチ',         hp: 10, exp:  6, atk:  5 , speed: 16 },
-    { name: 'おにこぞう',       hp:  8, exp:  5, atk:  6 , speed: 9 },
-    { name: 'ロックバード',     hp: 16, exp:  8, atk:  4 , speed: 12 },
-    { name: 'タートルナイト',   hp: 18, exp:  9, atk:  3 , speed: 4 },
-    { name: 'きとうし',         hp: 15, exp:  9, atk:  6 , speed: 11 },
-    { name: 'ダークピクシー',   hp: 13, exp:  8, atk:  5 , speed: 14 },
-    { name: 'ひとくいばこ',     hp: 11, exp:  7, atk:  4 , speed: 7 },
-    { name: 'マジシャン',       hp: 17, exp:  9, atk:  5 , speed: 9 },
-    { name: '影武者',           hp:  9, exp:  5, atk:  5 , speed: 15 },
-    { name: 'こわれた戦士',     hp: 12, exp:  7, atk:  4 , speed: 7 },
-    { name: 'ゴーストアーマー', hp: 14, exp:  8, atk:  3 , speed: 8 },
-    { name: '狂った騎士',       hp: 12, exp:  6, atk:  5 , speed: 9 },
-    { name: '毒花',             hp: 15, exp:  8, atk:  2 , speed: 5 },
-    // ── 大型敵 (hp 20-38, atk 6-11) ──────────────────────────
-    { name: 'サイクロプス',     hp: 20, exp: 12, atk:  6 , speed: 6 },
-    { name: '星間海賊',         hp: 22, exp: 11, atk:  7 , speed: 10 },
-    { name: 'ストーンゴーレム', hp: 25, exp: 13, atk:  8 , speed: 5 },
-    { name: 'グリフィン',       hp: 20, exp: 12, atk:  8 , speed: 13 },
-    { name: 'ヴァンパイア',     hp: 28, exp: 14, atk:  7 , speed: 11 },
-    { name: 'ハーピー',         hp: 24, exp: 13, atk:  9 , speed: 14 },
-    { name: 'リザードマン',     hp: 30, exp: 15, atk:  7 , speed: 9 },
-    { name: 'バジリスク',       hp: 22, exp: 13, atk:  8 , speed: 9 },
-    { name: 'メデューサ',       hp: 27, exp: 14, atk:  8 , speed: 10 },
-    { name: 'ダークプリースト', hp: 25, exp: 14, atk: 10 , speed: 8 },
-    { name: 'タイガーウルフ',   hp: 32, exp: 16, atk:  8 , speed: 13 },
-    { name: '死霊騎士',         hp: 35, exp: 18, atk:  9 , speed: 8 },
-    { name: 'アイアンゴーレム', hp: 20, exp: 11, atk:  9 , speed: 5 },
-    { name: 'ホラービースト',   hp: 30, exp: 16, atk: 10 , speed: 9 },
-    { name: '幻の剣士',         hp: 28, exp: 15, atk:  9 , speed: 12 },
-    { name: '黒竜の仔',         hp: 33, exp: 17, atk:  9 , speed: 11 },
-    { name: '呪われた剣士',     hp: 26, exp: 14, atk: 10 , speed: 10 },
-    { name: '鉄の蜘蛛',         hp: 30, exp: 16, atk: 11 , speed: 8 },
-    { name: '迷宮の番人',       hp: 38, exp: 19, atk:  8 , speed: 7 },
-    // ── 強敵 (hp 40-80, atk 12-16) ───────────────────────────
-    { name: 'ダークナイト',     hp: 40, exp: 22, atk: 12 , speed: 10 },
-    { name: 'ワイバーン',       hp: 35, exp: 20, atk: 13 , speed: 15 },
-    { name: 'ハイドラ',         hp: 45, exp: 24, atk: 12 , speed: 9 },
-    { name: '邪竜の化身',       hp: 38, exp: 21, atk: 13 , speed: 12 },
-    { name: '魔王の刺客',       hp: 42, exp: 23, atk: 12 , speed: 12 },
-    { name: '魔法剣士',         hp: 50, exp: 26, atk: 11 , speed: 10 },
-    { name: 'ゾンビドラゴン',   hp: 44, exp: 24, atk: 13 , speed: 8 },
-    { name: '闇の剣士',         hp: 48, exp: 25, atk: 14 , speed: 14 },
-    { name: '魔界の大賢者',     hp: 40, exp: 22, atk: 15 , speed: 9 },
-    { name: '不死の騎士王',     hp: 55, exp: 28, atk: 13 , speed: 9 },
-    { name: '死神',             hp: 45, exp: 25, atk: 14 , speed: 13 },
-    { name: '千年亡霊',         hp: 60, exp: 30, atk: 14 , speed: 7 },
-    { name: '神喰らい',         hp: 50, exp: 27, atk: 15 , speed: 11 },
-    { name: '世界を喰う竜',     hp: 65, exp: 33, atk: 14 , speed: 10 },
-    { name: '邪神の化身',       hp: 55, exp: 30, atk: 16 , speed: 11 },
-    { name: '絶対なる悪',       hp: 70, exp: 36, atk: 15 , speed: 10 },
-    { name: '破滅の使者',       hp: 80, exp: 40, atk: 16 , speed: 12 }
+    // 邪霊族 (magicAtk: 魔法ダメージあり)
+    { name: 'スライム',     hp: 8,   atk: 2,  exp: 4,  speed: 4,  type: '粘体族', magicAtk: 0 },
+    { name: '大スライム',   hp: 14,  atk: 3,  exp: 7,  speed: 5,  type: '粘体族', magicAtk: 0 },
+    { name: '毒スライム',   hp: 12,  atk: 4,  exp: 9,  speed: 6,  type: '粘体族', magicAtk: 1, mat: '薬草' },
+    { name: 'ゴブリン',     hp: 12,  atk: 4,  exp: 8,  speed: 8,  type: '小鬼族', magicAtk: 0, mat: '布切れ' },
+    { name: 'ゴブリン盗賊', hp: 15,  atk: 6,  exp: 12, speed: 11, type: '小鬼族', magicAtk: 0, mat: '布切れ' },
+    { name: 'コボルト',     hp: 18,  atk: 5,  exp: 11, speed: 7,  type: '獣人族', magicAtk: 0, mat: '骨片' },
+    { name: 'オーク',       hp: 30,  atk: 8,  exp: 18, speed: 6,  type: '鬼族',   magicAtk: 0, mat: '鉄くず' },
+    { name: 'オーク剣士',   hp: 35,  atk: 10, exp: 22, speed: 7,  type: '鬼族',   magicAtk: 0, mat: '鉄くず' },
+    { name: 'ゾンビ',       hp: 22,  atk: 7,  exp: 14, speed: 4,  type: '不死族', magicAtk: 2, mat: '骨片' },
+    { name: 'スケルトン',   hp: 20,  atk: 8,  exp: 15, speed: 6,  type: '不死族', magicAtk: 1, mat: '骨片' },
+    { name: '呪い師スケルトン', hp: 18, atk: 6, exp: 18, speed: 5, type: '不死族', magicAtk: 5, mat: '魔石' },
+    { name: 'ヘビ',         hp: 15,  atk: 5,  exp: 10, speed: 10, type: '爬虫族', magicAtk: 0, mat: '薬草' },
+    { name: '毒ヘビ',       hp: 18,  atk: 7,  exp: 14, speed: 12, type: '爬虫族', magicAtk: 2, mat: '薬草' },
+    { name: 'バット',       hp: 10,  atk: 4,  exp: 8,  speed: 13, type: '鳥族',   magicAtk: 0 },
+    { name: '大コウモリ',   hp: 20,  atk: 7,  exp: 16, speed: 14, type: '鳥族',   magicAtk: 0 },
+    { name: 'コカトリス',   hp: 28,  atk: 10, exp: 22, speed: 11, type: '鳥族',   magicAtk: 3, mat: '骨片' },
+    { name: 'ウルフ',       hp: 25,  atk: 9,  exp: 16, speed: 12, type: '獣族',   magicAtk: 0 },
+    { name: '炎狼',         hp: 30,  atk: 12, exp: 24, speed: 13, type: '獣族',   magicAtk: 4, mat: '魔石' },
+    { name: 'ゴーレム',     hp: 55,  atk: 14, exp: 30, speed: 4,  type: '機械族', magicAtk: 0, mat: '鉄くず' },
+    { name: '不良品ゴーレム', hp: 40, atk: 10, exp: 22, speed: 6, type: '機械族', magicAtk: 0, mat: '鉄くず' },
+    { name: 'ミミック',     hp: 35,  atk: 13, exp: 28, speed: 8,  type: '不定形', magicAtk: 0, mat: '布切れ' },
+    { name: 'サラマンダー', hp: 40,  atk: 14, exp: 32, speed: 9,  type: '爬虫族', magicAtk: 6, mat: '魔石' },
+    { name: '毒キノコ',     hp: 20,  atk: 6,  exp: 12, speed: 3,  type: '植物族', magicAtk: 3, mat: '薬草' },
+    { name: '暗黒騎士',     hp: 60,  atk: 18, exp: 45, speed: 9,  type: '人族',   magicAtk: 0, mat: '鉄くず' },
+    { name: '魔法使い兵',   hp: 25,  atk: 8,  exp: 38, speed: 8,  type: '人族',   magicAtk: 10, mat: '魔石' },
+    { name: 'マンドレイク',  hp: 30,  atk: 10, exp: 26, speed: 5,  type: '植物族', magicAtk: 4, mat: '薬草' },
+    { name: 'ウィスプ',     hp: 18,  atk: 5,  exp: 22, speed: 15, type: '邪霊族', magicAtk: 8, mat: '魔石' },
+    { name: 'バンシー',     hp: 22,  atk: 7,  exp: 28, speed: 13, type: '邪霊族', magicAtk: 9, mat: '魔石' },
+    { name: 'サキュバス',   hp: 35,  atk: 12, exp: 40, speed: 11, type: '悪魔族', magicAtk: 7, mat: '布切れ' },
+    { name: 'デーモン',     hp: 70,  atk: 20, exp: 55, speed: 10, type: '悪魔族', magicAtk: 5, mat: '魔石' },
+    { name: '竜の子',       hp: 80,  atk: 24, exp: 65, speed: 9,  type: '竜族',   magicAtk: 8, mat: '骨片' },
+    { name: 'サンドワーム', hp: 90,  atk: 22, exp: 60, speed: 5,  type: '虫族',   magicAtk: 0, mat: '骨片' },
+    { name: 'ガーゴイル',   hp: 75,  atk: 19, exp: 58, speed: 8,  type: '石族',   magicAtk: 3, mat: '鉄くず' },
+    { name: 'リッチ',       hp: 50,  atk: 14, exp: 70, speed: 7,  type: '不死族', magicAtk: 14, mat: '魔石' },
+    { name: 'ゴルゴン',     hp: 100, atk: 28, exp: 80, speed: 7,  type: '獣族',   magicAtk: 4, mat: '骨片' },
+    { name: '闇の精霊',     hp: 40,  atk: 10, exp: 60, speed: 14, type: '邪霊族', magicAtk: 16, mat: '魔石' },
 ];
 
 
 
 
+
+
+
+// ダンジョンの難易度に応じた敵プールを返す（enemiesBase全体を難易度でフィルタリング）
+// explore.js の addEnemyToStack で activeDungeon.enemies が null なら enemiesBase を使う
+// ここで明示的にダンジョン別の敵セットを定義することも可能
+function getEnemiesForDungeon(dungeon) {
+    if (!dungeon) return enemiesBase;
+    // 難易度に応じた敵の配列（enemiesBase からスライス）
+    const diff = dungeon.diff || 1;
+    // 難易度1-5: 序盤の敵, 6-10: 中盤, 11+: 終盤
+    return enemiesBase; // 全敵から選択（スケーリングで難易度調整済み）
+}
 
 // =============================================================
 // 戦闘スキルデータ
@@ -305,6 +281,57 @@ function getSkillNextThreshold(skillId) {
     return lv < 5 ? skill.levelThresholds[lv] : null;
 }
 
+
+// =============================================================
+// クラフトレシピ（浅層: 最大2素材）
+// =============================================================
+const craftMaterialTypes = ['薬草', '鉄くず', '魔石', '骨片', '布切れ'];
+
+const craftRecipes = [
+    {
+        name: 'ハーブ薬',
+        ingredients: { '薬草': 2 },
+        result: { type: 'food', name: 'ハーブ薬', hp: 35, hunger: 0 },
+        desc: '薬草×2 → HP+35回復',
+    },
+    {
+        name: '魔力の水',
+        ingredients: { '魔石': 1, '薬草': 1 },
+        result: { type: 'sp_potion', name: '魔力の水', spRestore: 50 },
+        desc: '魔石×1 + 薬草×1 → SP+50回復',
+    },
+    {
+        name: '鋼の盾片',
+        ingredients: { '鉄くず': 3 },
+        result: { type: 'shield', name: '鋼の盾片', def: 5, rarity: 1 },
+        desc: '鉄くず×3 → DEF+5の盾',
+    },
+    {
+        name: '骨の鎧',
+        ingredients: { '骨片': 2, '布切れ': 1 },
+        result: { type: 'armor', name: '骨の鎧', def: 6, spirit: 2, rarity: 1 },
+        desc: '骨片×2 + 布切れ×1 → DEF+6, 精神+2の鎧',
+    },
+    {
+        name: 'ローブ',
+        ingredients: { '布切れ': 3 },
+        result: { type: 'armor', name: 'ローブ', def: 2, spirit: 4, rarity: 1 },
+        desc: '布切れ×3 → DEF+2, 精神+4の魔法ローブ',
+    },
+    {
+        name: '鬼骨の刃',
+        ingredients: { '骨片': 2, '鉄くず': 2 },
+        result: { type: 'weapon', name: '鬼骨の刃', atk: 10, rarity: 2 },
+        desc: '骨片×2 + 鉄くず×2 → ATK+10の武器',
+    },
+    {
+        name: '魔封の水筒',
+        ingredients: { '魔石': 3 },
+        result: { type: 'water', name: '魔封の水筒', thirstRestore: 60, sp: 20 },
+        desc: '魔石×3 → 渇き+60, SP+20',
+    },
+];
+
 // =============================================================
 // 道具屋アイテム
 // =============================================================
@@ -336,6 +363,18 @@ const shopItems = [
     { name: '不動の大盾書',     category: 'skill', cost: 150,
       effect: { permBaseDef: 6 },  desc: '基礎 DEF +6（永続）' },
     // ── 戦闘スキル書 ───────────────────────────────────────────
+    // ── 水・SP回復 ───────────────────────────────────────────
+    { name: '清水',       category: 'water', cost: 15,
+      water: { name: '清水',   type: 'water', thirstRestore: 40, sp: 0 },
+      desc: '渇き+40回復' },
+    { name: '聖なる水',   category: 'water', cost: 35,
+      water: { name: '聖なる水', type: 'water', thirstRestore: 80, sp: 30 },
+      desc: '渇き+80, SP+30回復' },
+    // ── 素材（購入）────────────────────────────────────────────
+    { name: '薬草',   category: 'material', cost: 10, mat: '薬草',  desc: '素材: 薬草' },
+    { name: '鉄くず', category: 'material', cost: 8,  mat: '鉄くず', desc: '素材: 鉄くず' },
+    { name: '魔石',   category: 'material', cost: 20, mat: '魔石',  desc: '素材: 魔石' },
+    // ── 戦闘スキル書 ─────────────────────────────────────────
     { name: '渾身の一撃の書', category: 'combat_skill', meritCost: 15, skillId: 'powerStrike',
       desc: '戦闘スキル「渾身の一撃」を習得' },
     { name: '連撃の書',       category: 'combat_skill', meritCost: 15, skillId: 'rapidStrike',

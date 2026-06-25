@@ -42,6 +42,18 @@ function getTotalAttack() {
         if (hunger <= 0)  total = Math.max(1, total - 3);
         else if (hunger <= 25) total = Math.max(1, total - 1);
     }
+    // 渇きペナルティ
+    if (typeof thirst !== 'undefined') {
+        if (thirst <= 0)  total = Math.max(1, total - 3);
+        else if (thirst <= 25) total = Math.max(1, total - 1);
+    }
+    return total;
+}
+
+// 精神ステータス合計（魔法防御・バフ倍率）
+function getTotalSpirit() {
+    let total = typeof baseSpirit !== 'undefined' ? baseSpirit : 0;
+    Object.values(equipment).forEach(eq => { if (eq && eq.spirit) total += eq.spirit; });
     return total;
 }
 
@@ -613,6 +625,10 @@ function updateActionButtons() {
         exploreScene.classList.add('battle-mode-bg');
         exploreBtn.style.order = '1';
         returnBtn.style.order  = '99';
+        const tp = document.getElementById('tensionPanel');
+        if (tp) tp.classList.remove('hidden');
+        const sp2 = document.getElementById('stackPanel');
+        if (sp2) sp2.classList.add('hidden');
 
         // スキルボタン列を表示
         const skillRow = document.getElementById('skillBtnRow');
@@ -644,6 +660,8 @@ function updateActionButtons() {
     } else {
         const skillRow = document.getElementById('skillBtnRow');
         if (skillRow) skillRow.classList.add('hidden');
+        const tp2 = document.getElementById('tensionPanel');
+        if (tp2) tp2.classList.add('hidden');
         if (isBossDefeated) {
             exploreBtn.disabled    = true;
             exploreBtn.textContent = '［ 最 深 部 ］';
@@ -747,6 +765,40 @@ function updateUI() {
         hungerText.textContent = hunger <= 0 ? '飢餓！' : hunger <= 25 ? '空腹…' : `${hunger}`;
     }
 
+    // 渇きバー
+    const thirstBar  = document.getElementById('thirstBarFill');
+    const thirstText = document.getElementById('thirstText');
+    if (thirstBar && thirstText && typeof thirst !== 'undefined') {
+        const tpct = Math.max(0, Math.min(100, (thirst / maxThirst) * 100));
+        thirstBar.style.width = tpct + '%';
+        if (thirst <= 0)       { thirstBar.style.background = '#4488ff'; thirstText.style.color = '#4488ff'; thirstText.textContent = '脱水！'; }
+        else if (thirst <= 25) { thirstBar.style.background = '#88aaff'; thirstText.style.color = '#88aaff'; thirstText.textContent = '渇き…'; }
+        else                   { thirstBar.style.background = '#6699dd'; thirstText.style.color = '#6699dd'; thirstText.textContent = `${thirst}`; }
+    }
+
+    // SPバー
+    const spBar  = document.getElementById('spBarFill');
+    const spText = document.getElementById('spText');
+    if (spBar && spText && typeof sp !== 'undefined') {
+        const spPct = Math.max(0, Math.min(100, (sp / maxSp) * 100));
+        spBar.style.width = spPct + '%';
+        spBar.style.background = spPct > 50 ? '#a050d8' : spPct > 20 ? '#e07828' : '#d83030';
+        spText.textContent = sp + '/' + maxSp;
+    }
+
+    // 精神ステータム表示
+    const spiritStatEl = document.getElementById('spiritStatDisplay');
+    if (spiritStatEl) spiritStatEl.textContent = getTotalSpirit();
+
+    // テンション表示
+    const tensionEl = document.getElementById('tensionDisplay');
+    if (tensionEl && typeof tension !== 'undefined') {
+        const tLabels = ['1:通常', '2:高揚 ×1.3EXP', '3:狂乱 ×1.8EXP'];
+        const tColors = ['var(--text-dim)', 'var(--accent-orange)', 'var(--danger-red)'];
+        tensionEl.textContent = tLabels[tension - 1];
+        tensionEl.style.color = tColors[tension - 1];
+    }
+
     // 装備欄
     document.getElementById('eqWeapon').innerHTML = formatEq(equipment.weapon, 'atk');
     document.getElementById('eqHelm').innerHTML   = formatEq(equipment.helm,   'def');
@@ -782,6 +834,28 @@ function updateUI() {
                     </div>
                     <div class="item-actions">
                         <button class="mini-btn" style="border-color:#c8a060;color:#c8a060" onclick="eatFood(${index})">食べる</button>
+                    </div>
+                `;
+            } else if (item.type === 'water') {
+                li.style.borderLeft = '3px solid #6699dd';
+                li.innerHTML = `
+                    <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
+                        <span class="item-name" style="color:#88ccff">💧 ${item.name}</span>
+                        <span class="item-stats" style="color:#6688aa">渇き +${item.thirstRestore}${item.sp ? ' / SP +' + item.sp : ''}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="mini-btn" style="border-color:#6699dd;color:#88ccff" onclick="drinkWater(${index})">飲む</button>
+                    </div>
+                `;
+            } else if (item.type === 'sp_potion') {
+                li.style.borderLeft = '3px solid #a050d8';
+                li.innerHTML = `
+                    <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
+                        <span class="item-name" style="color:#c080ff">✦ ${item.name}</span>
+                        <span class="item-stats" style="color:#8060a0">SP +${item.spRestore}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="mini-btn" style="border-color:#a050d8;color:#c080ff" onclick="useSpPotion(${index})">使う</button>
                     </div>
                 `;
             } else {
@@ -830,6 +904,11 @@ function updateUI() {
         document.getElementById('enemySpdDisp').textContent  = 'SPD ' + (battleState.enemySpeed  || 8);
         const nameEl = document.getElementById('enemyAtbName');
         if (nameEl && battleState.enemy) nameEl.textContent = battleState.enemy.name.slice(0, 5);
+        // テンション表示更新
+        const tensionBtns = document.querySelectorAll('.tension-btn');
+        tensionBtns.forEach((btn, i) => {
+            btn.classList.toggle('tension-active', (i + 1) === tension);
+        });
         // ゲージ満タン時に攻撃ボタンを光らせる
         const btn = document.getElementById('exploreBtn');
         if (btn) btn.style.boxShadow = pPct >= 100 ? '0 0 12px var(--accent-cyan)' : '';
@@ -875,6 +954,14 @@ function switchTab(tab) {
     if (tab === 'archive') {
         document.getElementById('tabArchive').classList.add('active');
         document.getElementById('panelArchive').classList.remove('hidden');
+        updateIllustration('base');
+    }
+    if (tab === 'craft') {
+        const tc = document.getElementById('tabCraft');
+        if (tc) tc.classList.add('active');
+        const pc = document.getElementById('panelCraft');
+        if (pc) pc.classList.remove('hidden');
+        if (typeof renderCraft === 'function') renderCraft();
         updateIllustration('base');
     }
 }

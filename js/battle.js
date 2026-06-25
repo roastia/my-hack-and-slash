@@ -2,12 +2,12 @@
 // battle.js — ATBバトルシステム（スキル対応版）
 // =============================================================
 
-function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed) {
+function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpeed, enemyMagicAtk) {
     const pSpd = getTotalSpeed();
     const eSpd = enemySpeed || 8;
     battleState = {
         active:      true,
-        enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp },
+        enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp, magicAtk: enemyMagicAtk || 0 },
         isBoss:      isBoss,
         turn:        0,
         playerAtb:   0,
@@ -54,10 +54,23 @@ function calcPlayerDamage(atkOverride) {
     return { total: dmg, isCrit, spiritLog };
 }
 
-// 敵のダメージ計算（防御減算込み）
-function calcEnemyDamage(atk) {
-    let rawDmg = Math.floor(atk * (0.8 + Math.random() * 0.4));
-    return Math.max(1, rawDmg - getTotalDef());
+// 敵のダメージ計算（物理＋魔法分離・精神軽減込み）
+function calcEnemyDamage(atk, magicAtk) {
+    // 物理ダメージ
+    let physDmg = Math.floor(atk * (0.8 + Math.random() * 0.4));
+    physDmg = Math.max(0, physDmg - getTotalDef());
+
+    // 魔法ダメージ（精神ステータムで軽減）
+    let magDmg = 0;
+    if (magicAtk && magicAtk > 0) {
+        const spiritTotal = baseSpirit + (equipment.armor && equipment.armor.spirit ? equipment.armor.spirit : 0)
+            + (equipment.helm && equipment.helm.spirit ? equipment.helm.spirit : 0)
+            + (equipment.shield && equipment.shield.spirit ? equipment.shield.spirit : 0);
+        const spiritReduction = Math.min(0.85, spiritTotal * 0.04); // 1精神=4%軽減(最大85%)
+        magDmg = Math.max(0, Math.floor(magicAtk * (0.8 + Math.random() * 0.4) * (1 - spiritReduction)));
+    }
+
+    return { total: Math.max(1, physDmg + magDmg), phys: physDmg, magic: magDmg };
 }
 
 // ATBシミュレーション：プレイヤーのターンが来るまでティックを進める
@@ -68,16 +81,19 @@ function tickUntilPlayerTurn(atbCost) {
     const MAX_ENEMY_HITS = 6;
     let enemyHits = 0;
 
+    const tensionMult = (typeof tension !== 'undefined') ? [1.0, 1.5, 2.5][tension - 1] : 1.0;
     while (battleState.playerAtb < atbCost) {
         battleState.playerAtb += battleState.playerSpeed;
-        battleState.enemyAtb  += battleState.enemySpeed;
+        battleState.enemyAtb  += battleState.enemySpeed * tensionMult;
 
         if (battleState.enemyAtb >= 100 && enemyHits < MAX_ENEMY_HITS) {
             battleState.enemyAtb -= 100;
             enemyHits++;
-            let dmg = calcEnemyDamage(battleState.enemy.atk);
+            let dmgData = calcEnemyDamage(battleState.enemy.atk, battleState.enemy.magicAtk || 0);
+            let dmg = dmgData.total;
             currentHp = Math.max(0, currentHp - dmg);
-            addLog(`<span class="damage-text">⚡ ${battleState.enemy.name}が先手！ ${dmg} dmgを受けた！</span>`);
+            const magPart = dmgData.magic > 0 ? ` <span style="color:#88aaff; font-size:11px">(魔${dmgData.magic})</span>` : '';
+            addLog(`<span class="damage-text">⚡ ${battleState.enemy.name}が先手！ ${dmg} dmgを受けた！${magPart}</span>`);
             if (currentHp <= 0) {
                 currentHp = 0;
                 gameOver();
@@ -115,6 +131,14 @@ function executeBattleTurn(skillId) {
 
     // ── スキル実行 ──
     if (skill) {
+        // SPコスト確認
+        const spCosts = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10 };
+        const spCost  = spCosts[skillId] || 15;
+        if (sp < spCost) {
+            addLog(`<span class="damage-text">SPが足りない！ (必要: ${spCost} / 現在: ${sp})</span>`);
+            return;
+        }
+        sp -= spCost;
         const skillLvBefore = getSkillLevel(skillId);
         skillBook[skillId].uses++;
         const skillLvAfter  = getSkillLevel(skillId);
@@ -150,11 +174,12 @@ function executeBattleTurn(skillId) {
             logMsg = `<span class="attack-text">⚔ ${hits}連撃！ [${dmgParts.join('+')}] 計 ${total} dmg！ (Lv${skillLv})</span>`;
 
         } else if (skillId === 'healingWave') {
-            // 回復術：HP回復
+            // 回復術：HP回復（精神で強化）
+            const spiritBonus = 1 + baseSpirit * 0.05;
             const healPct = skill.healPcts[skillLv - 1];
-            const healAmt = Math.max(1, Math.floor(maxHp * healPct));
+            const healAmt = Math.max(1, Math.floor(maxHp * healPct * spiritBonus));
             currentHp     = Math.min(maxHp, currentHp + healAmt);
-            logMsg = `<span class="event-text">✦ 回復術！ HP +${healAmt} 回復した！ (Lv${skillLv} / ${Math.round(healPct*100)}%)</span>`;
+            logMsg = `<span class="event-text">✦ 回復術！ HP +${healAmt} 回復した！ (Lv${skillLv} / 精神補正×${spiritBonus.toFixed(2)})</span>`;
 
         } else if (skillId === 'guardStance') {
             // 鉄壁：次の被ダメを軽減
@@ -184,6 +209,14 @@ function executeBattleTurn(skillId) {
         exp      += enemy.exp;
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
         starDust += dust;
+
+        // テンションボーナス
+        const tensionExpMult = (typeof tension !== 'undefined') ? [1.0, 1.3, 1.8][tension - 1] : 1.0;
+        exp      = exp - enemy.exp + Math.floor(enemy.exp * tensionExpMult); // テンション補正後のEXPに修正
+        // ↑ checkLevelUpでexpに加算済みなので調整は不要、代わりに追加で加算
+        const bonusExp = Math.floor(enemy.exp * (tensionExpMult - 1.0));
+        exp += bonusExp;
+        if (bonusExp > 0) logMsg += ` <span style="color:var(--accent-magenta); font-size:11px">[テンションボーナス EXP+${bonusExp}]</span>`;
 
         // 武勲: ボスは多め、通常は難易度比例
         const meritGain = battleState.isBoss
@@ -223,16 +256,18 @@ function executeBattleTurn(skillId) {
         battleState.enemyAtb += battleState.enemySpeed;
         if (battleState.enemyAtb >= 100) {
             battleState.enemyAtb -= 100;
-            let enemyDmg = calcEnemyDamage(enemy.atk);
+            let counterData = calcEnemyDamage(enemy.atk, enemy.magicAtk || 0);
+            let counterDmg = counterData.total;
+            const cMagPart = counterData.magic > 0 ? ` <span style="color:#88aaff; font-size:11px">(魔${counterData.magic})</span>` : '';
 
             if (battleState.guardActive) {
-                const reduced = Math.max(1, Math.floor(enemyDmg * battleState.guardMult));
-                logMsg += `<br><span class="damage-text"><< 敵の反撃！ 🛡 鉄壁！ ${reduced} dmgに軽減！</span>`;
+                const reduced = Math.max(1, Math.floor(counterDmg * battleState.guardMult));
+                logMsg += `<br><span class="damage-text"><< 敵の反撃！ 🛡 鉄壁！ ${reduced} dmgに軽減！${cMagPart}</span>`;
                 currentHp -= reduced;
                 battleState.guardActive = false;
             } else {
-                logMsg += `<br><span class="damage-text"><< 敵の反撃！ ${enemyDmg} dmgを受けた！</span>`;
-                currentHp -= enemyDmg;
+                logMsg += `<br><span class="damage-text"><< 敵の反撃！ ${counterDmg} dmg！${cMagPart}</span>`;
+                currentHp -= counterDmg;
             }
         }
         addLog(logMsg);
@@ -274,9 +309,10 @@ function executeFlee() {
         updateActionButtons();
         updateUI();
     } else {
-        let enemy    = battleState.enemy;
-        let enemyDmg = calcEnemyDamage(enemy.atk);
-        currentHp   -= enemyDmg;
+        let enemy       = battleState.enemy;
+        let fleeData    = calcEnemyDamage(enemy.atk, enemy.magicAtk || 0);
+        let enemyDmg    = fleeData.total;
+        currentHp      -= enemyDmg;
         addLog(`>> 逃走に失敗！ 隙を突かれ <span class="damage-text">${enemyDmg} dmg</span> を受けた！`);
 
         if (currentHp <= 0) {

@@ -785,3 +785,63 @@ body {
         min-height: 50px;
     }
 }
+
+/* ============================================================
+   スタックパネル
+   ============================================================ */
+.stack-panel {
+    padding: 8px 12px;
+    background: rgba(180, 30, 10, 0.12);
+    border-top: 1px solid var(--danger-red);
+    border-bottom: 1px solid var(--danger-red);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.stack-fight-btn {
+    margin-top: 4px;
+    align-self: flex-start;
+    padding: 5px 14px !important;
+    font-size: 13px !important;
+    animation: pulse-red 1.5s infinite;
+}
+
+/* ============================================================
+   テンションパネル
+   ============================================================ */
+.tension-panel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(20, 8, 35, 0.6);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.tension-btn {
+    background: transparent;
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: all 0.15s;
+}
+
+.tension-btn:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+
+.tension-btn.tension-active {
+    border-color: var(--danger-red);
+    color: var(--danger-red);
+    background: rgba(216, 48, 48, 0.15);
+    font-weight: bold;
+}

@@ -8,6 +8,7 @@ let resetConfirmTimer = null;
 function saveData() {
     const data = {
         starDust, battleMerit, permMaxHp, permBaseAtk, permBaseDef, hunger, maxHunger, baseSpeed, skillBook,
+        sp, maxSp, thirst, maxThirst, baseMagic, baseSpirit, tension, materials, enemyStack,
         costHp, costAtk, costDef, stats,
         level, maxHp, currentHp, exp, nextExp,
         baseAttack, baseDefense,
@@ -42,6 +43,15 @@ function loadData() {
         costDef      = data.costDef      || 15;
         stats        = data.stats        || { kills: 0, deaths: 0, returns: 0 };
         skillBook    = data.skillBook    || {};
+        sp           = data.sp           !== undefined ? data.sp    : 100;
+        maxSp        = data.maxSp        || 100;
+        thirst       = data.thirst       !== undefined ? data.thirst : 100;
+        maxThirst    = data.maxThirst    || 100;
+        baseMagic    = data.baseMagic    || 0;
+        baseSpirit   = data.baseSpirit   || 0;
+        tension      = data.tension      || 1;
+        materials    = data.materials    || {};
+        enemyStack   = [];  // セーブ後はスタックリセット
 
         level        = data.level        || 1;
         maxHp        = data.maxHp        || 30;

@@ -7,10 +7,60 @@ function renderShop() {
     if (!panel) return;
     panel.innerHTML = '';
 
+    // ── 水セクション ──
+    const waterHeader = document.createElement('div');
+    waterHeader.className = 'log-entry';
+    waterHeader.style.cssText = 'color:#88ccff; border:none; padding-bottom:4px; font-size:14px;';
+    waterHeader.textContent = '💧 飲み物';
+    panel.appendChild(waterHeader);
+
+    shopItems.filter(s => s.category === 'water').forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'lab-item';
+        div.style.cssText = 'align-items:center;';
+        const canBuy = starDust >= item.cost && inventory.length < maxInventory;
+        div.innerHTML = `
+            <div>
+                <div style="color:var(--text-main); font-size:14px;">💧 ${item.name}</div>
+                <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
+            </div>
+            <button class="mini-btn" style="border-color:#6699dd;color:#88ccff; font-size:13px; padding:5px 10px;"
+                onclick="buyShopWater(${shopItems.indexOf(item)})"
+                ${canBuy ? '' : 'disabled'}>
+                購入 (G ${item.cost})
+            </button>`;
+        panel.appendChild(div);
+    });
+
+    // ── 素材セクション ──
+    const matHeader2 = document.createElement('div');
+    matHeader2.className = 'log-entry';
+    matHeader2.style.cssText = 'color:#aaddaa; border:none; padding-top:6px; padding-bottom:4px; font-size:14px;';
+    matHeader2.textContent = '🌿 素材（クラフト用）';
+    panel.appendChild(matHeader2);
+
+    shopItems.filter(s => s.category === 'material').forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'lab-item';
+        div.style.cssText = 'align-items:center;';
+        const canBuy = starDust >= item.cost;
+        div.innerHTML = `
+            <div>
+                <div style="color:var(--text-main); font-size:14px;">${item.name}</div>
+                <div class="lab-desc" style="color:#aaddaa;">現在: ${materials[item.mat] || 0}個</div>
+            </div>
+            <button class="mini-btn" style="border-color:#aaddaa;color:#aaddaa; font-size:13px; padding:5px 10px;"
+                onclick="buyShopMaterial(${shopItems.indexOf(item)})"
+                ${canBuy ? '' : 'disabled'}>
+                購入 (G ${item.cost})
+            </button>`;
+        panel.appendChild(div);
+    });
+
     // ── 食料セクション ──
     const foodHeader = document.createElement('div');
     foodHeader.className = 'log-entry';
-    foodHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-bottom:4px; font-size:14px;';
+    foodHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-top:6px; padding-bottom:4px; font-size:14px;';
     foodHeader.textContent = '🍖 食料';
     panel.appendChild(foodHeader);
 
@@ -144,4 +194,25 @@ function buyShopCombatSkill(index) {
     saveData();
     renderShop();
     updateUI();
+}
+
+function buyShopWater(index) {
+    const item = shopItems[index];
+    if (!item || item.category !== 'water') return;
+    if (starDust < item.cost) { addLog('<span class="damage-text">ゴールドが足りない。</span>'); return; }
+    if (inventory.length >= maxInventory) { addLog('<span class="damage-text">荷物が満杯で購入できない。</span>'); return; }
+    starDust -= item.cost;
+    inventory.push(Object.assign({}, item.water));
+    addLog(`💧 <span style="color:#88ccff">【${item.name}】</span> を購入した。 <span style="color:var(--accent-orange)">-G${item.cost}</span>`);
+    renderShop(); updateUI();
+}
+
+function buyShopMaterial(index) {
+    const item = shopItems[index];
+    if (!item || item.category !== 'material') return;
+    if (starDust < item.cost) { addLog('<span class="damage-text">ゴールドが足りない。</span>'); return; }
+    starDust -= item.cost;
+    materials[item.mat] = (materials[item.mat] || 0) + 1;
+    addLog(`🌿 <span style="color:#aaddaa">【${item.mat}】</span> を購入した。 <span style="color:var(--accent-orange)">-G${item.cost}</span>`);
+    renderShop(); updateUI();
 }
