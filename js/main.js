@@ -106,6 +106,10 @@ function updateMobileTopBar() {
 // リサイズ時にレイアウト再調整
 window.addEventListener('resize', handleMobileLayout);
 
-// ゲーム起動
-loadData();
-handleMobileLayout();
+// ゲーム起動（JSONデータを先にロード → セーブデータ復元）
+async function initGame() {
+    await loadGameData();   // data/*.json を fetch
+    loadData();             // localStorage からセーブ復元
+    handleMobileLayout();
+}
+initGame();

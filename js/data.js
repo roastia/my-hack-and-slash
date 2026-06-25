@@ -1,216 +1,43 @@
 // =============================================================
-// data.js
+// data.js — JSONから動的ロード + スキル定義
+// data/ フォルダ内の JSON ファイルを編集するだけで敵・ダンジョン等を追加できます
 // =============================================================
 
-const dungeons = [
-    {
-        name: 'スライムの洞窟', maxFloor: 3, diff: 1,
-        boss: { name: 'キングスライム', speed: 6, hp: 40, atk: 4, exp: 30 },
-        story: '勇者よ、旅立ちのときが来た。\n村はずれの洞窟にスライムが群れをなし、田畑を荒らしている。\nまずはここで剣を慣らせ。'
-    },
-    {
-        name: '呪われた墓地', maxFloor: 4, diff: 2,
-        boss: { name: '骸骨の王', speed: 7, hp: 70, atk: 6, exp: 50 },
-        story: '夜ごと墓場から死者が蘇り、村人を脅かしている。\n亡者を再び眠らせるのも、勇者の務めだ。\n怖気づくな。'
-    },
-    {
-        name: '盗賊団のアジト', maxFloor: 4, diff: 3,
-        boss: { name: '頭目ガルフ', speed: 10, hp: 120, atk: 9, exp: 80 },
-        story: '街道を荒らす盗賊団の根城が山中に見つかった。\n奪われた旅人の財と命を返すため、乗り込め。\nやつらも命がけで立ち向かってくるぞ。'
-    },
-    {
-        name: '廃城の地下', maxFloor: 5, diff: 4,
-        boss: { name: '甲冑将軍ヴェルガ', speed: 8, hp: 180, atk: 12, exp: 120 },
-        story: '朽ち果てた古城の地下に、魔物が巣食い始めた。\n城主の亡霊が番をしているという噂もある。\n気を引き締めて挑め。'
-    },
-    {
-        name: '毒沼の遺跡', maxFloor: 5, diff: 5,
-        boss: { name: '沼地の主バロン', speed: 7, hp: 250, atk: 16, exp: 180 },
-        story: 'かつて栄えた古代文明の遺跡が、毒の沼に沈んでいる。\n底に眠る財宝を求めて入った者は誰も戻らなかった。\n今のお前ならどうだ？'
-    },
-    {
-        name: '魔物の森', maxFloor: 6, diff: 6,
-        boss: { name: '森の大魔女', speed: 11, hp: 350, atk: 22, exp: 250 },
-        story: '光も届かぬ深い森に、凶暴な魔物が棲み着いた。\nかつて里を守っていた精霊の加護も今はなく、森全体が牙をむく。\n道を切り開け。'
-    },
-    {
-        name: '氷雪の洞窟', maxFloor: 6, diff: 7,
-        boss: { name: '氷の女王', speed: 10, hp: 480, atk: 30, exp: 350 },
-        story: '山奥の洞窟が永久凍土に閉ざされ、村の水源が絶えかけている。\n氷を支配する女王が棲むという——倒せば春が戻るかもしれない。'
-    },
-    {
-        name: '砂漠の古神殿', maxFloor: 7, diff: 8,
-        boss: { name: '番人スフィンクス', speed: 9, hp: 650, atk: 40, exp: 480 },
-        story: '砂に埋もれた神殿から強大な魔力が溢れ出している。\n封じられていた古の番人が目覚めたのだ。\n謎を解いて打ち勝て。'
-    },
-    {
-        name: '火山の地下道', maxFloor: 7, diff: 9,
-        boss: { name: '炎の魔人ヴォルカン', speed: 12, hp: 850, atk: 52, exp: 650 },
-        story: '噴火寸前の火山の内部に道がある。\n溶岩と魔物が渦巻くその先に、封印の鍵があるという。\n炎を恐れるな。'
-    },
-    {
-        name: '海底神殿', maxFloor: 8, diff: 10,
-        boss: { name: '海神の化身', speed: 10, hp: 1100, atk: 65, exp: 850 },
-        story: '大海の底に沈む古代の神殿。\n海神の怒りが波と嵐をもたらしているという。\n深みへと潜れ——帰る空気は保証しない。'
-    },
-    {
-        name: '古代の迷宮', maxFloor: 8, diff: 11,
-        boss: { name: '迷宮の支配者デダロス', speed: 9, hp: 1450, atk: 85, exp: 1100 },
-        story: '終わりのない迷路が地下に広がっている。\n入った者は全員迷子になったと言われる。\n知恵と剣で突破せよ。'
-    },
-    {
-        name: '魔族の砦', maxFloor: 9, diff: 12,
-        boss: { name: '魔族将軍ゲルニコ', hp: 1900, atk: 110, exp: 1450 },
-        story: '魔王軍の前線基地が山の要害に築かれた。\n砦が落ちれば、王都への道が開く。\n総攻撃あるのみだ。'
-    },
-    {
-        name: '竜の巣穴', maxFloor: 9, diff: 13,
-        boss: { name: 'シルバードレイク', hp: 2500, atk: 145, exp: 1900 },
-        story: '古竜の一族が棲む山岳の洞窟。\n竜の鱗は最強の防具になるという——しかし竜は死を厭わず戦う。'
-    },
-    {
-        name: '呪いの塔', maxFloor: 10, diff: 14,
-        boss: { name: '呪いの塔の魔女', hp: 3200, atk: 190, exp: 2500 },
-        story: '近づく者を次々と石に変えてきた呪いの塔。\n頂にいる魔女を倒さぬ限り、呪いは解けない。\n意志の力で石化を跳ね返せ。'
-    },
-    {
-        name: '精霊の試練場', maxFloor: 10, diff: 15,
-        boss: { name: '精霊王', hp: 4200, atk: 250, exp: 3200 },
-        story: '神に選ばれた勇者だけが踏み込める試練の地。\n精霊たちはお前の真の強さを問う。\n逃げることは許されない。'
-    },
-    {
-        name: '魔王の前線基地', maxFloor: 10, diff: 16,
-        boss: { name: 'ダークビショップ', hp: 5500, atk: 320, exp: 4200 },
-        story: '魔王みずから設けた最前線の拠点。\nここを落とせば魔王城への道が見えてくる。\nいよいよ本番だ——心して挑め。'
-    },
-    {
-        name: '闇の回廊', maxFloor: 11, diff: 17,
-        boss: { name: '闇の化身', hp: 7000, atk: 410, exp: 5500 },
-        story: '光が届かぬ漆黒の通路が延々と続く。\nここで正気を保てなかった者は、闇に飲まれ魔物になった。\n前だけを見ろ。'
-    },
-    {
-        name: '奈落の底', maxFloor: 11, diff: 18,
-        boss: { name: '奈落の番人ベルガル', hp: 9000, atk: 530, exp: 7000 },
-        story: '世界の底へと続く深淵。ここより先は地獄と呼ばれる領域だ。\n生きて帰った者はいない——まだ、誰も。'
-    },
-    {
-        name: '魂の迷宮', maxFloor: 11, diff: 19,
-        boss: { name: '悪夢の化身ナイトメア', hp: 11500, atk: 680, exp: 9000 },
-        story: '死した英雄たちの魂が彷徨う場所。\n恐怖そのものが形を持ち、お前の前に立ちはだかる。\n自分の心と戦え。'
-    },
-    {
-        name: '魔王城・外壁', maxFloor: 12, diff: 20,
-        boss: { name: '守護竜バルドラン', hp: 15000, atk: 880, exp: 11500 },
-        story: 'ついに魔王城が見えた。\n城壁を守る強大な竜を突破しなければ、中へは入れない。\n長い旅の集大成——諦めるな！'
-    },
-    {
-        name: '魔王城・地下牢', maxFloor: 12, diff: 21,
-        boss: { name: '処刑人グレイム', hp: 19000, atk: 1130, exp: 15000 },
-        story: '数えきれぬ罪なき者が囚われたこの地下牢。\n彼らの怨念が怪物を生み出している。\n全ての囚人を救うため、深くへ進め。'
-    },
-    {
-        name: '魔王城・武器庫', maxFloor: 12, diff: 22,
-        boss: { name: '武器神マルスゲル', hp: 25000, atk: 1450, exp: 19000 },
-        story: '魔王軍の兵器が集積された巨大な武器庫。\n奥には魔王軍最強の武器と、それを守る存在が潜む。\n制圧して敵の力を削げ。'
-    },
-    {
-        name: '魔王城・魔法塔', maxFloor: 13, diff: 23,
-        boss: { name: '大魔道士ゾルガ', hp: 32000, atk: 1870, exp: 25000 },
-        story: '魔法の研究が行われる塔に、膨大な魔力が渦巻いている。\n魔王の軍師、大魔道士ゾルガがここで待ち受けている。\n魔法には魔法で対抗せよ。'
-    },
-    {
-        name: '魔王城・玉座への間', maxFloor: 13, diff: 24,
-        boss: { name: '近衛騎士長ジーク', hp: 41000, atk: 2400, exp: 32000 },
-        story: '玉座の間まであと一歩。だが魔王の親衛隊が最後の防壁となって立ちふさがる。\nここを越えれば——魔王と対面できる。'
-    },
-    {
-        name: '混沌の谷', maxFloor: 14, diff: 25,
-        boss: { name: '混沌の化身カオス', hp: 52000, atk: 3100, exp: 41000 },
-        story: '時空が歪み、あらゆる存在が混ざり合う谷。\nここは世界の法則が通じない。\n生き残ることが唯一のルールだ。'
-    },
-    {
-        name: '神々の試練', maxFloor: 14, diff: 26,
-        boss: { name: '神の試練ガーディアン', hp: 67000, atk: 4000, exp: 52000 },
-        story: '神が人間の限界を試す場所。\n真の勇者にしか突破できない、最後の聖域だ。\n信念を貫け。'
-    },
-    {
-        name: '創世の神殿', maxFloor: 14, diff: 27,
-        boss: { name: '世界竜アルカヌス', hp: 86000, atk: 5150, exp: 67000 },
-        story: 'この世界が生まれた場所、神話の神殿。\n世界竜が目覚め、全てを終わらせようとしている。\n世界の命運はお前の剣にかかっている。'
-    },
-    {
-        name: '終焉の回廊', maxFloor: 15, diff: 28,
-        boss: { name: '終焉の天使', hp: 110000, atk: 6650, exp: 86000 },
-        story: 'あらゆる命が尽きる場所への道。\n天使は終わりをもたらすためにここにいる。\nこれが最後の戦いかもしれない——それでも剣を取れ。'
-    },
-    {
-        name: '世界の果て', maxFloor: 15, diff: 29,
-        boss: { name: '世界の意思', hp: 140000, atk: 8600, exp: 110000 },
-        story: '地平の果て、世界が終わる場所。\nここには世界そのものの意思が宿っているという。\n終わりと始まりが重なり合う地に立て。'
-    },
-    {
-        name: '神話の頂', maxFloor: 16, diff: 30,
-        boss: { name: '究極の魔王ゼロアス', hp: 180000, atk: 11000, exp: 140000 },
-        story: '全ての神話の頂点。\n究極の魔王ゼロアスがここで待っている。\n——長い旅の、本当の終わりだ。立ち向かえ、勇者よ。'
+// ---  グローバルデータ（loadGameData()で注入される）---
+let dungeons         = [];
+let enemiesBase      = [];
+let foodDatabase     = [];
+let shopItems        = [];
+let craftRecipes     = [];
+const craftMaterialTypes = ['薬草', '鉄くず', '魔石', '骨片', '布切れ'];
+
+// --- JSON 一括ロード ---
+async function loadGameData() {
+    const base = './data/';
+    try {
+        const [enemies, duns, food, shop, recipes] = await Promise.all([
+            fetch(base + 'enemies.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+            fetch(base + 'dungeons.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+            fetch(base + 'food.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+            fetch(base + 'shop.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+            fetch(base + 'recipes.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+        ]);
+        enemiesBase  = enemies;
+        dungeons     = duns;
+        foodDatabase = food;
+        shopItems    = shop;
+        craftRecipes = recipes;
+        console.log(`[data] ロード完了: 敵${enemiesBase.length}体 / ダンジョン${dungeons.length}件`);
+    } catch (err) {
+        console.error('[data] JSONロード失敗:', err);
+        alert('データファイルの読み込みに失敗しました。\nサーバー経由でアクセスしているか確認してください。');
     }
-];
+}
 
-
-const enemiesBase = [
-    // 邪霊族 (magicAtk: 魔法ダメージあり)
-    { name: 'スライム',     hp: 8,   atk: 2,  exp: 4,  speed: 4,  type: '粘体族', magicAtk: 0 },
-    { name: '大スライム',   hp: 14,  atk: 3,  exp: 7,  speed: 5,  type: '粘体族', magicAtk: 0 },
-    { name: '毒スライム',   hp: 12,  atk: 4,  exp: 9,  speed: 6,  type: '粘体族', magicAtk: 1, mat: '薬草' },
-    { name: 'ゴブリン',     hp: 12,  atk: 4,  exp: 8,  speed: 8,  type: '小鬼族', magicAtk: 0, mat: '布切れ' },
-    { name: 'ゴブリン盗賊', hp: 15,  atk: 6,  exp: 12, speed: 11, type: '小鬼族', magicAtk: 0, mat: '布切れ' },
-    { name: 'コボルト',     hp: 18,  atk: 5,  exp: 11, speed: 7,  type: '獣人族', magicAtk: 0, mat: '骨片' },
-    { name: 'オーク',       hp: 30,  atk: 8,  exp: 18, speed: 6,  type: '鬼族',   magicAtk: 0, mat: '鉄くず' },
-    { name: 'オーク剣士',   hp: 35,  atk: 10, exp: 22, speed: 7,  type: '鬼族',   magicAtk: 0, mat: '鉄くず' },
-    { name: 'ゾンビ',       hp: 22,  atk: 7,  exp: 14, speed: 4,  type: '不死族', magicAtk: 2, mat: '骨片' },
-    { name: 'スケルトン',   hp: 20,  atk: 8,  exp: 15, speed: 6,  type: '不死族', magicAtk: 1, mat: '骨片' },
-    { name: '呪い師スケルトン', hp: 18, atk: 6, exp: 18, speed: 5, type: '不死族', magicAtk: 5, mat: '魔石' },
-    { name: 'ヘビ',         hp: 15,  atk: 5,  exp: 10, speed: 10, type: '爬虫族', magicAtk: 0, mat: '薬草' },
-    { name: '毒ヘビ',       hp: 18,  atk: 7,  exp: 14, speed: 12, type: '爬虫族', magicAtk: 2, mat: '薬草' },
-    { name: 'バット',       hp: 10,  atk: 4,  exp: 8,  speed: 13, type: '鳥族',   magicAtk: 0 },
-    { name: '大コウモリ',   hp: 20,  atk: 7,  exp: 16, speed: 14, type: '鳥族',   magicAtk: 0 },
-    { name: 'コカトリス',   hp: 28,  atk: 10, exp: 22, speed: 11, type: '鳥族',   magicAtk: 3, mat: '骨片' },
-    { name: 'ウルフ',       hp: 25,  atk: 9,  exp: 16, speed: 12, type: '獣族',   magicAtk: 0 },
-    { name: '炎狼',         hp: 30,  atk: 12, exp: 24, speed: 13, type: '獣族',   magicAtk: 4, mat: '魔石' },
-    { name: 'ゴーレム',     hp: 55,  atk: 14, exp: 30, speed: 4,  type: '機械族', magicAtk: 0, mat: '鉄くず' },
-    { name: '不良品ゴーレム', hp: 40, atk: 10, exp: 22, speed: 6, type: '機械族', magicAtk: 0, mat: '鉄くず' },
-    { name: 'ミミック',     hp: 35,  atk: 13, exp: 28, speed: 8,  type: '不定形', magicAtk: 0, mat: '布切れ' },
-    { name: 'サラマンダー', hp: 40,  atk: 14, exp: 32, speed: 9,  type: '爬虫族', magicAtk: 6, mat: '魔石' },
-    { name: '毒キノコ',     hp: 20,  atk: 6,  exp: 12, speed: 3,  type: '植物族', magicAtk: 3, mat: '薬草' },
-    { name: '暗黒騎士',     hp: 60,  atk: 18, exp: 45, speed: 9,  type: '人族',   magicAtk: 0, mat: '鉄くず' },
-    { name: '魔法使い兵',   hp: 25,  atk: 8,  exp: 38, speed: 8,  type: '人族',   magicAtk: 10, mat: '魔石' },
-    { name: 'マンドレイク',  hp: 30,  atk: 10, exp: 26, speed: 5,  type: '植物族', magicAtk: 4, mat: '薬草' },
-    { name: 'ウィスプ',     hp: 18,  atk: 5,  exp: 22, speed: 15, type: '邪霊族', magicAtk: 8, mat: '魔石' },
-    { name: 'バンシー',     hp: 22,  atk: 7,  exp: 28, speed: 13, type: '邪霊族', magicAtk: 9, mat: '魔石' },
-    { name: 'サキュバス',   hp: 35,  atk: 12, exp: 40, speed: 11, type: '悪魔族', magicAtk: 7, mat: '布切れ' },
-    { name: 'デーモン',     hp: 70,  atk: 20, exp: 55, speed: 10, type: '悪魔族', magicAtk: 5, mat: '魔石' },
-    { name: '竜の子',       hp: 80,  atk: 24, exp: 65, speed: 9,  type: '竜族',   magicAtk: 8, mat: '骨片' },
-    { name: 'サンドワーム', hp: 90,  atk: 22, exp: 60, speed: 5,  type: '虫族',   magicAtk: 0, mat: '骨片' },
-    { name: 'ガーゴイル',   hp: 75,  atk: 19, exp: 58, speed: 8,  type: '石族',   magicAtk: 3, mat: '鉄くず' },
-    { name: 'リッチ',       hp: 50,  atk: 14, exp: 70, speed: 7,  type: '不死族', magicAtk: 14, mat: '魔石' },
-    { name: 'ゴルゴン',     hp: 100, atk: 28, exp: 80, speed: 7,  type: '獣族',   magicAtk: 4, mat: '骨片' },
-    { name: '闇の精霊',     hp: 40,  atk: 10, exp: 60, speed: 14, type: '邪霊族', magicAtk: 16, mat: '魔石' },
-];
-
-
-
-
-
-
-
-// ダンジョンの難易度に応じた敵プールを返す（enemiesBase全体を難易度でフィルタリング）
-// explore.js の addEnemyToStack で activeDungeon.enemies が null なら enemiesBase を使う
-// ここで明示的にダンジョン別の敵セットを定義することも可能
+// ダンジョン別の敵プールを返す
 function getEnemiesForDungeon(dungeon) {
     if (!dungeon) return enemiesBase;
-    // 難易度に応じた敵の配列（enemiesBase からスライス）
-    const diff = dungeon.diff || 1;
-    // 難易度1-5: 序盤の敵, 6-10: 中盤, 11+: 終盤
-    return enemiesBase; // 全敵から選択（スケーリングで難易度調整済み）
+    return enemiesBase; // 全敵プール（スケーリングで難易度調整）
 }
 
 // =============================================================
@@ -285,122 +112,12 @@ function getSkillNextThreshold(skillId) {
 // =============================================================
 // クラフトレシピ（浅層: 最大2素材）
 // =============================================================
-const craftMaterialTypes = ['薬草', '鉄くず', '魔石', '骨片', '布切れ'];
-
-const craftRecipes = [
-    {
-        name: 'ハーブ薬',
-        ingredients: { '薬草': 2 },
-        result: { type: 'food', name: 'ハーブ薬', hp: 35, hunger: 0 },
-        desc: '薬草×2 → HP+35回復',
-    },
-    {
-        name: '魔力の水',
-        ingredients: { '魔石': 1, '薬草': 1 },
-        result: { type: 'sp_potion', name: '魔力の水', spRestore: 50 },
-        desc: '魔石×1 + 薬草×1 → SP+50回復',
-    },
-    {
-        name: '鋼の盾片',
-        ingredients: { '鉄くず': 3 },
-        result: { type: 'shield', name: '鋼の盾片', def: 5, rarity: 1 },
-        desc: '鉄くず×3 → DEF+5の盾',
-    },
-    {
-        name: '骨の鎧',
-        ingredients: { '骨片': 2, '布切れ': 1 },
-        result: { type: 'armor', name: '骨の鎧', def: 6, spirit: 2, rarity: 1 },
-        desc: '骨片×2 + 布切れ×1 → DEF+6, 精神+2の鎧',
-    },
-    {
-        name: 'ローブ',
-        ingredients: { '布切れ': 3 },
-        result: { type: 'armor', name: 'ローブ', def: 2, spirit: 4, rarity: 1 },
-        desc: '布切れ×3 → DEF+2, 精神+4の魔法ローブ',
-    },
-    {
-        name: '鬼骨の刃',
-        ingredients: { '骨片': 2, '鉄くず': 2 },
-        result: { type: 'weapon', name: '鬼骨の刃', atk: 10, rarity: 2 },
-        desc: '骨片×2 + 鉄くず×2 → ATK+10の武器',
-    },
-    {
-        name: '魔封の水筒',
-        ingredients: { '魔石': 3 },
-        result: { type: 'water', name: '魔封の水筒', thirstRestore: 60, sp: 20 },
-        desc: '魔石×3 → 渇き+60, SP+20',
-    },
-];
-
 // =============================================================
 // 道具屋アイテム
 // =============================================================
-const shopItems = [
-    // ── 食料 ──────────────────────────────────────────────────
-    { name: 'パン',             category: 'food',  cost: 15,
-      food: { name: 'パン',             type: 'food', hunger: 25, hp: 0,  desc: '素朴な村のパン。' } },
-    { name: '干し肉',           category: 'food',  cost: 25,
-      food: { name: '干し肉',           type: 'food', hunger: 40, hp: 0,  desc: '旅人の定番携帯食。' } },
-    { name: '薬草スープ',       category: 'food',  cost: 35,
-      food: { name: '薬草スープ',       type: 'food', hunger: 35, hp: 8,  desc: '体も癒す薬草煮込み。' } },
-    { name: '冒険者の携帯食',   category: 'food',  cost: 50,
-      food: { name: '冒険者の携帯食',   type: 'food', hunger: 50, hp: 0,  desc: '高カロリー保存食。' } },
-    { name: '聖水の滴',         category: 'food',  cost: 80,
-      food: { name: '聖水の滴',         type: 'food', hunger: 60, hp: 20, desc: '精霊の加護。空腹とHPを癒す。' } },
-    // ── スキル書 ───────────────────────────────────────────────
-    { name: '戦士の心得書',     category: 'skill', cost: 80,
-      effect: { permBaseAtk: 3 },  desc: '基礎 ATK +3（永続）' },
-    { name: '守護の誓い書',     category: 'skill', cost: 80,
-      effect: { permBaseDef: 3 },  desc: '基礎 DEF +3（永続）' },
-    { name: '疾風の秘伝書',     category: 'skill', cost: 100,
-      effect: { baseSpeed: 3 },    desc: '基礎 SPD +3（永続）' },
-    { name: '鋼の肉体書',       category: 'skill', cost: 100,
-      effect: { permMaxHp: 25 },   desc: '最大 HP +25（永続）' },
-    { name: '大食漢の秘法書',   category: 'skill', cost: 60,
-      effect: { maxHunger: 20 },   desc: '満腹度上限 +20（永続）' },
-    { name: '達人の剣術書',     category: 'skill', cost: 150,
-      effect: { permBaseAtk: 6 },  desc: '基礎 ATK +6（永続）' },
-    { name: '不動の大盾書',     category: 'skill', cost: 150,
-      effect: { permBaseDef: 6 },  desc: '基礎 DEF +6（永続）' },
-    // ── 戦闘スキル書 ───────────────────────────────────────────
-    // ── 水・SP回復 ───────────────────────────────────────────
-    { name: '清水',       category: 'water', cost: 15,
-      water: { name: '清水',   type: 'water', thirstRestore: 40, sp: 0 },
-      desc: '渇き+40回復' },
-    { name: '聖なる水',   category: 'water', cost: 35,
-      water: { name: '聖なる水', type: 'water', thirstRestore: 80, sp: 30 },
-      desc: '渇き+80, SP+30回復' },
-    // ── 素材（購入）────────────────────────────────────────────
-    { name: '薬草',   category: 'material', cost: 10, mat: '薬草',  desc: '素材: 薬草' },
-    { name: '鉄くず', category: 'material', cost: 8,  mat: '鉄くず', desc: '素材: 鉄くず' },
-    { name: '魔石',   category: 'material', cost: 20, mat: '魔石',  desc: '素材: 魔石' },
-    // ── 戦闘スキル書 ─────────────────────────────────────────
-    { name: '渾身の一撃の書', category: 'combat_skill', meritCost: 15, skillId: 'powerStrike',
-      desc: '戦闘スキル「渾身の一撃」を習得' },
-    { name: '連撃の書',       category: 'combat_skill', meritCost: 15, skillId: 'rapidStrike',
-      desc: '戦闘スキル「連撃」を習得' },
-    { name: '回復術の書',     category: 'combat_skill', meritCost: 20, skillId: 'healingWave',
-      desc: '戦闘スキル「回復術」を習得' },
-    { name: '鉄壁の書',       category: 'combat_skill', meritCost: 15, skillId: 'guardStance',
-      desc: '戦闘スキル「鉄壁」を習得' },
-];
-
 // =============================================================
 // 食料データベース
 // =============================================================
-const foodDatabase = [
-    { name: 'パン',             hunger: 25, hp: 0,  desc: '素朴な村のパン。空腹を少し満たす。' },
-    { name: '干し肉',           hunger: 40, hp: 0,  desc: '旅人の定番。しっかり腹を満たす。' },
-    { name: '薬草スープ',       hunger: 35, hp: 8,  desc: '薬草を煮込んだスープ。体も癒す。' },
-    { name: '炎の実',           hunger: 30, hp: 5,  desc: '辛い木の実。体が燃えるように熱くなる。' },
-    { name: '冒険者の携帯食',   hunger: 50, hp: 0,  desc: '高カロリーの保存食。空腹を大きく満たす。' },
-    { name: '神秘の木の実',     hunger: 20, hp: 15, desc: '光を放つ果実。少量でHPが大きく回復。' },
-    { name: 'ドラゴン肉',       hunger: 80, hp: 25, desc: '竜の肉。滋養に溢れ、力が漲る。' },
-    { name: '聖水の滴',         hunger: 60, hp: 20, desc: '精霊が宿る泉の水。空腹と傷を癒す。' },
-    { name: '黒パン',           hunger: 20, hp: 0,  desc: '硬い黒パン。不味いが腹は満たせる。' },
-    { name: '森の恵み',         hunger: 30, hp: 10, desc: '森で採れた果物と木の実の詰め合わせ。' }
-];
-
 const itemsDatabase = [
     // 武器 (30)
     { name: '木の棒',             type: 'weapon', atk:  0 },
