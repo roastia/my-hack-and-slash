@@ -1226,13 +1226,27 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main)
     cursor: pointer;
     transition: all 0.15s;
 }
+/* 自動探索トグル ON */
 .auto-btn.on {
     border-color: var(--accent-green);
-    color: var(--accent-green);
-    background: rgba(108,203,95,0.12);
+    color: #111;
+    background: var(--accent-green);
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(108,203,95,0.45);
 }
+/* 速度選択 ON: 塗りつぶし＋文字色反転で一目瞭然 */
+.auto-btn.speed-on {
+    border-color: var(--accent-cyan);
+    color: #111;
+    background: var(--accent-cyan);
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(96,205,255,0.45);
+}
+/* オートバトル ON */
 .auto-btn.battle-on {
     border-color: var(--accent-orange);
-    color: var(--accent-orange);
-    background: rgba(255,215,0,0.12);
+    color: #111;
+    background: var(--accent-orange);
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(255,165,0,0.45);
 }

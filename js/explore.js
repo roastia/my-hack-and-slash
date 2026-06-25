@@ -600,13 +600,13 @@ function renderAutoRow() {
 
     row.innerHTML = `
         <button class="auto-btn ${exOn ? 'on' : ''}" onclick="toggleAutoExplore()">
-            ${exOn ? '⏸ 自動探索' : '▶ 自動探索'}
+            ${exOn ? '⏸ 自動停止' : '▶ 自動探索'}
         </button>
-        <button class="auto-btn ${sp1 ? 'on' : ''}" onclick="setAutoSpeed(1200)" title="低速">×1</button>
-        <button class="auto-btn ${sp2 ? 'on' : ''}" onclick="setAutoSpeed(700)"  title="中速">×2</button>
-        <button class="auto-btn ${sp3 ? 'on' : ''}" onclick="setAutoSpeed(350)"  title="高速">×3</button>
+        <button class="auto-btn ${sp1 ? 'speed-on' : ''}" onclick="setAutoSpeed(1200)">×1</button>
+        <button class="auto-btn ${sp2 ? 'speed-on' : ''}" onclick="setAutoSpeed(700)">×2</button>
+        <button class="auto-btn ${sp3 ? 'speed-on' : ''}" onclick="setAutoSpeed(350)">×3</button>
         <button class="auto-btn ${batOn ? 'battle-on' : ''}" onclick="toggleAutoBattle()" style="margin-left:4px;">
-            ${batOn ? '⚔ AUTO ON' : '⚔ AUTO'}
+            ${batOn ? '⚔ 戦闘AUTO' : '⚔ AUTO'}
         </button>
     `;
 }
