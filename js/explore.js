@@ -58,10 +58,13 @@ function startDungeon(index) {
     updateIllustration('explore');
     updateUI();
     updateActionButtons();
+    if (typeof renderAutoRow === 'function') renderAutoRow();
 }
 
 // 拠点へ帰還
 function returnToBase(isDead = false) {
+    if (typeof stopAutoExplore === 'function') { stopAutoExplore(); autoExplore = false; }
+    if (typeof stopAutoBattle  === 'function') { stopAutoBattle();  autoBattle  = false; }
     activeDungeon = null;
     enemyStack    = [];
     exploreScene.classList.add('hidden');
@@ -187,6 +190,7 @@ function fightStack() {
     updateStackPanel();
 
     startBattle(name, totalHp, avgAtk + bonusAtk, totalExp, false, maxSpd, magicAtkAvg, dnaTypes);
+    if (typeof autoBattle !== 'undefined' && autoBattle) startAutoBattle();
 }
 
 // ================================================================
@@ -256,6 +260,7 @@ function executeExploreStep() {
         const spBeforeBoss = sp; sp = Math.floor(sp / 2);
         addLog(`<span style="color:#aa88ff; font-size:11px;">⚠ ボス戦突入でSP半減: ${spBeforeBoss} → ${sp}</span>`);
         startBattle(boss.name, boss.hp, boss.atk, boss.exp, true, boss.speed || 9, boss.magicAtk || 0);
+        if (typeof autoBattle !== 'undefined' && autoBattle) startAutoBattle();
         return;
     }
 
@@ -539,4 +544,69 @@ function applyThirst(amount = 3) {
         addLog(`<span style="color:#88aaff; font-size:12px;">…喉が渇いてきた。水を探せ。</span>`);
     }
     return false;
+}
+
+// ================================================================
+// 自動探索システム
+// ================================================================
+let autoExplore      = false;
+let autoExploreTimer = null;
+let autoExploreSpeed = 1200; // ms
+
+function toggleAutoExplore() {
+    autoExplore = !autoExplore;
+    if (autoExplore) {
+        startAutoExplore();
+    } else {
+        stopAutoExplore();
+    }
+    renderAutoRow();
+}
+
+function setAutoSpeed(ms) {
+    autoExploreSpeed = ms;
+    if (autoExplore && autoExploreTimer) {
+        stopAutoExplore();
+        startAutoExplore();
+    }
+    renderAutoRow();
+}
+
+function startAutoExplore() {
+    if (autoExploreTimer) clearInterval(autoExploreTimer);
+    autoExploreTimer = setInterval(() => {
+        if (!activeDungeon || battleState.active || eventState.active) return;
+        if (isBossDefeated) { stopAutoExplore(); autoExplore = false; renderAutoRow(); return; }
+        if (enemyStack.length > 0) { fightStack(); return; }
+        executeExploreStep();
+    }, autoExploreSpeed);
+}
+
+function stopAutoExplore() {
+    if (autoExploreTimer) { clearInterval(autoExploreTimer); autoExploreTimer = null; }
+}
+
+function renderAutoRow() {
+    const row = document.getElementById('autoRow');
+    if (!row) return;
+    if (!activeDungeon || isBossDefeated) { row.style.display = 'none'; return; }
+    row.style.display = 'flex';
+
+    const exOn  = autoExplore;
+    const batOn = typeof autoBattle !== 'undefined' && autoBattle;
+    const sp1   = autoExploreSpeed === 1200;
+    const sp2   = autoExploreSpeed === 700;
+    const sp3   = autoExploreSpeed === 350;
+
+    row.innerHTML = `
+        <button class="auto-btn ${exOn ? 'on' : ''}" onclick="toggleAutoExplore()">
+            ${exOn ? '⏸ 自動探索' : '▶ 自動探索'}
+        </button>
+        <button class="auto-btn ${sp1 ? 'on' : ''}" onclick="setAutoSpeed(1200)" title="低速">×1</button>
+        <button class="auto-btn ${sp2 ? 'on' : ''}" onclick="setAutoSpeed(700)"  title="中速">×2</button>
+        <button class="auto-btn ${sp3 ? 'on' : ''}" onclick="setAutoSpeed(350)"  title="高速">×3</button>
+        <button class="auto-btn ${batOn ? 'battle-on' : ''}" onclick="toggleAutoBattle()" style="margin-left:4px;">
+            ${batOn ? '⚔ AUTO ON' : '⚔ AUTO'}
+        </button>
+    `;
 }

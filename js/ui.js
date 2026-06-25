@@ -753,6 +753,7 @@ function updateActionButtons() {
         returnBtn.classList.remove('btn-flee');
         exploreScene.classList.remove('battle-mode-bg');
     }
+    if (typeof renderAutoRow === 'function') renderAutoRow();
 }
 
 

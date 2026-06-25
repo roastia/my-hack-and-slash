@@ -200,6 +200,7 @@ function executeBattleTurn(skillId) {
         enemy.hp = Math.max(0, enemy.hp - myDmgData.total);
         const atkLabel = isRange ? '🏹 射撃！' : '>>';
         logMsg   = `<span class="attack-text">${atkLabel} ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
+        showFloatingDamage(myDmgData.total, myDmgData.isCrit ? 'crit' : 'player');
         const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
         if (heal > 0) {
             currentHp = Math.min(maxHp, currentHp + heal);
@@ -266,6 +267,8 @@ function executeBattleTurn(skillId) {
         }
 
         battleState.active = false;
+        stopAutoBattle();
+        if (typeof renderAutoRow === 'function') renderAutoRow();
         updateIllustration('explore');
         updateActionButtons();
 
@@ -281,10 +284,12 @@ function executeBattleTurn(skillId) {
             if (battleState.guardActive) {
                 const reduced = Math.max(1, Math.floor(counterDmg * battleState.guardMult));
                 logMsg += `<br><span class="damage-text"><< 敵の反撃！ 🛡 鉄壁！ ${reduced} dmgに軽減！${cMagPart}</span>`;
+                showFloatingDamage(reduced, 'enemy');
                 currentHp -= reduced;
                 battleState.guardActive = false;
             } else {
                 logMsg += `<br><span class="damage-text"><< 敵の反撃！ ${counterDmg} dmg！${cMagPart}</span>`;
+                showFloatingDamage(counterDmg, 'enemy');
                 currentHp -= counterDmg;
             }
         }
@@ -369,4 +374,58 @@ function gameOver() {
         addLog('―― 勇者は村で目を覚ました。<br><span class="damage-text">装備、アイテム、ゴールドをすべて失った。</span>村から再出発しよう。');
         returnToBase(true);
     }, 3000);
+}
+
+// ================================================================
+// オートバトル + 浮遊ダメージ演出
+// ================================================================
+let autoBattle      = false;
+let autoBattleTimer = null;
+
+function toggleAutoBattle() {
+    autoBattle = !autoBattle;
+    if (autoBattle && battleState.active) {
+        startAutoBattle();
+    } else {
+        stopAutoBattle();
+    }
+    if (typeof renderAutoRow === 'function') renderAutoRow();
+}
+
+function startAutoBattle() {
+    if (autoBattleTimer) clearInterval(autoBattleTimer);
+    autoBattleTimer = setInterval(() => {
+        if (!battleState.active) { stopAutoBattle(); return; }
+        executeBattleTurn('normal');
+    }, 900);
+}
+
+function stopAutoBattle() {
+    if (autoBattleTimer) { clearInterval(autoBattleTimer); autoBattleTimer = null; }
+}
+
+// 浮遊ダメージ数字
+function showFloatingDamage(value, type) {
+    const color = type === 'player'  ? 'var(--accent-cyan)'
+                : type === 'enemy'   ? 'var(--danger-red)'
+                : type === 'heal'    ? 'var(--accent-green)'
+                : type === 'crit'    ? 'var(--accent-orange)'
+                : 'var(--text-main)';
+    const prefix = type === 'heal' ? '+' : type === 'player' || type === 'crit' ? '' : '-';
+    const el = document.createElement('div');
+    el.className   = 'float-dmg';
+    el.textContent = prefix + value;
+    el.style.color = color;
+    // ビューポートの中央付近にランダム配置
+    const vp = document.getElementById('viewportContent');
+    if (vp) {
+        const rect = vp.getBoundingClientRect();
+        el.style.left = (rect.left + rect.width  * (0.3 + Math.random() * 0.4)) + 'px';
+        el.style.top  = (rect.top  + rect.height * (0.3 + Math.random() * 0.3)) + 'px';
+    } else {
+        el.style.left = (window.innerWidth  * 0.4 + Math.random() * 80) + 'px';
+        el.style.top  = (window.innerHeight * 0.4) + 'px';
+    }
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 900);
 }

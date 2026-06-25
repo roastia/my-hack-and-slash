@@ -1178,3 +1178,61 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main)
 
     /* Skill buttons row */
     .skill-btn-row { gap: 4px !important; padding: 4px 6px !important
+/* ============================================================
+   スムーズ操作演出
+   ============================================================ */
+
+/* ボタン押下フィードバック */
+.action-btn:active, .mini-btn:active, .skill-action-btn:active {
+    transform: scale(0.93);
+    filter: brightness(1.15);
+}
+.action-btn, .mini-btn, .skill-action-btn {
+    transition: transform 0.07s ease, filter 0.07s ease, background 0.15s ease;
+}
+
+/* 浮遊ダメージ数字 */
+@keyframes floatUp {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    60%  { opacity: 1; transform: translateY(-36px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
+}
+.float-dmg {
+    position: fixed;
+    pointer-events: none;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    animation: floatUp 0.85s ease forwards;
+    z-index: 999;
+    white-space: nowrap;
+}
+
+/* 自動探索ボタン */
+#autoRow {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 0;
+    flex-wrap: wrap;
+}
+.auto-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.auto-btn.on {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    background: rgba(108,203,95,0.12);
+}
+.auto-btn.battle-on {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+    background: rgba(255,215,0,0.12);
+}
