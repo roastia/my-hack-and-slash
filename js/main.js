@@ -107,8 +107,8 @@ function updateMobileTopBar() {
 window.addEventListener('resize', handleMobileLayout);
 
 // ゲーム起動（JSONデータを先にロード → セーブデータ復元）
-async function initGame() {
-    await loadGameData();   // data/*.json を fetch
+function initGame() {
+    loadGameData();
     loadData();             // localStorage からセーブ復元
     handleMobileLayout();
 }

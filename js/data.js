@@ -11,27 +11,14 @@ let shopItems        = [];
 let craftRecipes     = [];
 const craftMaterialTypes = ['薬草', '鉄くず', '魔石', '骨片', '布切れ'];
 
-// --- JSON 一括ロード ---
-async function loadGameData() {
-    const base = './data/';
-    try {
-        const [enemies, duns, food, shop, recipes] = await Promise.all([
-            fetch(base + 'enemies.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-            fetch(base + 'dungeons.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-            fetch(base + 'food.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-            fetch(base + 'shop.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-            fetch(base + 'recipes.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-        ]);
-        enemiesBase  = enemies;
-        dungeons     = duns;
-        foodDatabase = food;
-        shopItems    = shop;
-        craftRecipes = recipes;
-        console.log(`[data] ロード完了: 敵${enemiesBase.length}体 / ダンジョン${dungeons.length}件`);
-    } catch (err) {
-        console.error('[data] JSONロード失敗:', err);
-        alert('データファイルの読み込みに失敗しました。\nサーバー経由でアクセスしているか確認してください。');
-    }
+// --- データ初期化（data/*.js のグローバル変数から代入）---
+function loadGameData() {
+    enemiesBase  = typeof enemiesData  !== 'undefined' ? enemiesData  : [];
+    dungeons     = typeof dungeonsData !== 'undefined' ? dungeonsData : [];
+    foodDatabase = typeof foodData     !== 'undefined' ? foodData     : [];
+    shopItems    = typeof shopData     !== 'undefined' ? shopData     : [];
+    craftRecipes = typeof recipesData  !== 'undefined' ? recipesData  : [];
+    console.log(`[data] ロード完了: 敵${enemiesBase.length}体 / ダンジョン${dungeons.length}件`);
 }
 
 // ダンジョン別の敵プールを返す

@@ -1,0 +1,357 @@
+const enemiesData = [
+  {
+    "name": "スライム",
+    "hp": 8,
+    "atk": 2,
+    "exp": 4,
+    "speed": 4,
+    "type": "粘体族",
+    "magicAtk": 0
+  },
+  {
+    "name": "大スライム",
+    "hp": 14,
+    "atk": 3,
+    "exp": 7,
+    "speed": 5,
+    "type": "粘体族",
+    "magicAtk": 0
+  },
+  {
+    "name": "毒スライム",
+    "hp": 12,
+    "atk": 4,
+    "exp": 9,
+    "speed": 6,
+    "type": "粘体族",
+    "magicAtk": 1,
+    "mat": "薬草"
+  },
+  {
+    "name": "ゴブリン",
+    "hp": 12,
+    "atk": 4,
+    "exp": 8,
+    "speed": 8,
+    "type": "小鬼族",
+    "magicAtk": 0,
+    "mat": "布切れ"
+  },
+  {
+    "name": "ゴブリン盗賊",
+    "hp": 15,
+    "atk": 6,
+    "exp": 12,
+    "speed": 11,
+    "type": "小鬼族",
+    "magicAtk": 0,
+    "mat": "布切れ"
+  },
+  {
+    "name": "コボルト",
+    "hp": 18,
+    "atk": 5,
+    "exp": 11,
+    "speed": 7,
+    "type": "獣人族",
+    "magicAtk": 0,
+    "mat": "骨片"
+  },
+  {
+    "name": "オーク",
+    "hp": 30,
+    "atk": 8,
+    "exp": 18,
+    "speed": 6,
+    "type": "鬼族",
+    "magicAtk": 0,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "オーク剣士",
+    "hp": 35,
+    "atk": 10,
+    "exp": 22,
+    "speed": 7,
+    "type": "鬼族",
+    "magicAtk": 0,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "ゾンビ",
+    "hp": 22,
+    "atk": 7,
+    "exp": 14,
+    "speed": 4,
+    "type": "不死族",
+    "magicAtk": 2,
+    "mat": "骨片"
+  },
+  {
+    "name": "スケルトン",
+    "hp": 20,
+    "atk": 8,
+    "exp": 15,
+    "speed": 6,
+    "type": "不死族",
+    "magicAtk": 1,
+    "mat": "骨片"
+  },
+  {
+    "name": "呪い師スケルトン",
+    "hp": 18,
+    "atk": 6,
+    "exp": 18,
+    "speed": 5,
+    "type": "不死族",
+    "magicAtk": 5,
+    "mat": "魔石"
+  },
+  {
+    "name": "ヘビ",
+    "hp": 15,
+    "atk": 5,
+    "exp": 10,
+    "speed": 10,
+    "type": "爬虫族",
+    "magicAtk": 0,
+    "mat": "薬草"
+  },
+  {
+    "name": "毒ヘビ",
+    "hp": 18,
+    "atk": 7,
+    "exp": 14,
+    "speed": 12,
+    "type": "爬虫族",
+    "magicAtk": 2,
+    "mat": "薬草"
+  },
+  {
+    "name": "バット",
+    "hp": 10,
+    "atk": 4,
+    "exp": 8,
+    "speed": 13,
+    "type": "鳥族",
+    "magicAtk": 0
+  },
+  {
+    "name": "大コウモリ",
+    "hp": 20,
+    "atk": 7,
+    "exp": 16,
+    "speed": 14,
+    "type": "鳥族",
+    "magicAtk": 0
+  },
+  {
+    "name": "コカトリス",
+    "hp": 28,
+    "atk": 10,
+    "exp": 22,
+    "speed": 11,
+    "type": "鳥族",
+    "magicAtk": 3,
+    "mat": "骨片"
+  },
+  {
+    "name": "ウルフ",
+    "hp": 25,
+    "atk": 9,
+    "exp": 16,
+    "speed": 12,
+    "type": "獣族",
+    "magicAtk": 0
+  },
+  {
+    "name": "炎狼",
+    "hp": 30,
+    "atk": 12,
+    "exp": 24,
+    "speed": 13,
+    "type": "獣族",
+    "magicAtk": 4,
+    "mat": "魔石"
+  },
+  {
+    "name": "ゴーレム",
+    "hp": 55,
+    "atk": 14,
+    "exp": 30,
+    "speed": 4,
+    "type": "機械族",
+    "magicAtk": 0,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "不良品ゴーレム",
+    "hp": 40,
+    "atk": 10,
+    "exp": 22,
+    "speed": 6,
+    "type": "機械族",
+    "magicAtk": 0,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "ミミック",
+    "hp": 35,
+    "atk": 13,
+    "exp": 28,
+    "speed": 8,
+    "type": "不定形",
+    "magicAtk": 0,
+    "mat": "布切れ"
+  },
+  {
+    "name": "サラマンダー",
+    "hp": 40,
+    "atk": 14,
+    "exp": 32,
+    "speed": 9,
+    "type": "爬虫族",
+    "magicAtk": 6,
+    "mat": "魔石"
+  },
+  {
+    "name": "毒キノコ",
+    "hp": 20,
+    "atk": 6,
+    "exp": 12,
+    "speed": 3,
+    "type": "植物族",
+    "magicAtk": 3,
+    "mat": "薬草"
+  },
+  {
+    "name": "暗黒騎士",
+    "hp": 60,
+    "atk": 18,
+    "exp": 45,
+    "speed": 9,
+    "type": "人族",
+    "magicAtk": 0,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "魔法使い兵",
+    "hp": 25,
+    "atk": 8,
+    "exp": 38,
+    "speed": 8,
+    "type": "人族",
+    "magicAtk": 10,
+    "mat": "魔石"
+  },
+  {
+    "name": "マンドレイク",
+    "hp": 30,
+    "atk": 10,
+    "exp": 26,
+    "speed": 5,
+    "type": "植物族",
+    "magicAtk": 4,
+    "mat": "薬草"
+  },
+  {
+    "name": "ウィスプ",
+    "hp": 18,
+    "atk": 5,
+    "exp": 22,
+    "speed": 15,
+    "type": "邪霊族",
+    "magicAtk": 8,
+    "mat": "魔石"
+  },
+  {
+    "name": "バンシー",
+    "hp": 22,
+    "atk": 7,
+    "exp": 28,
+    "speed": 13,
+    "type": "邪霊族",
+    "magicAtk": 9,
+    "mat": "魔石"
+  },
+  {
+    "name": "サキュバス",
+    "hp": 35,
+    "atk": 12,
+    "exp": 40,
+    "speed": 11,
+    "type": "悪魔族",
+    "magicAtk": 7,
+    "mat": "布切れ"
+  },
+  {
+    "name": "デーモン",
+    "hp": 70,
+    "atk": 20,
+    "exp": 55,
+    "speed": 10,
+    "type": "悪魔族",
+    "magicAtk": 5,
+    "mat": "魔石"
+  },
+  {
+    "name": "竜の子",
+    "hp": 80,
+    "atk": 24,
+    "exp": 65,
+    "speed": 9,
+    "type": "竜族",
+    "magicAtk": 8,
+    "mat": "骨片"
+  },
+  {
+    "name": "サンドワーム",
+    "hp": 90,
+    "atk": 22,
+    "exp": 60,
+    "speed": 5,
+    "type": "虫族",
+    "magicAtk": 0,
+    "mat": "骨片"
+  },
+  {
+    "name": "ガーゴイル",
+    "hp": 75,
+    "atk": 19,
+    "exp": 58,
+    "speed": 8,
+    "type": "石族",
+    "magicAtk": 3,
+    "mat": "鉄くず"
+  },
+  {
+    "name": "リッチ",
+    "hp": 50,
+    "atk": 14,
+    "exp": 70,
+    "speed": 7,
+    "type": "不死族",
+    "magicAtk": 14,
+    "mat": "魔石"
+  },
+  {
+    "name": "ゴルゴン",
+    "hp": 100,
+    "atk": 28,
+    "exp": 80,
+    "speed": 7,
+    "type": "獣族",
+    "magicAtk": 4,
+    "mat": "骨片"
+  },
+  {
+    "name": "闇の精霊",
+    "hp": 40,
+    "atk": 10,
+    "exp": 60,
+    "speed": 14,
+    "type": "邪霊族",
+    "magicAtk": 16,
+    "mat": "魔石"
+  }
+];
