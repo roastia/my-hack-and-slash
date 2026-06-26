@@ -85,29 +85,30 @@ function renderDnaPanel() {
     const panel = document.getElementById('panelDna');
     if (!panel) return;
 
-    const equipped = mutations.length;
-    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">装備中: <b style="color:var(--accent-cyan)">${equipped}/${mutationSlots}</b> スロット使用 | 変異を解除するにはDNAが必要</div>`;
+    const equippedCount = mutations.length;
+    const slotMax = mutationSlots;
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">装備中: <b style="color:var(--accent-cyan)">${equippedCount}/${slotMax}</b> スロット使用 | 変異を解除するにはDNAが必要</div>`;
 
     mutationCatalog.forEach(mut => {
-        const have     = dnaCounts[mut.req.type] || 0;
-        const need     = mut.req.count;
-        const unlocked = have >= need;
-        const equipped = mutations.includes(mut.id);
-        const pct      = Math.min(100, Math.floor(have / need * 100));
+        const have      = dnaCounts[mut.req.type] || 0;
+        const need      = mut.req.count;
+        const unlocked  = have >= need;
+        const isEquipped = mutations.includes(mut.id);
+        const pct       = Math.min(100, Math.floor(have / need * 100));
 
         let btnHtml = '';
         if (!unlocked) {
             btnHtml = `<span style="color:var(--text-disabled);font-size:11px;">未解除</span>`;
-        } else if (equipped) {
+        } else if (isEquipped) {
             btnHtml = `<button class="mini-btn btn-equipped" onclick="toggleMutation('${mut.id}')">✓ 装備中</button>`;
-        } else if (mutations.length < mutationSlots) {
+        } else if (mutations.length < slotMax) {
             btnHtml = `<button class="mini-btn btn-equip" onclick="toggleMutation('${mut.id}')">装備する</button>`;
         } else {
             btnHtml = `<button class="mini-btn" disabled style="opacity:0.5;">スロット満杯</button>`;
         }
 
         html += `
-        <div class="lab-item" style="${equipped ? 'border-color:var(--accent-cyan);background:rgba(96,205,255,0.05);' : ''}">
+        <div class="lab-item" style="${isEquipped ? 'border-color:var(--accent-cyan);background:rgba(96,205,255,0.05);' : ''}">
             <div style="flex:1;">
                 <div style="font-weight:bold;">${mut.icon} ${mut.name} <span style="color:var(--accent-green);font-size:12px;">${mut.desc}</span></div>
                 <div class="lab-desc">${mut.req.type} 討伐: ${have}/${need}
