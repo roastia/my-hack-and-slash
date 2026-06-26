@@ -103,6 +103,11 @@
                     <span>精神: <span id="spiritStatDisplay" style="color:#88aaff">0</span></span>
                     <span id="tensionDisplay" style="font-size:12px;">テンション 1:通常</span>
                 </div>
+                <!-- 称号・現型表示 -->
+                <div class="status-row" style="font-size:12px; margin-top:2px; border-top:1px dashed #332; padding-top:3px;">
+                    <span>称号: <span id="activeTitleDisplay" style="color:var(--text-dim);">称号なし</span></span>
+                    <span>現型: <span id="activeArchetypeDisplay" style="color:var(--text-dim);">—</span></span>
+                </div>
                 <!-- バージョン表示 -->
                 <div style="text-align: right; font-size: 12px; color: var(--text-dim); font-family: 'Courier New', monospace; margin-top: 2px;">
                     勇者の冒険 v2.0
@@ -154,6 +159,8 @@
                     <button id="tabFish"    class="mini-btn tab-btn"        onclick="switchTab('fish')"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
                     <button id="tabDna"     class="mini-btn tab-btn"        onclick="switchTab('dna')"     style="font-size:14px; padding:6px 10px;">🧬 変 異</button>
                     <button id="tabTrap"    class="mini-btn tab-btn"        onclick="switchTab('trap')"    style="font-size:14px; padding:6px 10px;">🪤 罠</button>
+                    <button id="tabTitle"   class="mini-btn tab-btn"        onclick="switchTab('title')"   style="font-size:14px; padding:6px 10px;">🏆 称 号</button>
+                    <button id="tabAi"      class="mini-btn tab-btn"        onclick="switchTab('ai')"      style="font-size:14px; padding:6px 10px;">🤖 A I</button>
                     <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
                 </div>
 
@@ -233,6 +240,12 @@
 
                 <!-- 釣りパネル -->
                 <div id="panelFish" class="base-panel hidden"></div>
+
+                <!-- 称号タブ -->
+                <div id="panelTitle" class="base-panel hidden"></div>
+
+                <!-- カスタムAIタブ -->
+                <div id="panelAi" class="base-panel hidden"></div>
 
                 <!-- アーカイブタブ -->
                 <div id="panelArchive" class="base-panel hidden">

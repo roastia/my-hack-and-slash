@@ -240,6 +240,7 @@ function chainExplosion() {
 function executeExploreStep() {
     clearLog();
     stepCount++;
+    if (typeof titleStats !== 'undefined') { titleStats.stepsTotal++; if(titleStats.stepsTotal % 50 === 0 && typeof checkTitleUnlocks === 'function') checkTitleUnlocks(); }
 
     // SP消費（移動コスト）
     const spCost = 3;
@@ -410,6 +411,35 @@ function addEnemyToStack(isReturn = false) {
 
     enemyStack.push(enemy);
 
+    // 星座: extraEnemy（双子座）: 1体追加で出現
+    if (!isReturn && typeof getConstellationEffects === 'function') {
+        const _cex = getConstellationEffects();
+        if (_cex.extraEnemy && enemyStack.length === 1) {
+            const extraBase = pool[Math.floor(Math.random() * pool.length)];
+            const extraEnemy = {
+                name: '〔双〕' + extraBase.name,
+                hp: Math.floor(extraBase.hp * scale * 0.8),
+                maxHp: Math.floor(extraBase.hp * scale * 0.8),
+                atk: Math.floor(extraBase.atk * scale * 0.3) + 1,
+                exp: Math.floor(extraBase.exp * scale * 0.7),
+                speed: extraBase.speed || 8,
+                type: extraBase.type || '不明',
+                magicAtk: Math.floor((extraBase.magicAtk || 0) * scale * 0.8),
+                mat: extraBase.mat || null,
+            };
+            enemyStack.push(extraEnemy);
+        }
+    }
+
+    // 星座: enemyHpMult（獅子座・死神座）
+    if (typeof getConstellationEffects === 'function') {
+        const _ceh = getConstellationEffects();
+        if (_ceh.enemyHpMult) {
+            enemy.hp    = Math.floor(enemy.hp    * _ceh.enemyHpMult);
+            enemy.maxHp = Math.floor(enemy.maxHp * _ceh.enemyHpMult);
+        }
+    }
+
     const count = enemyStack.length;
     const risk  = count >= 4 ? 'var(--danger-red)' : count >= 2 ? 'var(--accent-orange)' : 'var(--accent-cyan)';
     addLog(`<span style="color:${risk}">⚠ ${enemy.name} <span style="color:var(--text-dim); font-size:11px">[${enemy.type}]</span> が近づいている！ スタック: ${count}体</span>`);
@@ -441,7 +471,9 @@ function spawnEnemy() {
 function findItem() {
     updateIllustration('item');
 
-    if (Math.random() < 0.20) {
+    let _matChance = 0.20;
+    if (typeof getConstellationEffects === 'function') { const _cd = getConstellationEffects(); if(_cd.dropMult) _matChance *= _cd.dropMult; }
+    if (Math.random() < _matChance) {
         const food = Object.assign({}, foodDatabase[Math.floor(Math.random() * foodDatabase.length)]);
         food.type = 'food';
         if (inventory.length < maxInventory) {

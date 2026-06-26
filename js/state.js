@@ -89,3 +89,14 @@ let mutationSlots = 3;    // 変異装備スロット上限
 // --- 拠点トラップ ---
 let traps    = [];        // 設置中のトラップ配列 { id, name, dmgBase, usesLeft, ignoresDef }
 const MAX_TRAPS = 3;      // 同時設置上限
+// --- 称号（二つ名）システム ---
+let equippedTitle  = null;           // 装備中の称号ID
+let unlockedTitles = ['nameless'];   // 解除済み称号ID配列
+let titleStats     = { critHits: 0, stealCount: 0, skillUseCount: 0, stepsTotal: 0 };
+
+// --- 星座システム ---
+let activeDungeonConstellation = null;  // ダンジョン突入時の星座ID
+
+// --- カスタムAI優先度 ---
+let customAiPriority = ['healingWave', 'powerStrike', 'rapidStrike', 'guardStance', 'normal'];
+

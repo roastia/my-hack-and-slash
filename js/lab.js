@@ -267,3 +267,147 @@ function buyMeritShopItem(id) {
     renderMeritShop();
     updateUI();
 }
+
+// =============================================================
+// 称号パネル
+// =============================================================
+function checkTitleUnlocks() {
+    if (typeof titleCatalog === 'undefined' || typeof unlockedTitles === 'undefined') return;
+    let newUnlock = false;
+    titleCatalog.forEach(t => {
+        if (!unlockedTitles.includes(t.id) && t.unlockFn && t.unlockFn()) {
+            unlockedTitles.push(t.id);
+            addLog(`<span style="color:#ffd700">🏆 称号【${t.icon} ${t.name}】を解除した！</span>`);
+            newUnlock = true;
+        }
+    });
+    return newUnlock;
+}
+
+function equipTitle(id) {
+    if (!unlockedTitles.includes(id)) return;
+    equippedTitle = (equippedTitle === id) ? null : id;
+    saveData();
+    renderTitlePanel();
+    updateUI();
+    const t = titleCatalog.find(x => x.id === id);
+    if (t) addLog(`<span style="color:#ffd700">🏆 称号【${t.icon} ${t.name}】を${equippedTitle === id ? '装備した！' : '外した。'}</span>`);
+}
+
+function renderTitlePanel() {
+    const panel = document.getElementById('panelTitle');
+    if (!panel) return;
+    if (typeof titleCatalog === 'undefined') return;
+
+    const equipped = equippedTitle;
+    const unlocked = unlockedTitles || ['nameless'];
+
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
+        称号を装備すると強力なステータス補正を得られます。一度に1つだけ装備できます。<br>
+        装備中: <b style="color:#ffd700">${equipped ? titleCatalog.find(t=>t.id===equipped)?.name || 'なし' : 'なし'}</b>
+    </div>`;
+
+    const stars = ['', '★', '★★', '★★★'];
+    titleCatalog.forEach(t => {
+        const isUnlocked = unlocked.includes(t.id);
+        const isEquipped = equipped === t.id;
+
+        // エフェクト文字列を生成
+        const eff = t.effects;
+        const effParts = [];
+        if (eff.atkMult)    effParts.push(`<span style="color:${eff.atkMult>1?'var(--accent-cyan)':'var(--danger-red)'}">ATK×${eff.atkMult}</span>`);
+        if (eff.defMult)    effParts.push(`<span style="color:${eff.defMult>1?'var(--accent-cyan)':'var(--danger-red)'}">DEF×${eff.defMult}</span>`);
+        if (eff.spdBonus)   effParts.push(`<span style="color:var(--accent-cyan)">SPD+${eff.spdBonus}</span>`);
+        if (eff.spdMult)    effParts.push(`<span style="color:var(--accent-cyan)">SPD×${eff.spdMult}</span>`);
+        if (eff.critBonus)  effParts.push(`<span style="color:var(--accent-orange)">会心+${eff.critBonus}%</span>`);
+        if (eff.stealBonus) effParts.push(`<span style="color:var(--accent-green)">奪取+${eff.stealBonus}%</span>`);
+        if (eff.spiritBonus)effParts.push(`<span style="color:#aa88ff">精神+${eff.spiritBonus}</span>`);
+        if (eff.magicMult)  effParts.push(`<span style="color:#aa88ff">魔法×${eff.magicMult}</span>`);
+        if (eff.expMult)    effParts.push(`<span style="color:var(--accent-orange)">EXP×${eff.expMult}</span>`);
+
+        const effText = effParts.length > 0 ? effParts.join(' / ') : '<span style="color:var(--text-dim)">効果なし</span>';
+
+        if (!isUnlocked) {
+            html += `<div class="lab-item" style="opacity:0.5">
+                <div>
+                    <div style="font-weight:bold;color:var(--text-dim)">${t.icon} ${t.name}</div>
+                    <div class="lab-desc">${t.desc}</div>
+                    <div class="lab-desc" style="color:var(--accent-orange)">🔒 解除条件: ${t.unlockHint}</div>
+                </div>
+            </div>`;
+        } else {
+            html += `<div class="lab-item" style="${isEquipped ? 'border-color:#ffd700;background:rgba(255,215,0,0.07);' : ''}">
+                <div style="flex:1">
+                    <div style="font-weight:bold;color:${isEquipped ? '#ffd700' : 'var(--text-main)'}">${t.icon} ${t.name}${isEquipped ? ' ✓ 装備中' : ''}</div>
+                    <div class="lab-desc">${t.desc}</div>
+                    <div class="lab-desc" style="margin-top:3px">${effText}</div>
+                </div>
+                <button class="mini-btn ${isEquipped ? 'btn-equipped' : 'btn-equip'}" onclick="equipTitle('${t.id}')">
+                    ${isEquipped ? '外す' : '装備する'}
+                </button>
+            </div>`;
+        }
+    });
+    panel.innerHTML = html;
+}
+
+// =============================================================
+// カスタムAI設定パネル
+// =============================================================
+function renderAiPanel() {
+    const panel = document.getElementById('panelAi');
+    if (!panel) return;
+
+    const priority = (typeof customAiPriority !== 'undefined') ? customAiPriority : ['normal'];
+    const skillNames = {
+        healingWave: '✦ 回復術',
+        powerStrike: '💥 渾身の一撃',
+        rapidStrike: '⚔ 連撃',
+        guardStance: '🛡 鉄壁',
+        normal:      '⚡ 通常攻撃'
+    };
+    const skillDescs = {
+        healingWave: 'HP50%未満の時のみ発動',
+        powerStrike: '高威力の一撃',
+        rapidStrike: '複数回の連続攻撃',
+        guardStance: '次の攻撃を軽減',
+        normal:      '常に発動（最終手段）'
+    };
+
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
+        自動戦闘でのスキル使用優先順位を設定します。<br>
+        上のスキルから順に、使用可能なものを選択して発動します。
+    </div>`;
+
+    priority.forEach((sid, idx) => {
+        const learned = sid === 'normal' || (typeof skillBook !== 'undefined' && skillBook[sid]?.learned);
+        const name  = skillNames[sid] || sid;
+        const desc  = skillDescs[sid] || '';
+        const canUp   = idx > 0;
+        const canDown = idx < priority.length - 1;
+        html += `<div class="lab-item" style="align-items:center;${!learned?'opacity:0.45;':''}">
+            <div style="width:24px;text-align:center;font-size:16px;color:var(--accent-cyan);font-weight:bold">${idx + 1}</div>
+            <div style="flex:1;margin:0 8px;">
+                <div style="font-weight:bold">${name}${learned ? '' : ' <span style="font-size:10px;color:var(--text-disabled)">[未習得]</span>'}</div>
+                <div class="lab-desc">${desc}</div>
+            </div>
+            <div style="display:flex;gap:4px;">
+                <button class="mini-btn" style="padding:3px 8px;font-size:13px;" onclick="moveAiPriority(${idx},-1)" ${canUp?'':'disabled style="opacity:0.3;padding:3px 8px;font-size:13px;"'}>▲</button>
+                <button class="mini-btn" style="padding:3px 8px;font-size:13px;" onclick="moveAiPriority(${idx},+1)" ${canDown?'':'disabled style="opacity:0.3;padding:3px 8px;font-size:13px;"'}>▼</button>
+            </div>
+        </div>`;
+    });
+
+    panel.innerHTML = html;
+}
+
+function moveAiPriority(idx, dir) {
+    if (typeof customAiPriority === 'undefined') return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= customAiPriority.length) return;
+    const tmp = customAiPriority[idx];
+    customAiPriority[idx] = customAiPriority[newIdx];
+    customAiPriority[newIdx] = tmp;
+    saveData();
+    renderAiPanel();
+}

@@ -34,6 +34,43 @@ const progressBar       = document.getElementById('progressBar');
 // ステータス計算（装備込み）
 // =============================================================
 
+
+// =============================================================
+// 称号エフェクト
+// =============================================================
+function getTitleEffects() {
+    if (typeof equippedTitle === 'undefined' || !equippedTitle) return {};
+    const t = (typeof titleCatalog !== 'undefined') ? titleCatalog.find(x => x.id === equippedTitle) : null;
+    return t ? t.effects : {};
+}
+
+// =============================================================
+// 現型（装備シナジー）エフェクト
+// =============================================================
+function getArchetypeEffect() {
+    const w = equipment.weapon  !== null;
+    const h = equipment.helm    !== null;
+    const a = equipment.armor   !== null;
+    const s = equipment.shield  !== null;
+    const cnt = [w,h,a,s].filter(Boolean).length;
+    if (cnt === 4) return { id:'fullArmor',  name:'完全武装型',  icon:'⚔🛡', atkMult:1.1, defMult:1.1, spdBonus:3,  critBonus:5 };
+    if (w && !h && !a && !s) return { id:'bladeMaster', name:'剣聖型',      icon:'⚔',   atkMult:1.2, spdBonus:6 };
+    if (!w && h && a && s)   return { id:'fortress',    name:'要塞型',      icon:'🛡',   defMult:1.35 };
+    if (w && s && !h && !a)  return { id:'duelist',     name:'決闘者型',    icon:'⚔🛡', atkMult:1.15, defMult:1.1 };
+    if (w && h && a && !s)   return { id:'assault',     name:'強襲型',      icon:'💥',   atkMult:1.15, critBonus:10 };
+    if (!w && !h && !a && !s) return null;
+    return null;
+}
+
+// =============================================================
+// 星座エフェクト（現在アクティブな星座）
+// =============================================================
+function getConstellationEffects() {
+    if (typeof activeDungeonConstellation === 'undefined' || !activeDungeonConstellation) return {};
+    const c = (typeof constellationCatalog !== 'undefined') ? constellationCatalog.find(x => x.id === activeDungeonConstellation) : null;
+    return c ? c.effects : {};
+}
+
 function getTotalAttack() {
     let total = baseAttack;
     Object.values(equipment).forEach(eq => { if (eq && eq.atk) total += eq.atk; });
@@ -61,7 +98,13 @@ function getTotalAttack() {
     if (typeof baseCondition !== 'undefined' && baseCondition === 0) {
         total = Math.max(1, Math.floor(total * 0.8));
     }
-    return total;
+    // 称号効果
+    const _te = getTitleEffects();
+    if (_te.atkMult) total = Math.floor(total * _te.atkMult);
+    // 現型効果
+    const _ar = getArchetypeEffect();
+    if (_ar && _ar.atkMult) total = Math.floor(total * _ar.atkMult);
+    return Math.max(1, total);
 }
 
 // 遠隔武器かどうか判定
@@ -95,6 +138,9 @@ function getTotalSpirit() {
         const mu = getMutationEffects();
         if (mu.spiritBonus) total += mu.spiritBonus;
     }
+    // 称号効果
+    const _te_st = getTitleEffects();
+    if (_te_st.spiritBonus) total += _te_st.spiritBonus;
     return total;
 }
 
@@ -109,6 +155,12 @@ function getTotalDef() {
         const mu = getMutationEffects();
         if (mu.defBonus) total += mu.defBonus;
     }
+    // 称号効果
+    const _te_d = getTitleEffects();
+    if (_te_d.defMult) total = Math.floor(total * _te_d.defMult);
+    // 現型効果
+    const _ar_d = getArchetypeEffect();
+    if (_ar_d && _ar_d.defMult) total = Math.floor(total * _ar_d.defMult);
     return total;
 }
 
@@ -123,6 +175,12 @@ function getCritRate() {
         const mu = getMutationEffects();
         if (mu.critBonus) total += mu.critBonus;
     }
+    // 称号効果
+    const _te_c = getTitleEffects();
+    if (_te_c.critBonus) total += _te_c.critBonus;
+    // 現型効果
+    const _ar_c = getArchetypeEffect();
+    if (_ar_c && _ar_c.critBonus) total += _ar_c.critBonus;
     return total;
 }
 
@@ -137,6 +195,9 @@ function getStealRate() {
         const mu = getMutationEffects();
         if (mu.drainBonus) total += mu.drainBonus;
     }
+    // 称号効果
+    const _te_s = getTitleEffects();
+    if (_te_s.stealBonus) total += _te_s.stealBonus;
     return total;
 }
 
@@ -151,6 +212,13 @@ function getTotalSpeed() {
         const mu = getMutationEffects();
         if (mu.spdBonus) total += mu.spdBonus;
     }
+    // 称号効果
+    const _te_sp = getTitleEffects();
+    if (_te_sp.spdBonus) total += _te_sp.spdBonus;
+    if (_te_sp.spdMult)  total = Math.floor(total * _te_sp.spdMult);
+    // 現型効果
+    const _ar_sp = getArchetypeEffect();
+    if (_ar_sp && _ar_sp.spdBonus) total += _ar_sp.spdBonus;
     return Math.max(1, total);
 }
 
@@ -860,6 +928,21 @@ function updateUI() {
     // 精神ステータム表示
     const spiritStatEl = document.getElementById('spiritStatDisplay');
     if (spiritStatEl) spiritStatEl.textContent = getTotalSpirit();
+    // 称号・現型表示
+    const titleEl = document.getElementById('activeTitleDisplay');
+    if (titleEl) {
+        const te = getTitleEffects();
+        const hasEffect = Object.keys(te).length > 0;
+        const tObj = (typeof titleCatalog !== 'undefined' && equippedTitle) ? titleCatalog.find(t=>t.id===equippedTitle) : null;
+        titleEl.textContent = tObj ? `${tObj.icon} ${tObj.name}` : '称号なし';
+        titleEl.style.color = tObj ? '#ffd700' : 'var(--text-dim)';
+    }
+    const archetypeEl = document.getElementById('activeArchetypeDisplay');
+    if (archetypeEl) {
+        const ar = getArchetypeEffect();
+        archetypeEl.textContent = ar ? `${ar.icon} ${ar.name}` : '—';
+        archetypeEl.style.color = ar ? 'var(--accent-cyan)' : 'var(--text-dim)';
+    }
 
     // テンション表示
     const tensionEl = document.getElementById('tensionDisplay');
@@ -1092,6 +1175,22 @@ function switchTab(tab) {
         if (typeof renderDnaPanel === 'function') renderDnaPanel();
         updateIllustration('base');
     }
+    if (tab === 'title') {
+        const ttl = document.getElementById('tabTitle');
+        if (ttl) ttl.classList.add('active');
+        const ptl = document.getElementById('panelTitle');
+        if (ptl) ptl.classList.remove('hidden');
+        if (typeof renderTitlePanel === 'function') renderTitlePanel();
+        updateIllustration('base');
+    }
+    if (tab === 'ai') {
+        const tai = document.getElementById('tabAi');
+        if (tai) tai.classList.add('active');
+        const pai = document.getElementById('panelAi');
+        if (pai) pai.classList.remove('hidden');
+        if (typeof renderAiPanel === 'function') renderAiPanel();
+        updateIllustration('base');
+    }
     if (tab === 'trap') {
         const tt = document.getElementById('tabTrap');
         if (tt) tt.classList.add('active');
@@ -1119,8 +1218,26 @@ function renderBaseScene() {
     eventState  = { active: false, type: null };
     updateActionButtons();
 
+    // 星座選択UI
+    const constEl = document.getElementById('dungeonList');
+    constEl.innerHTML = '';
+    if (typeof constellationCatalog !== 'undefined') {
+        const constDiv = document.createElement('div');
+        constDiv.style.cssText = 'margin-bottom:10px; padding:8px; background:rgba(30,20,60,0.6); border:1px solid #443; border-radius:6px;';
+        const active = activeDungeonConstellation || 'none';
+        const diffColors = ['var(--text-dim)', 'var(--accent-orange)', 'var(--danger-red)', '#ff4444'];
+        constDiv.innerHTML = `<div style="color:var(--accent-cyan);font-size:12px;margin-bottom:6px;">✨ 星座（ダンジョン修飾）: <b style="color:#ffd700">${
+            constellationCatalog.find(c=>c.id===active)?.name || 'なし'
+        }</b></div><div style="display:flex;flex-wrap:wrap;gap:4px;">${
+            constellationCatalog.map(c => {
+                const sel = c.id === active;
+                return `<button class="mini-btn" onclick="selectConstellation('${c.id}')" style="font-size:11px;padding:3px 7px;${sel?'background:rgba(255,215,0,0.15);border-color:#ffd700;color:#ffd700;':''}">${c.icon} ${c.name}${'⚠'.repeat(c.difficulty)}</button>`;
+            }).join('')
+        }</div>${active !== 'none' ? `<div style="font-size:11px;color:var(--text-dim);margin-top:5px;">${constellationCatalog.find(c=>c.id===active)?.desc || ''}</div>` : ''}`;
+        constEl.appendChild(constDiv);
+    }
+
     const list = document.getElementById('dungeonList');
-    list.innerHTML = '';
     for (let i = 0; i <= currentProgress && i < dungeons.length; i++) {
         const d          = dungeons[i];
         const totalSteps = d.maxFloor * stepsToNextFloor;

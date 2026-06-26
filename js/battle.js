@@ -33,6 +33,7 @@ function calcPlayerDamage(atkOverride) {
     let atk      = atkOverride !== undefined ? atkOverride : getTotalAttack();
     let critRate = getCritRate() / 100;
     let isCrit   = Math.random() < critRate;
+    if (isCrit && typeof titleStats !== 'undefined') { titleStats.critHits++; if(typeof checkTitleUnlocks==='function') checkTitleUnlocks(); }
     let dmg      = isCrit ? Math.floor(atk * 1.5) : atk;
 
     let spiritDmg = 0, spiritLog = '';
@@ -142,6 +143,7 @@ function executeBattleTurn(skillId) {
         sp -= spCost;
         const skillLvBefore = getSkillLevel(skillId);
         skillBook[skillId].uses++;
+        if (typeof titleStats !== 'undefined') { titleStats.skillUseCount++; if(typeof checkTitleUnlocks==='function') checkTitleUnlocks(); }
         const skillLvAfter  = getSkillLevel(skillId);
         const skillLv       = skillLvAfter;
 
@@ -158,7 +160,8 @@ function executeBattleTurn(skillId) {
             enemy.hp     = Math.max(0, enemy.hp - dmg);
             logMsg = `<span class="attack-text">💥 渾身の一撃！ ${dmg} dmgを与えた！ (Lv${skillLv} × ${mult.toFixed(1)})</span>`;
             const heal = Math.floor(dmg * (getStealRate() / 100));
-            if (heal > 0) { currentHp = Math.min(maxHp, currentHp + heal); logMsg += ` <span class="event-text">(吸収 +${heal})</span>`; }
+            if (heal > 0) { currentHp = Math.min(maxHp, currentHp + heal); logMsg += ` <span class="event-text">(吸収 +${heal})</span>`;
+                if (typeof titleStats !== 'undefined') { titleStats.stealCount++; if(typeof checkTitleUnlocks==='function') checkTitleUnlocks(); } }
             sp = Math.min(maxSp, sp + 5);
 
         } else if (skillId === 'rapidStrike') {
@@ -216,13 +219,20 @@ function executeBattleTurn(skillId) {
     // ── 撃破判定 ──
     if (enemy.hp <= 0) {
         stats.kills++;
-        exp      += enemy.exp;
+        let _gainedExp = enemy.exp;
+        // 称号 EXP補正
+        if (typeof getTitleEffects === 'function') { const _te=getTitleEffects(); if(_te.expMult) _gainedExp = Math.floor(_gainedExp * _te.expMult); }
+        // 星座 EXP補正
+        if (typeof getConstellationEffects === 'function') { const _ce=getConstellationEffects(); if(_ce.expMult) _gainedExp = Math.floor(_gainedExp * _ce.expMult); }
+        exp      += _gainedExp;
         // DNA追跡
         if (typeof dnaCounts !== 'undefined' && window._pendingDnaTypes && window._pendingDnaTypes.length > 0) {
             window._pendingDnaTypes.forEach(t => { if (t) dnaCounts[t] = (dnaCounts[t] || 0) + 1; });
             window._pendingDnaTypes = [];
         }
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
+        // 星座 GOLD補正
+        if (typeof getConstellationEffects === 'function') { const _cg=getConstellationEffects(); if(_cg.goldMult) dust = Math.floor(dust * _cg.goldMult); }
         starDust += dust;
 
         // テンションボーナス
@@ -367,6 +377,7 @@ function checkLevelUp() {
 
 // ゲームオーバー
 function gameOver() {
+    if (typeof checkTitleUnlocks === 'function') checkTitleUnlocks();
     updateIllustration('death');
     battleState.active = false;
     updateActionButtons();
@@ -401,7 +412,20 @@ function startAutoBattle() {
     if (autoBattleTimer) clearInterval(autoBattleTimer);
     autoBattleTimer = setInterval(() => {
         if (!battleState.active) { stopAutoBattle(); return; }
-        executeBattleTurn('normal');
+        // カスタムAI優先度でスキルを選択
+        const priority = (typeof customAiPriority !== 'undefined') ? customAiPriority : ['normal'];
+        const spCosts  = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10 };
+        let chosen = 'normal';
+        for (const sid of priority) {
+            if (sid === 'normal') { chosen = 'normal'; break; }
+            const entry = skillBook[sid];
+            if (!entry || !entry.learned) continue;
+            const cost  = spCosts[sid] || 15;
+            // healingWave はHP50%未満のときのみ発動
+            if (sid === 'healingWave' && currentHp > maxHp * 0.5) continue;
+            if (sp >= cost) { chosen = sid; break; }
+        }
+        executeBattleTurn(chosen);
     }, 900);
 }
 

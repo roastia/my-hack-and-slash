@@ -54,6 +54,8 @@ function saveData() {
         baseCondition, costRepairBase,
         dnaCounts, mutations, mutationSlots,
         traps,
+        equippedTitle, unlockedTitles, titleStats,
+        activeDungeonConstellation, customAiPriority,
         fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
         fishingRodUpgradeCost: fishingState ? fishingState.rodUpgradeCost : 30,
         costHp, costAtk, costDef, stats,
@@ -109,6 +111,11 @@ function loadData() {
         mutations      = data.mutations        || [];
         mutationSlots  = data.mutationSlots    || 3;
         traps          = data.traps            || [];
+        equippedTitle  = data.equippedTitle    || null;
+        unlockedTitles = data.unlockedTitles   || ['nameless'];
+        titleStats     = data.titleStats       || { critHits: 0, stealCount: 0, skillUseCount: 0, stepsTotal: 0 };
+        activeDungeonConstellation = data.activeDungeonConstellation || null;
+        customAiPriority = data.customAiPriority || ['healingWave', 'powerStrike', 'rapidStrike', 'guardStance', 'normal'];
         if (typeof fishingState !== 'undefined') {
             fishingState.rodLevel = data.fishingRodLevel || 1;
             fishingState.rodUpgradeCost = data.fishingRodUpgradeCost || 30;

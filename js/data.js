@@ -445,3 +445,92 @@ const trapCatalog = [
     { id: 'trap_poison', name: '毒霧トラップ',     icon: '☠️', cost: 18, dmgBase: 20, uses: 3, ignoresDef: false, desc: '毒20ダメ×3回' },
     { id: 'trap_needle', name: '針山トラップ',     icon: '🪡', cost: 10, dmgBase: 15, uses: 4, ignoresDef: false, desc: '15ダメ×4回（使い捨て多め）' },
 ];
+
+// =============================================================
+// 称号（二つ名）カタログ
+// =============================================================
+const titleCatalog = [
+    {
+        id: 'nameless', name: '名もなき勇者', icon: '⚔',
+        desc: '始まりの称号。特別な効果はない。',
+        unlockHint: '最初から所持',
+        unlockFn: () => true,
+        effects: {}
+    },
+    {
+        id: 'berserker', name: '狂戦士', icon: '🔥',
+        desc: '攻撃力 ×1.5 / 防御力 ×0.7。火力で押し切る荒くれ者。',
+        unlockHint: '50体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 50,
+        effects: { atkMult: 1.5, defMult: 0.7 }
+    },
+    {
+        id: 'guardian', name: '鉄壁の守護者', icon: '🛡',
+        desc: '防御力 ×1.5 / 攻撃力 ×0.75。鉄の意志で仲間を守る。',
+        unlockHint: '100体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 100,
+        effects: { defMult: 1.5, atkMult: 0.75 }
+    },
+    {
+        id: 'shadow', name: '影の暗殺者', icon: '🗡',
+        desc: '会心+25% / 素早さ+8 / 防御 ×0.6。先手を取って一気に仕留める。',
+        unlockHint: 'クリティカル20回達成',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.critHits >= 20,
+        effects: { critBonus: 25, spdBonus: 8, defMult: 0.6 }
+    },
+    {
+        id: 'greedy', name: '貪欲なる者', icon: '💰',
+        desc: '奪取率+15% / スキルEXP +20%。あらゆるものを掻き集める。',
+        unlockHint: '敵から15回奪取',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stealCount >= 15,
+        effects: { stealBonus: 15, expMult: 1.2 }
+    },
+    {
+        id: 'undying', name: '不死身の戦士', icon: '💀',
+        desc: '防御 ×1.3 / 精神+15 / 攻撃 ×0.8。何度倒れても立ち上がる不屈の魂。',
+        unlockHint: '5回力尽きる',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 5,
+        effects: { defMult: 1.3, spiritBonus: 15, atkMult: 0.8 }
+    },
+    {
+        id: 'mage', name: '魔道の申し子', icon: '✨',
+        desc: '魔法 ×1.5 / 精神+10 / 物理攻撃 ×0.7。魔力と共に生きる者。',
+        unlockHint: 'スキル30回使用',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.skillUseCount >= 30,
+        effects: { magicMult: 1.5, spiritBonus: 10, atkMult: 0.7 }
+    },
+    {
+        id: 'challenger', name: '命知らずの挑戦者', icon: '⚡',
+        desc: '攻撃 ×1.8 / 防御 ×0.4 / 素早さ+10。リスクを恐れぬ真の勇者。',
+        unlockHint: '3回力尽き、かつ30体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 3 && stats.kills >= 30,
+        effects: { atkMult: 1.8, defMult: 0.4, spdBonus: 10 }
+    },
+    {
+        id: 'chosen', name: '天運の使者', icon: '⭐',
+        desc: '会心+15% / EXP +20%。運命に選ばれた者。',
+        unlockHint: '200体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 200,
+        effects: { critBonus: 15, expMult: 1.2 }
+    },
+    {
+        id: 'explorer', name: '果ての探索者', icon: '🗺',
+        desc: '素早さ ×1.3 / 奪取+10%。誰も踏み入れぬ地を目指す者。',
+        unlockHint: '300歩探索',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stepsTotal >= 300,
+        effects: { spdMult: 1.3, stealBonus: 10 }
+    },
+];
+
+// =============================================================
+// 星座（ダンジョン修飾）カタログ
+// =============================================================
+const constellationCatalog = [
+    { id: 'none',     name: 'なし',   icon: '⬜', desc: '通常の難易度',                                difficulty: 0, effects: {} },
+    { id: 'aries',    name: '牡羊座', icon: '♈', desc: '敵ATK +30% / 獲得G +60%',                   difficulty: 1, effects: { enemyAtkMult: 1.3, goldMult: 1.6 } },
+    { id: 'gemini',   name: '双子座', icon: '♊', desc: '戦闘で追加の敵が出現 / EXP +50%',             difficulty: 1, effects: { extraEnemy: true, expMult: 1.5 } },
+    { id: 'capricorn',name: '山羊座', icon: '♑', desc: 'SP回復 ×0.5 / ドロップ率 +70%',             difficulty: 2, effects: { spRegenMult: 0.5, dropMult: 1.7 } },
+    { id: 'scorpio',  name: '蠍座',   icon: '♏', desc: '毎ターン最大HPの5%毒ダメージ / EXP +80%',   difficulty: 2, effects: { poisonDmgPct: 0.05, expMult: 1.8 } },
+    { id: 'leo',      name: '獅子座', icon: '♌', desc: '敵HP +50% / 敵ATK +20% / 全報酬 +60%',      difficulty: 2, effects: { enemyHpMult: 1.5, enemyAtkMult: 1.2, expMult: 1.6, goldMult: 1.6 } },
+    { id: 'death',    name: '死神座', icon: '☠', desc: '敵ATK +60% / 敵HP +60% / 全報酬 ×2',        difficulty: 3, effects: { enemyAtkMult: 1.6, enemyHpMult: 1.6, expMult: 2.0, goldMult: 2.0 } },
+];
