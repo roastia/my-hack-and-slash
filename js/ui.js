@@ -649,12 +649,12 @@ function clearLog() {
 function updateActionButtons() {
     const _actionGroup = document.querySelector('.action-group');
     if (!activeDungeon) {
-        if (_actionGroup) { _actionGroup.classList.add('hidden'); _actionGroup.style.display = ''; }
+        if (_actionGroup) { _actionGroup.style.setProperty('display', 'none', 'important'); }
         exploreBtn.classList.add('hidden');
         returnBtn.classList.add('hidden');
         return;
     }
-    if (_actionGroup) { _actionGroup.classList.remove('hidden'); }
+    if (_actionGroup) { _actionGroup.style.removeProperty('display'); _actionGroup.classList.remove('hidden'); }
 
     if (eventState.active && eventState.type === 'console') {
         exploreBtn.disabled    = false;
