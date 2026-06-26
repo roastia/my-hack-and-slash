@@ -5,7 +5,7 @@ const enemiesData = [
     "atk": 2,
     "exp": 4,
     "speed": 4,
-    "type": "粘体族",
+    "type": "粘体族", "weakElement": "炎",
     "magicAtk": 0
   },
   {
@@ -14,7 +14,7 @@ const enemiesData = [
     "atk": 3,
     "exp": 7,
     "speed": 5,
-    "type": "粘体族",
+    "type": "粘体族", "weakElement": "炎",
     "magicAtk": 0
   },
   {
@@ -23,7 +23,7 @@ const enemiesData = [
     "atk": 4,
     "exp": 9,
     "speed": 6,
-    "type": "粘体族",
+    "type": "粘体族", "weakElement": "炎",
     "magicAtk": 1,
     "mat": "薬草"
   },
@@ -83,7 +83,7 @@ const enemiesData = [
     "atk": 7,
     "exp": 14,
     "speed": 4,
-    "type": "不死族",
+    "type": "不死族", "weakElement": "光",
     "magicAtk": 2,
     "mat": "骨片"
   },
@@ -93,7 +93,7 @@ const enemiesData = [
     "atk": 8,
     "exp": 15,
     "speed": 6,
-    "type": "不死族",
+    "type": "不死族", "weakElement": "光",
     "magicAtk": 1,
     "mat": "骨片"
   },
@@ -103,7 +103,7 @@ const enemiesData = [
     "atk": 6,
     "exp": 18,
     "speed": 5,
-    "type": "不死族",
+    "type": "不死族", "weakElement": "光",
     "magicAtk": 5,
     "mat": "魔石"
   },
@@ -133,7 +133,7 @@ const enemiesData = [
     "atk": 4,
     "exp": 8,
     "speed": 13,
-    "type": "鳥族",
+    "type": "鳥族", "weakElement": "氷",
     "magicAtk": 0
   },
   {
@@ -142,7 +142,7 @@ const enemiesData = [
     "atk": 7,
     "exp": 16,
     "speed": 14,
-    "type": "鳥族",
+    "type": "鳥族", "weakElement": "氷",
     "magicAtk": 0
   },
   {
@@ -151,7 +151,7 @@ const enemiesData = [
     "atk": 10,
     "exp": 22,
     "speed": 11,
-    "type": "鳥族",
+    "type": "鳥族", "weakElement": "氷",
     "magicAtk": 3,
     "mat": "骨片"
   },
@@ -161,7 +161,7 @@ const enemiesData = [
     "atk": 9,
     "exp": 16,
     "speed": 12,
-    "type": "獣族",
+    "type": "獣族", "weakElement": "斬",
     "magicAtk": 0
   },
   {
@@ -170,7 +170,7 @@ const enemiesData = [
     "atk": 12,
     "exp": 24,
     "speed": 13,
-    "type": "獣族",
+    "type": "獣族", "weakElement": "斬",
     "magicAtk": 4,
     "mat": "魔石"
   },
@@ -180,7 +180,7 @@ const enemiesData = [
     "atk": 14,
     "exp": 30,
     "speed": 4,
-    "type": "機械族",
+    "type": "機械族", "weakElement": "雷",
     "magicAtk": 0,
     "mat": "鉄くず"
   },
@@ -190,7 +190,7 @@ const enemiesData = [
     "atk": 10,
     "exp": 22,
     "speed": 6,
-    "type": "機械族",
+    "type": "機械族", "weakElement": "雷",
     "magicAtk": 0,
     "mat": "鉄くず"
   },
@@ -220,7 +220,7 @@ const enemiesData = [
     "atk": 6,
     "exp": 12,
     "speed": 3,
-    "type": "植物族",
+    "type": "植物族", "weakElement": "炎",
     "magicAtk": 3,
     "mat": "薬草"
   },
@@ -250,7 +250,7 @@ const enemiesData = [
     "atk": 10,
     "exp": 26,
     "speed": 5,
-    "type": "植物族",
+    "type": "植物族", "weakElement": "炎",
     "magicAtk": 4,
     "mat": "薬草"
   },
@@ -280,7 +280,7 @@ const enemiesData = [
     "atk": 12,
     "exp": 40,
     "speed": 11,
-    "type": "悪魔族",
+    "type": "悪魔族", "weakElement": "光",
     "magicAtk": 7,
     "mat": "布切れ"
   },
@@ -290,7 +290,7 @@ const enemiesData = [
     "atk": 20,
     "exp": 55,
     "speed": 10,
-    "type": "悪魔族",
+    "type": "悪魔族", "weakElement": "光",
     "magicAtk": 5,
     "mat": "魔石"
   },
@@ -300,7 +300,7 @@ const enemiesData = [
     "atk": 24,
     "exp": 65,
     "speed": 9,
-    "type": "竜族",
+    "type": "竜族", "weakElement": "氷",
     "magicAtk": 8,
     "mat": "骨片"
   },
@@ -330,7 +330,7 @@ const enemiesData = [
     "atk": 14,
     "exp": 70,
     "speed": 7,
-    "type": "不死族",
+    "type": "不死族", "weakElement": "光",
     "magicAtk": 14,
     "mat": "魔石"
   },
@@ -340,7 +340,7 @@ const enemiesData = [
     "atk": 28,
     "exp": 80,
     "speed": 7,
-    "type": "獣族",
+    "type": "獣族", "weakElement": "斬",
     "magicAtk": 4,
     "mat": "骨片"
   },

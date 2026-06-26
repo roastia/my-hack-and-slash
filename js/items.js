@@ -38,6 +38,13 @@ function generateItem(scale) {
         base.spirits[type] = { val, color: colors[type] };
     }
 
+    // ★ レアランク付与
+    const starRoll = Math.random();
+    if      (starRoll < 0.01) { base.stars = 3; base.name = '★★★ ' + base.name; base.atk  = Math.round((base.atk  ||0)*2.0); base.def  = Math.round((base.def  ||0)*2.0); base.crit = Math.round((base.crit ||0)*2.0); base.steal = Math.round((base.steal||0)*2.0); }
+    else if (starRoll < 0.05) { base.stars = 2; base.name = '★★ '  + base.name; base.atk  = Math.round((base.atk  ||0)*1.5); base.def  = Math.round((base.def  ||0)*1.5); base.crit = Math.round((base.crit ||0)*1.5); base.steal = Math.round((base.steal||0)*1.5); }
+    else if (starRoll < 0.15) { base.stars = 1; base.name = '★ '   + base.name; base.atk  = Math.round((base.atk  ||0)*1.2); base.def  = Math.round((base.def  ||0)*1.2); base.crit = Math.round((base.crit ||0)*1.2); base.steal = Math.round((base.steal||0)*1.2); }
+    else                       { base.stars = 0; }
+
     return base;
 }
 
@@ -172,4 +179,22 @@ function setTension(t) {
     const labels = ['通常', '高揚', '狂乱'];
     addLog(`<span style="color:var(--accent-orange)">テンション → ${labels[tension-1]}！ (×${[1.0,1.3,1.8][tension-1]} EXP)</span>`);
     updateUI();
+}
+
+// インベントリ自動整列
+function sortInventory() {
+    const typeOrder = { weapon: 0, helm: 1, armor: 2, shield: 3, sp_potion: 4, food: 5, water: 6 };
+    inventory.sort((a, b) => {
+        const ta = typeOrder[a.type] ?? 9, tb = typeOrder[b.type] ?? 9;
+        if (ta !== tb) return ta - tb;
+        // 同タイプ: ★多い順 → stat値大きい順
+        const sa = b.stars || 0, sb = a.stars || 0;
+        if (sa !== sb) return sa - sb;
+        const va = (b.atk || 0) + (b.def || 0);
+        const vb = (a.atk || 0) + (a.def || 0);
+        return va - vb;
+    });
+    addLog('<span style="color:#88ccff">📦 インベントリを整列した。</span>');
+    updateUI();
+    saveData();
 }

@@ -109,7 +109,9 @@ window.addEventListener('resize', handleMobileLayout);
 // ゲーム起動（JSONデータを先にロード → セーブデータ復元）
 function initGame() {
     loadGameData();
-    loadData();             // localStorage からセーブ復元
+    loadData();
+    // オフライン報酬チェック
+    setTimeout(() => { if (typeof checkOfflineRewards === 'function') checkOfflineRewards(); }, 500);             // localStorage からセーブ復元
     handleMobileLayout();
 }
 initGame();

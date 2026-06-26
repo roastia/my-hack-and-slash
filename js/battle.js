@@ -6,9 +6,12 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
     const pSpd = getTotalSpeed();
     const eSpd = enemySpeed || 8;
     window._pendingDnaTypes = pendingTypes || [];
+    // 属性弱点情報取得（explore.jsで保存済み）
+    const _stackWeak = (typeof window._fightStackWeakElement !== 'undefined') ? window._fightStackWeakElement : null;
+    window._fightStackWeakElement = null; // 使用後リセット
     battleState = {
         active:      true,
-        enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp, magicAtk: enemyMagicAtk || 0 },
+        enemy:       { name: enemyName, hp: enemyMaxHp, maxHp: enemyMaxHp, atk: enemyAtk, exp: enemyExp, magicAtk: enemyMagicAtk || 0, weakElement: _stackWeak },
         isBoss:      isBoss,
         turn:        0,
         playerAtb:   0,
@@ -23,18 +26,27 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
     const spdCmp = pSpd >= eSpd
         ? `<span style="color:var(--accent-cyan)">▲ 素早さ有利</span>`
         : `<span style="color:var(--danger-red)">▼ 素早さ不利</span>`;
-    addLog(`<span class="${isBoss ? 'boss-text' : 'attack-text'}">${enemyName} が立ちはだかった！</span> ${spdCmp}<br><span style="color:var(--text-dim);font-size:12px">SPD 勇者:${pSpd} / 敵:${eSpd}</span>`);
+    const _weakEl = _stackWeak;
+    const _weakElInfo = (_weakEl && typeof ELEMENTS !== 'undefined' && ELEMENTS[_weakEl])
+        ? ` <span style="color:${ELEMENTS[_weakEl].color};font-size:11px">[弱点: ${ELEMENTS[_weakEl].icon}${_weakEl}]</span>` : '';
+    addLog(`<span class="${isBoss ? 'boss-text' : 'attack-text'}">${enemyName} が立ちはだかった！</span>${_weakElInfo} ${spdCmp}<br><span style="color:var(--text-dim);font-size:12px">SPD 勇者:${pSpd} / 敵:${eSpd}</span>`);
     updateActionButtons();
     updateUI();
 }
 
 // プレイヤーのダメージ計算（クリット・精霊込み）
-function calcPlayerDamage(atkOverride) {
+function calcPlayerDamage(atkOverride, skillElement) {
     let atk      = atkOverride !== undefined ? atkOverride : getTotalAttack();
     let critRate = getCritRate() / 100;
     let isCrit   = Math.random() < critRate;
     if (isCrit && typeof titleStats !== 'undefined') { titleStats.critHits++; if(typeof checkTitleUnlocks==='function') checkTitleUnlocks(); }
     let dmg      = isCrit ? Math.floor(atk * 1.5) : atk;
+    // 属性弱点ボーナス
+    const weaponElem   = (equipment.weapon && equipment.weapon.element) ? equipment.weapon.element : null;
+    const activeElem   = skillElement || weaponElem;
+    const enemyWeak    = battleState.enemy && battleState.enemy.weakElement ? battleState.enemy.weakElement : null;
+    const elemBonus    = (typeof getElementBonus === 'function') ? getElementBonus(activeElem, enemyWeak) : 1.0;
+    if (elemBonus > 1.0) dmg = Math.floor(dmg * elemBonus);
 
     let spiritDmg = 0, spiritLog = '';
     let totalSpirits = getTotalSpirits();
@@ -194,6 +206,37 @@ function executeBattleTurn(skillId) {
             battleState.guardMult   = defMult;
             logMsg = `<span class="event-text">🛡 鉄壁の構え！ 次の被ダメを ${Math.round((1 - defMult) * 100)}% 軽減！ (Lv${skillLv})</span>`;
             sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'flameBurst') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const elemB = (typeof getElementBonus==='function'&&battleState.enemy) ? getElementBonus('炎',battleState.enemy.weakElement) : 1.0;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * (0.9 + Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const wMsg = elemB>1 ? ' <span style="color:#ff6644">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">🔥 炎撃！ ${dmg} dmg${wMsg} (Lv${skillLv})</span>`;
+            const h = Math.floor(dmg*(getStealRate()/100)); if(h>0){currentHp=Math.min(maxHp,currentHp+h);}
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'iceEdge') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const elemB = (typeof getElementBonus==='function'&&battleState.enemy) ? getElementBonus('氷',battleState.enemy.weakElement) : 1.0;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * (0.9 + Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const origS = battleState.enemySpeed;
+            battleState.enemySpeed = Math.max(1, Math.floor(origS * 0.8));
+            setTimeout(()=>{ if(battleState.active) battleState.enemySpeed=origS; }, 2500);
+            const wMsg = elemB>1 ? ' <span style="color:#44ccff">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">❄ 氷刃！ ${dmg} dmg${wMsg} 敵の動きが鈍った！ (Lv${skillLv})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'thunderClap') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const elemB = (typeof getElementBonus==='function'&&battleState.enemy) ? getElementBonus('雷',battleState.enemy.weakElement) : 1.0;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * (0.9 + Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const wMsg = elemB>1 ? ' <span style="color:#ffee44">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">⚡ 雷霆！ 天雷がスタックを貫く！ ${dmg} dmg${wMsg} (Lv${skillLv})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
         }
 
         saveData();
@@ -233,6 +276,7 @@ function executeBattleTurn(skillId) {
         let dust  = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + (battleState.isBoss ? 20 : 2);
         // 星座 GOLD補正
         if (typeof getConstellationEffects === 'function') { const _cg=getConstellationEffects(); if(_cg.goldMult) dust = Math.floor(dust * _cg.goldMult); }
+        if (typeof getJobEffects === 'function') { const _jg=getJobEffects(); if(_jg.goldMult) dust = Math.floor(dust * _jg.goldMult); }
         starDust += dust;
 
         // テンションボーナス
@@ -414,7 +458,7 @@ function startAutoBattle() {
         if (!battleState.active) { stopAutoBattle(); return; }
         // カスタムAI優先度でスキルを選択
         const priority = (typeof customAiPriority !== 'undefined') ? customAiPriority : ['normal'];
-        const spCosts  = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10 };
+        const spCosts  = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10, flameBurst: 18, iceEdge: 15, thunderClap: 30 };
         let chosen = 'normal';
         for (const sid of priority) {
             if (sid === 'normal') { chosen = 'normal'; break; }

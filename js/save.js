@@ -55,6 +55,7 @@ function saveData() {
         dnaCounts, mutations, mutationSlots,
         traps,
         equippedTitle, unlockedTitles, titleStats,
+        equippedJob,
         activeDungeonConstellation, customAiPriority,
         fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
         fishingRodUpgradeCost: fishingState ? fishingState.rodUpgradeCost : 30,
@@ -66,6 +67,7 @@ function saveData() {
         currentFloor, stepCount, isBossDefeated, battleState, eventState
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    localStorage.setItem('rs_hns_last_save_' + currentSlot, Date.now());
 }
 
 function loadData() {
@@ -112,6 +114,7 @@ function loadData() {
         mutationSlots  = data.mutationSlots    || 3;
         traps          = data.traps            || [];
         equippedTitle  = data.equippedTitle    || null;
+        equippedJob    = data.equippedJob     || 'none';
         unlockedTitles = data.unlockedTitles   || ['nameless'];
         titleStats     = data.titleStats       || { critHits: 0, stealCount: 0, skillUseCount: 0, stepsTotal: 0 };
         activeDungeonConstellation = data.activeDungeonConstellation || null;

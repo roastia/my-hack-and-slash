@@ -186,6 +186,8 @@ function fightStack() {
         }
     }
 
+    // 弱点情報を先に保存（fightStackはenemyStackをクリアするため）
+    window._fightStackWeakElement = (enemyStack.length > 0 && enemyStack[0].weakElement) ? enemyStack[0].weakElement : null;
     enemyStack = [];
     updateStackPanel();
 
@@ -398,15 +400,16 @@ function addEnemyToStack(isReturn = false) {
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
 
     const enemy = {
-        name:     prefix + baseEnemy.name,
-        hp:       Math.floor(baseEnemy.hp  * scale),
-        maxHp:    Math.floor(baseEnemy.hp  * scale),
-        atk:      Math.floor(baseEnemy.atk * scale * 0.38) + 1,
-        exp:      Math.floor(baseEnemy.exp * scale),
-        speed:    baseEnemy.speed || 8,
-        type:     baseEnemy.type  || '不明',
-        magicAtk: Math.floor((baseEnemy.magicAtk || 0) * scale),
-        mat:      baseEnemy.mat || null,
+        name:        prefix + baseEnemy.name,
+        hp:          Math.floor(baseEnemy.hp  * scale),
+        maxHp:       Math.floor(baseEnemy.hp  * scale),
+        atk:         Math.floor(baseEnemy.atk * scale * 0.38) + 1,
+        exp:         Math.floor(baseEnemy.exp * scale),
+        speed:       baseEnemy.speed || 8,
+        type:        baseEnemy.type  || '不明',
+        magicAtk:    Math.floor((baseEnemy.magicAtk || 0) * scale),
+        mat:         baseEnemy.mat || null,
+        weakElement: baseEnemy.weakElement || null,
     };
 
     enemyStack.push(enemy);

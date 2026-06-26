@@ -194,5 +194,8 @@ const shopData = [
     "meritCost": 15,
     "skillId": "guardStance",
     "desc": "戦闘スキル「鉄壁」を習得"
-  }
+  },
+  { "id": "flameBurst",   "type": "skill", "name": "炎撃",   "desc": "炎属性の一撃。弱点+50%",       "cost": 120 },
+  { "id": "iceEdge",      "type": "skill", "name": "氷刃",   "desc": "氷属性+敵速度デバフ",            "cost": 120 },
+  { "id": "thunderClap",  "type": "skill", "name": "雷霆",   "desc": "雷属性の全体攻撃",               "cost": 150 },
 ];

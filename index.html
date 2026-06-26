@@ -105,7 +105,10 @@
                 </div>
                 <!-- 称号・現型表示 -->
                 <div class="status-row" style="font-size:12px; margin-top:2px; border-top:1px dashed #332; padding-top:3px;">
+                    <span>職: <span id="activeJobDisplay" style="color:var(--text-dim);">無職</span></span>
                     <span>称号: <span id="activeTitleDisplay" style="color:var(--text-dim);">称号なし</span></span>
+                </div>
+                <div class="status-row" style="font-size:12px; margin-top:1px;">
                     <span>現型: <span id="activeArchetypeDisplay" style="color:var(--text-dim);">—</span></span>
                 </div>
                 <!-- バージョン表示 -->
@@ -159,6 +162,7 @@
                     <button id="tabFish"    class="mini-btn tab-btn"        onclick="switchTab('fish')"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
                     <button id="tabDna"     class="mini-btn tab-btn"        onclick="switchTab('dna')"     style="font-size:14px; padding:6px 10px;">🧬 変 異</button>
                     <button id="tabTrap"    class="mini-btn tab-btn"        onclick="switchTab('trap')"    style="font-size:14px; padding:6px 10px;">🪤 罠</button>
+                    <button id="tabJob"     class="mini-btn tab-btn"        onclick="switchTab('job')"     style="font-size:14px; padding:6px 10px;">⚗ 職 業</button>
                     <button id="tabTitle"   class="mini-btn tab-btn"        onclick="switchTab('title')"   style="font-size:14px; padding:6px 10px;">🏆 称 号</button>
                     <button id="tabAi"      class="mini-btn tab-btn"        onclick="switchTab('ai')"      style="font-size:14px; padding:6px 10px;">🤖 A I</button>
                     <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
@@ -241,6 +245,9 @@
                 <!-- 釣りパネル -->
                 <div id="panelFish" class="base-panel hidden"></div>
 
+                <!-- 職業タブ -->
+                <div id="panelJob" class="base-panel hidden"></div>
+
                 <!-- 称号タブ -->
                 <div id="panelTitle" class="base-panel hidden"></div>
 
@@ -295,7 +302,10 @@
                 <div class="inventory-header">
                     <span>所 持 品</span>
                     <span><span style="color:var(--accent-orange)">G: <span id="stardustDisplay">0</span></span></span>
-                    <span><span id="itemCountDisplay">0</span> / 10</span>
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        <button class="mini-btn" style="font-size:11px;padding:1px 6px;" onclick="sortInventory()">↕ 整列</button>
+                        <span id="itemCountDisplay">0</span> / 10
+                    </span>
                 </div>
                 <div style="padding:3px 6px; border-bottom:1px solid var(--border-color); font-size:12px; color:#88ccff; text-align:right;">
                     ⚔ 武勲: <span id="meritDisplay">0</span>

@@ -411,3 +411,63 @@ function moveAiPriority(idx, dir) {
     saveData();
     renderAiPanel();
 }
+
+// =============================================================
+// ジョブ選択パネル
+// =============================================================
+function renderJobPanel() {
+    const panel = document.getElementById('panelJob');
+    if (!panel) return;
+    if (typeof jobCatalog === 'undefined') return;
+
+    const current = typeof equippedJob !== 'undefined' ? equippedJob : 'none';
+    const currentJob = jobCatalog.find(j => j.id === current);
+
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
+        職業を選ぶとパッシブ効果が永続します。変更にはGが必要です。<br>
+        現在: <b style="color:var(--accent-green)">${currentJob ? currentJob.icon + ' ' + currentJob.name : '無職'}</b>
+    </div>`;
+
+    jobCatalog.forEach(j => {
+        const isActive = j.id === current;
+        const eff = j.effects;
+        const effParts = [];
+        if (eff.atkMult)    effParts.push(`<span style="color:${eff.atkMult>1?'var(--accent-cyan)':'var(--danger-red)'}">ATK×${eff.atkMult}</span>`);
+        if (eff.defMult)    effParts.push(`<span style="color:${eff.defMult>1?'var(--accent-cyan)':'var(--danger-red)'}">DEF×${eff.defMult}</span>`);
+        if (eff.spdBonus)   effParts.push(`<span style="color:var(--accent-cyan)">SPD+${eff.spdBonus}</span>`);
+        if (eff.critBonus)  effParts.push(`<span style="color:var(--accent-orange)">会心+${eff.critBonus}%</span>`);
+        if (eff.stealBonus) effParts.push(`<span style="color:var(--accent-green)">奪取+${eff.stealBonus}%</span>`);
+        if (eff.spiritBonus)effParts.push(`<span style="color:#aa88ff">精神+${eff.spiritBonus}</span>`);
+        if (eff.magicMult)  effParts.push(`<span style="color:#aa88ff">魔法×${eff.magicMult}</span>`);
+        if (eff.rangeMult)  effParts.push(`<span style="color:var(--accent-orange)">遠隔×${eff.rangeMult}</span>`);
+        if (eff.spRegen)    effParts.push(`<span style="color:#c080ff">SP+${eff.spRegen}/turn</span>`);
+        if (eff.matDropMult)effParts.push(`<span style="color:var(--accent-green)">素材+${Math.round((eff.matDropMult-1)*100)}%</span>`);
+        if (eff.goldMult)   effParts.push(`<span style="color:var(--accent-orange)">G+${Math.round((eff.goldMult-1)*100)}%</span>`);
+        const effText = effParts.length > 0 ? effParts.join(' / ') : '<span style="color:var(--text-dim)">効果なし</span>';
+
+        const canAfford = starDust >= j.changeCost;
+        const costLabel = j.changeCost === 0 ? '無料' : `G${j.changeCost}`;
+
+        html += `<div class="lab-item" style="${isActive ? 'border-color:var(--accent-green);background:rgba(0,200,100,0.07);' : ''}">
+            <div style="flex:1;">
+                <div style="font-weight:bold;color:${isActive ? 'var(--accent-green)' : 'var(--text-main)'}">${j.icon} ${j.name}${isActive ? ' ✓ 選択中' : ''}</div>
+                <div class="lab-desc">${j.desc}</div>
+                <div class="lab-desc" style="margin-top:3px">${effText}</div>
+            </div>
+            ${isActive ? '' : `<button class="mini-btn btn-equip" onclick="changeJob('${j.id}')" style="font-size:12px;" ${canAfford?'':'disabled style="opacity:0.5;font-size:12px;"'}>${costLabel}</button>`}
+        </div>`;
+    });
+    panel.innerHTML = html;
+}
+
+function changeJob(id) {
+    const j = (typeof jobCatalog !== 'undefined') ? jobCatalog.find(x => x.id === id) : null;
+    if (!j) return;
+    if (starDust < j.changeCost) { addLog(`<span class="damage-text">Gが足りない！ (必要: ${j.changeCost}G)</span>`); return; }
+    starDust -= j.changeCost;
+    equippedJob = id;
+    saveData();
+    renderJobPanel();
+    updateUI();
+    addLog(`<span style="color:var(--accent-green)">⚗ 職業を【${j.icon} ${j.name}】に変更した！${j.changeCost > 0 ? ' G-' + j.changeCost : ''}</span>`);
+}

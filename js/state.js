@@ -100,3 +100,5 @@ let activeDungeonConstellation = null;  // ダンジョン突入時の星座ID
 // --- カスタムAI優先度 ---
 let customAiPriority = ['healingWave', 'powerStrike', 'rapidStrike', 'guardStance', 'normal'];
 
+// --- ジョブシステム ---
+let equippedJob = 'none';  // 現在のジョブID

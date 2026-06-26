@@ -104,6 +104,8 @@ function getTotalAttack() {
     // 現型効果
     const _ar = getArchetypeEffect();
     if (_ar && _ar.atkMult) total = Math.floor(total * _ar.atkMult);
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je=getJobEffects(); if(_je.atkMult) total=Math.floor(total*_je.atkMult); }
     return Math.max(1, total);
 }
 
@@ -141,6 +143,8 @@ function getTotalSpirit() {
     // 称号効果
     const _te_st = getTitleEffects();
     if (_te_st.spiritBonus) total += _te_st.spiritBonus;
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je_st=getJobEffects(); if(_je_st.spiritBonus) total+=_je_st.spiritBonus; }
     return total;
 }
 
@@ -161,6 +165,8 @@ function getTotalDef() {
     // 現型効果
     const _ar_d = getArchetypeEffect();
     if (_ar_d && _ar_d.defMult) total = Math.floor(total * _ar_d.defMult);
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je_d=getJobEffects(); if(_je_d.defMult) total=Math.floor(total*_je_d.defMult); }
     return total;
 }
 
@@ -181,6 +187,8 @@ function getCritRate() {
     // 現型効果
     const _ar_c = getArchetypeEffect();
     if (_ar_c && _ar_c.critBonus) total += _ar_c.critBonus;
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je_c=getJobEffects(); if(_je_c.critBonus) total+=_je_c.critBonus; }
     return total;
 }
 
@@ -198,6 +206,8 @@ function getStealRate() {
     // 称号効果
     const _te_s = getTitleEffects();
     if (_te_s.stealBonus) total += _te_s.stealBonus;
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je_s=getJobEffects(); if(_je_s.stealBonus) total+=_je_s.stealBonus; }
     return total;
 }
 
@@ -219,6 +229,11 @@ function getTotalSpeed() {
     // 現型効果
     const _ar_sp = getArchetypeEffect();
     if (_ar_sp && _ar_sp.spdBonus) total += _ar_sp.spdBonus;
+    // ジョブ効果
+    if (typeof getJobEffects === 'function') { const _je_sp=getJobEffects(); if(_je_sp.spdBonus) total+=_je_sp.spdBonus; }
+    // 重量ペナルティ
+    const totalWeight = Object.values(equipment).reduce((s,e)=>s+(e&&e.weight?e.weight:0),0);
+    if (totalWeight > 6) total = Math.max(1, total - Math.floor((totalWeight - 6) * 0.8));
     return Math.max(1, total);
 }
 
@@ -943,6 +958,12 @@ function updateUI() {
         archetypeEl.textContent = ar ? `${ar.icon} ${ar.name}` : '—';
         archetypeEl.style.color = ar ? 'var(--accent-cyan)' : 'var(--text-dim)';
     }
+    const jobEl = document.getElementById('activeJobDisplay');
+    if (jobEl && typeof jobCatalog !== 'undefined' && typeof equippedJob !== 'undefined') {
+        const jObj = jobCatalog.find(j=>j.id===equippedJob);
+        jobEl.textContent = jObj ? `${jObj.icon} ${jObj.name}` : '無職';
+        jobEl.style.color = (jObj && jObj.id !== 'none') ? 'var(--accent-green)' : 'var(--text-dim)';
+    }
 
     // テンション表示
     const tensionEl = document.getElementById('tensionDisplay');
@@ -977,8 +998,12 @@ function updateUI() {
             if (item.steal)    statsText += `ABS+${item.steal}% `;
             let spText = getSpiritText(item.spirits);
             if (spText !== '無') statsText += `[${spText}]`;
+            if (item.weight) statsText += ` ⚖${item.weight}`;
 
-            li.style.borderLeft = `3px solid ${r.color}`;
+                // ★ star color override
+                const starColor = item.stars === 3 ? '#FFD700' : item.stars === 2 ? '#C0C0C0' : item.stars === 1 ? '#CD7F32' : null;
+            li.style.borderLeft = `3px solid ${starColor || r.color}`;
+            if (starColor) li.style.boxShadow = `inset 0 0 6px ${starColor}44`;
             if (item.type === 'food') {
                 li.style.borderLeft = '3px solid #c8a060';
                 li.innerHTML = `
@@ -1181,6 +1206,14 @@ function switchTab(tab) {
         const ptl = document.getElementById('panelTitle');
         if (ptl) ptl.classList.remove('hidden');
         if (typeof renderTitlePanel === 'function') renderTitlePanel();
+        updateIllustration('base');
+    }
+    if (tab === 'job') {
+        const tj = document.getElementById('tabJob');
+        if (tj) tj.classList.add('active');
+        const pj = document.getElementById('panelJob');
+        if (pj) pj.classList.remove('hidden');
+        if (typeof renderJobPanel === 'function') renderJobPanel();
         updateIllustration('base');
     }
     if (tab === 'ai') {

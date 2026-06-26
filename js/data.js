@@ -72,6 +72,39 @@ const combatSkills = [
         levelThresholds: [0, 10, 30, 60, 100],
         defMults: [0.5, 0.4, 0.3, 0.2, 0.1], // 被ダメ倍率
     },
+    {
+        id: 'flameBurst',
+        name: '炎撃',
+        icon: '🔥',
+        element: '炎',
+        atbMultiplier: 1.1,
+        shopCost: 120,
+        desc: '炎属性の一撃。敵の弱点なら威力+50%。',
+        levelThresholds: [0, 15, 40, 80, 120],
+        dmgMults: [1.4, 1.7, 2.1, 2.6, 3.2],
+    },
+    {
+        id: 'iceEdge',
+        name: '氷刃',
+        icon: '❄',
+        element: '氷',
+        atbMultiplier: 0.85,
+        shopCost: 120,
+        desc: '氷属性で敵を斬る。命中時に敵SPD-20%（1ターン）。',
+        levelThresholds: [0, 15, 40, 80, 120],
+        dmgMults: [1.2, 1.4, 1.7, 2.1, 2.6],
+    },
+    {
+        id: 'thunderClap',
+        name: '雷霆',
+        icon: '⚡',
+        element: '雷',
+        atbMultiplier: 1.3,
+        shopCost: 150,
+        desc: 'スタック全体に雷撃（威力は分散）。',
+        levelThresholds: [0, 20, 50, 90, 140],
+        dmgMults: [0.9, 1.1, 1.4, 1.7, 2.2],
+    },
 ];
 
 function getSkillLevel(skillId) {
@@ -107,94 +140,94 @@ function getSkillNextThreshold(skillId) {
 // =============================================================
 const itemsDatabase = [
     // 武器 (30)
-    { name: '木の棒',             type: 'weapon', atk:  0 },
-    { name: '旅人の短剣',         type: 'weapon', atk:  1 },
-    { name: '銅の剣',             type: 'weapon', atk:  2 },
-    { name: '鉄の剣',             type: 'weapon', atk:  3, crit:  2 },
-    { name: '騎士の剣',           type: 'weapon', atk:  4 },
-    { name: '炎の剣',             type: 'weapon', atk:  5, crit:  3 },
-    { name: '魔法の剣',           type: 'weapon', atk:  6 },
-    { name: '大剣',               type: 'weapon', atk:  7 },
-    { name: '竜殺しの剣',         type: 'weapon', atk:  8, crit:  4 },
-    { name: '聖なる剣',           type: 'weapon', atk:  9, steal: 4 },
-    { name: '英雄の槍',           type: 'weapon', atk: 10 },
-    { name: '魔王の剣',           type: 'weapon', atk: 11, crit:  5 },
-    { name: '伝説の剣',           type: 'weapon', atk: 12 },
-    { name: '神剣・天威',         type: 'weapon', atk: 13, crit:  6 },
-    { name: '究極剣・ゼロ',       type: 'weapon', atk: 14 },
-    { name: '短剣・毒刃',         type: 'weapon', atk:  1, steal: 5 },
-    { name: '戦士の斧',           type: 'weapon', atk:  5 },
-    { name: '魔法の杖',           type: 'weapon', atk:  3, crit:  4 },
-    { name: '聖なる槍',           type: 'weapon', atk:  7, steal: 5 },
-    { name: '黒の鎌',             type: 'weapon', atk:  6, steal: 6 },
-    { name: '鉄の弓',             type: 'weapon', atk:  4, crit:  3, rangeWeapon: true },
-    { name: '賢者の杖',           type: 'weapon', atk:  5, crit:  5 },
-    { name: '竜骨の槍',           type: 'weapon', atk:  9 },
-    { name: '暗殺者の短剣',       type: 'weapon', atk:  2, steal: 8 },
-    { name: '炎の弓',             type: 'weapon', atk:  8, crit:  4, rangeWeapon: true },
-    { name: 'エルフの弓矢',       type: 'weapon', atk:  6, crit:  6, rangeWeapon: true },
-    { name: '黄金の剣',           type: 'weapon', atk: 10, steal: 6 },
-    { name: '破滅の大鎌',         type: 'weapon', atk: 12, steal: 7 },
-    { name: '神話の弓',           type: 'weapon', atk: 11, crit:  7, rangeWeapon: true },
-    { name: '世界樹の枝',         type: 'weapon', atk: 16, steal: 8 },
+    { name: '木の棒',             type: 'weapon', atk:  0, weight: 1 },
+    { name: '旅人の短剣',         type: 'weapon', atk:  1, weight: 1 },
+    { name: '銅の剣',             type: 'weapon', atk:  2, weight: 2 },
+    { name: '鉄の剣',             type: 'weapon', atk:  3, crit:  2, weight: 2 },
+    { name: '騎士の剣',           type: 'weapon', atk:  4, weight: 3 },
+    { name: '炎の剣',   element: '炎', type: 'weapon', atk:  5, crit:  3, weight: 3 },
+    { name: '魔法の剣', element: '魔', type: 'weapon', atk:  6, weight: 2 },
+    { name: '大剣',               type: 'weapon', atk:  7, weight: 5 },
+    { name: '竜殺しの剣', element: '斬', type: 'weapon', atk:  8, crit:  4, weight: 4 },
+    { name: '聖なる剣', element: '光', type: 'weapon', atk:  9, steal: 4, weight: 3 },
+    { name: '英雄の槍', element: '光', type: 'weapon', atk: 10, weight: 3 },
+    { name: '魔王の剣',           type: 'weapon', atk: 11, crit:  5, weight: 4 },
+    { name: '伝説の剣',           type: 'weapon', atk: 12, weight: 4 },
+    { name: '神剣・天威', element: '光', type: 'weapon', atk: 13, crit:  6, weight: 5 },
+    { name: '究極剣・ゼロ', element: '斬', type: 'weapon', atk: 14, weight: 5 },
+    { name: '短剣・毒刃',         type: 'weapon', atk:  1, steal: 5, weight: 1 },
+    { name: '戦士の斧',           type: 'weapon', atk:  5, weight: 4 },
+    { name: '魔法の杖', element: '魔', type: 'weapon', atk:  3, crit:  4, weight: 1 },
+    { name: '聖なる槍', element: '光', type: 'weapon', atk:  7, steal: 5, weight: 3 },
+    { name: '黒の鎌',   element: '闇', type: 'weapon', atk:  6, steal: 6, weight: 3 },
+    { name: '鉄の弓',             type: 'weapon', atk:  4, crit:  3, rangeWeapon: true, weight: 2 },
+    { name: '賢者の杖',           type: 'weapon', atk:  5, crit:  5, weight: 1 },
+    { name: '竜骨の槍', element: '斬', type: 'weapon', atk:  9, weight: 3 },
+    { name: '暗殺者の短剣', element: '刺', type: 'weapon', atk:  2, steal: 8, weight: 1 },
+    { name: '炎の弓',   element: '炎', type: 'weapon', atk:  8, crit:  4, rangeWeapon: true, weight: 2 },
+    { name: 'エルフの弓矢',       type: 'weapon', atk:  6, crit:  6, rangeWeapon: true, weight: 2 },
+    { name: '黄金の剣',           type: 'weapon', atk: 10, steal: 6, weight: 4 },
+    { name: '破滅の大鎌', element: '闇', type: 'weapon', atk: 12, steal: 7, weight: 5 },
+    { name: '神話の弓',           type: 'weapon', atk: 11, crit:  7, rangeWeapon: true, weight: 2 },
+    { name: '世界樹の枝',         type: 'weapon', atk: 16, steal: 8, weight: 3 },
     // 兜 (20)
-    { name: '皮の帽子',   type: 'helm', def:  1 },
-    { name: '鉄兜',       type: 'helm', def:  2 },
-    { name: '騎士の兜',   type: 'helm', def:  3 },
-    { name: '魔法の帽子', type: 'helm', def:  2, crit:  3 },
-    { name: '炎の兜',     type: 'helm', def:  4 },
-    { name: '竜鱗の兜',   type: 'helm', def:  5 },
-    { name: '黄金の冠',   type: 'helm', def:  4, steal: 4 },
-    { name: '聖者の帽子', type: 'helm', def:  3, steal: 3 },
-    { name: '魔王の兜',   type: 'helm', def:  6 },
-    { name: '英雄の兜',   type: 'helm', def:  7 },
-    { name: '革の帽子',   type: 'helm', def:  1, crit:  2 },
-    { name: '賢者の冠',   type: 'helm', def:  3, crit:  4 },
-    { name: '鋼の兜',     type: 'helm', def:  5 },
-    { name: '妖精の帽子', type: 'helm', def:  2, steal: 5 },
-    { name: '魔法の兜',   type: 'helm', def:  6, crit:  3 },
-    { name: '戦士の兜',   type: 'helm', def:  4 },
-    { name: '神話の冠',   type: 'helm', def:  8 },
-    { name: '守護の兜',   type: 'helm', def:  7, steal: 3 },
-    { name: '暗黒の兜',   type: 'helm', def:  8, crit:  4 },
-    { name: '伝説の兜',   type: 'helm', def:  9 },
+    { name: '皮の帽子',   type: 'helm', def:  1, weight: 1 },
+    { name: '鉄兜',       type: 'helm', def:  2, weight: 2 },
+    { name: '騎士の兜',   type: 'helm', def:  3, weight: 3 },
+    { name: '魔法の帽子', type: 'helm', def:  2, crit:  3, weight: 1 },
+    { name: '炎の兜',   element: '炎', type: 'helm', def:  4, weight: 3 },
+    { name: '竜鱗の兜',   type: 'helm', def:  5, weight: 4 },
+    { name: '黄金の冠',   type: 'helm', def:  4, steal: 4, weight: 2 },
+    { name: '聖者の帽子', type: 'helm', def:  3, steal: 3, weight: 1 },
+    { name: '魔王の兜',   type: 'helm', def:  6, weight: 4 },
+    { name: '英雄の兜',   type: 'helm', def:  7, weight: 4 },
+    { name: '革の帽子',   type: 'helm', def:  1, crit:  2, weight: 1 },
+    { name: '賢者の冠',   type: 'helm', def:  3, crit:  4, weight: 1 },
+    { name: '鋼の兜',     type: 'helm', def:  5, weight: 3 },
+    { name: '妖精の帽子', type: 'helm', def:  2, steal: 5, weight: 1 },
+    { name: '魔法の兜',   type: 'helm', def:  6, crit:  3, weight: 2 },
+    { name: '戦士の兜',   type: 'helm', def:  4, weight: 3 },
+    { name: '神話の冠',   type: 'helm', def:  8, weight: 5 },
+    { name: '守護の兜',   type: 'helm', def:  7, steal: 3, weight: 4 },
+    { name: '暗黒の兜',   type: 'helm', def:  8, crit:  4, weight: 4 },
+    { name: '伝説の兜',   type: 'helm', def:  9, weight: 5 },
     // 鎧 (20)
-    { name: '皮の鎧',       type: 'armor', def:  2 },
-    { name: '鎖帷子',       type: 'armor', def:  3 },
-    { name: '鉄の鎧',       type: 'armor', def:  4 },
-    { name: '騎士の鎧',     type: 'armor', def:  5 },
-    { name: '魔法の鎧',     type: 'armor', def:  4, crit:  3 },
-    { name: '炎の鎧',       type: 'armor', def:  6 },
-    { name: '竜鱗の鎧',     type: 'armor', def:  7 },
-    { name: '黄金の鎧',     type: 'armor', def:  6, steal: 4 },
-    { name: '聖なる鎧',     type: 'armor', def:  5, steal: 5 },
-    { name: '英雄の鎧',     type: 'armor', def:  8 },
-    { name: '魔王の鎧',     type: 'armor', def:  9 },
-    { name: '革の胸当て',   type: 'armor', def:  2, crit:  2 },
-    { name: '鋼の鎧',       type: 'armor', def:  6 },
-    { name: '妖精の衣',     type: 'armor', def:  3, steal: 5 },
-    { name: '賢者の法衣',   type: 'armor', def:  4, crit:  4 },
-    { name: '闇の鎧',       type: 'armor', def:  7, crit:  3 },
-    { name: '守護の鎧',     type: 'armor', def:  8, steal: 3 },
-    { name: '神話の鎧',     type: 'armor', def: 10 },
-    { name: '伝説の鎧',     type: 'armor', def:  9 },
-    { name: '世界樹の衣',   type: 'armor', def: 10, steal: 4 },
+    { name: '皮の鎧',       type: 'armor', def:  2, weight: 1 },
+    { name: '鎖帷子',       type: 'armor', def:  3, weight: 2 },
+    { name: '鉄の鎧',       type: 'armor', def:  4, weight: 3 },
+    { name: '騎士の鎧',     type: 'armor', def:  5, weight: 4 },
+    { name: '魔法の鎧', element: '魔', type: 'armor', def:  4, crit:  3, weight: 2 },
+    { name: '炎の鎧',   element: '炎', type: 'armor', def:  6, weight: 4 },
+    { name: '竜鱗の鎧',     type: 'armor', def:  7, weight: 5 },
+    { name: '黄金の鎧',     type: 'armor', def:  6, steal: 4, weight: 3 },
+    { name: '聖なる鎧', element: '光', type: 'armor', def:  5, steal: 5, weight: 3 },
+    { name: '英雄の鎧',     type: 'armor', def:  8, weight: 5 },
+    { name: '魔王の鎧',     type: 'armor', def:  9, weight: 5 },
+    { name: '革の胸当て',   type: 'armor', def:  2, crit:  2, weight: 1 },
+    { name: '鋼の鎧',       type: 'armor', def:  6, weight: 4 },
+    { name: '妖精の衣',     type: 'armor', def:  3, steal: 5, weight: 1 },
+    { name: '賢者の法衣',   type: 'armor', def:  4, crit:  4, weight: 2 },
+    { name: '闇の鎧',       type: 'armor', def:  7, crit:  3, weight: 4 },
+    { name: '守護の鎧',     type: 'armor', def:  8, steal: 3, weight: 5 },
+    { name: '神話の鎧',     type: 'armor', def: 10, weight: 6 },
+    { name: '伝説の鎧',     type: 'armor', def:  9, weight: 5 },
+    { name: '世界樹の衣',   type: 'armor', def: 10, steal: 4, weight: 2 },
     // 盾 (15)
-    { name: '木の盾',       type: 'shield', def:  1 },
-    { name: '革の盾',       type: 'shield', def:  2 },
-    { name: '鉄の盾',       type: 'shield', def:  3 },
-    { name: '騎士の盾',     type: 'shield', def:  4 },
-    { name: '魔法の盾',     type: 'shield', def:  3, steal: 3 },
-    { name: '炎の盾',       type: 'shield', def:  5 },
-    { name: '竜鱗の盾',     type: 'shield', def:  6 },
-    { name: '黄金の盾',     type: 'shield', def:  5, steal: 4 },
-    { name: '聖なる盾',     type: 'shield', def:  4, steal: 5 },
-    { name: '英雄の盾',     type: 'shield', def:  7 },
-    { name: '魔王の盾',     type: 'shield', def:  8 },
-    { name: '守護の盾',     type: 'shield', def:  7, steal: 3 },
-    { name: '神話の盾',     type: 'shield', def:  9 },
-    { name: '伝説の盾',     type: 'shield', def:  8, crit:  3 },
-    { name: '世界樹の盾',   type: 'shield', def: 10 }
+    { name: '木の盾',       type: 'shield', def:  1, weight: 1 },
+    { name: '革の盾',       type: 'shield', def:  2, weight: 1 },
+    { name: '鉄の盾',       type: 'shield', def:  3, weight: 2 },
+    { name: '騎士の盾',     type: 'shield', def:  4, weight: 3 },
+    { name: '魔法の盾', element: '魔', type: 'shield', def:  3, steal: 3, weight: 1 },
+    { name: '炎の盾',   element: '炎', type: 'shield', def:  5, weight: 3 },
+    { name: '竜鱗の盾',     type: 'shield', def:  6, weight: 4 },
+    { name: '黄金の盾',     type: 'shield', def:  5, steal: 4, weight: 2 },
+    { name: '聖なる盾', element: '光', type: 'shield', def:  4, steal: 5, weight: 2 },
+    { name: '英雄の盾',     type: 'shield', def:  7, weight: 4 },
+    { name: '魔王の盾',     type: 'shield', def:  8, weight: 5 },
+    { name: '守護の盾',     type: 'shield', def:  7, steal: 3, weight: 4 },
+    { name: '神話の盾',     type: 'shield', def:  9, weight: 5 },
+    { name: '伝説の盾',     type: 'shield', def:  8, crit:  3, weight: 4 },
+    { name: '世界樹の盾',   type: 'shield', def: 10, weight: 5 }
 ];
 
 
@@ -534,3 +567,84 @@ const constellationCatalog = [
     { id: 'leo',      name: '獅子座', icon: '♌', desc: '敵HP +50% / 敵ATK +20% / 全報酬 +60%',      difficulty: 2, effects: { enemyHpMult: 1.5, enemyAtkMult: 1.2, expMult: 1.6, goldMult: 1.6 } },
     { id: 'death',    name: '死神座', icon: '☠', desc: '敵ATK +60% / 敵HP +60% / 全報酬 ×2',        difficulty: 3, effects: { enemyAtkMult: 1.6, enemyHpMult: 1.6, expMult: 2.0, goldMult: 2.0 } },
 ];
+
+// =============================================================
+// 属性システム定義
+// =============================================================
+const ELEMENTS = {
+    '炎': { color: '#ff6644', icon: '🔥', beats: '植', weak: '水' },
+    '氷': { color: '#44ccff', icon: '❄', beats: '竜', weak: '炎' },
+    '雷': { color: '#ffee44', icon: '⚡', beats: '水', weak: '土' },
+    '風': { color: '#88ff88', icon: '🌀', beats: '土', weak: '雷' },
+    '光': { color: '#ffffaa', icon: '✨', beats: '闇', weak: '闇' },
+    '闇': { color: '#cc44ff', icon: '🌑', beats: '光', weak: '光' },
+    '斬': { color: '#ff8844', icon: '⚔',  beats: '獣', weak: '盾' },
+    '刺': { color: '#aaffaa', icon: '🗡',  beats: '魔', weak: '鎧' },
+    '魔': { color: '#aa88ff', icon: '🔮', beats: '物', weak: '光' },
+};
+
+function getElementBonus(attackElement, defenderWeakElement) {
+    if (!attackElement || !defenderWeakElement) return 1.0;
+    if (attackElement === defenderWeakElement) return 1.5;
+    return 1.0;
+}
+
+// =============================================================
+// ジョブ（職業）カタログ
+// =============================================================
+const jobCatalog = [
+    {
+        id: 'none', name: '無職', icon: '👤',
+        desc: '特別な恩恵なし。すべての職業の基礎。',
+        changeCost: 0,
+        effects: {}
+    },
+    {
+        id: 'warrior', name: '戦士', icon: '⚔',
+        desc: 'ATK+20% / DEF+10%。重い装備を纏い前線で戦う。',
+        changeCost: 50,
+        effects: { atkMult: 1.2, defMult: 1.1 }
+    },
+    {
+        id: 'mage', name: '魔道士', icon: '🔮',
+        desc: '魔法ATK×2 / 精神+20 / 物理ATK-30%。魔力に特化した術師。',
+        changeCost: 50,
+        effects: { magicMult: 2.0, spiritBonus: 20, atkMult: 0.7 }
+    },
+    {
+        id: 'rogue', name: '盗賊', icon: '🗡',
+        desc: '会心+20% / 素早さ+15 / 奪取+10%。素早い一撃で仕留める。',
+        changeCost: 50,
+        effects: { critBonus: 20, spdBonus: 15, stealBonus: 10 }
+    },
+    {
+        id: 'cleric', name: '聖者', icon: '✦',
+        desc: '精神+30 / DEF+15% / SPリジェネ+3/turn。神の加護を受けし者。',
+        changeCost: 60,
+        effects: { spiritBonus: 30, defMult: 1.15, spRegen: 3 }
+    },
+    {
+        id: 'monk', name: '武道家', icon: '🥋',
+        desc: '会心+25% / ATK+15% / DEF-20%。素手に近い軽装で最大火力を発揮。',
+        changeCost: 60,
+        effects: { critBonus: 25, atkMult: 1.15, defMult: 0.8 }
+    },
+    {
+        id: 'ranger', name: '弓使い', icon: '🏹',
+        desc: '遠隔ATK×1.5 / 素早さ+10 / 会心+10%。遠距離から精確に狙う。',
+        changeCost: 50,
+        effects: { rangeMult: 1.5, spdBonus: 10, critBonus: 10 }
+    },
+    {
+        id: 'alchemist', name: '錬金術師', icon: '⚗',
+        desc: '素材ドロップ+50% / G収入+30% / ATK-10%。知識で富を生み出す賢者。',
+        changeCost: 70,
+        effects: { matDropMult: 1.5, goldMult: 1.3, atkMult: 0.9 }
+    },
+];
+
+function getJobEffects() {
+    if (typeof equippedJob === 'undefined' || !equippedJob) return {};
+    const j = jobCatalog.find(x => x.id === equippedJob);
+    return j ? j.effects : {};
+}
