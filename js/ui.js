@@ -280,14 +280,26 @@ function updateIllustration(type, enemy = null) {
         }
     }
 
+    // 戦闘以外ではHPオーバーレイを非表示
+    const _ov = document.getElementById('enemyHpOverlay');
+    if (_ov && !enemy) _ov.style.display = 'none';
+
     let enemyLabel = '';
     if (enemy) {
         const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
         const hpCol   = hpRatio > 0.5 ? green : hpRatio > 0.25 ? flame : red;
-        enemyLabel = `<text x="50" y="10" text-anchor="middle" font-size="6.5" fill="${gold}" font-family="serif" letter-spacing="1">${enemy.name}</text>
-        <rect x="15" y="13" width="70" height="4" rx="2" fill="#1a1006"/>
-        <rect x="15" y="13" width="${70 * hpRatio}" height="4" rx="2" fill="${hpCol}" opacity="0.9"/>
-        <text x="50" y="23" text-anchor="middle" font-size="5" fill="${pale}" opacity="0.6">HP: ${enemy.hp} / ${enemy.maxHp}</text>`;
+        // 敵名はSVG内に薄く残す（イラストの背後なので邪魔にならない）
+        enemyLabel = '';
+        // HP表示はSVG外のオーバーレイに
+        const ov = document.getElementById('enemyHpOverlay');
+        if (ov) {
+            ov.style.display = 'block';
+            document.getElementById('enemyHpName').textContent = enemy.name;
+            document.getElementById('enemyHpText').textContent = `HP ${enemy.hp} / ${enemy.maxHp}`;
+            const fill = document.getElementById('enemyHpFill');
+            fill.style.width = `${hpRatio * 100}%`;
+            fill.style.background = hpCol;
+        }
     }
 
     function getEnemySprite(name) {
