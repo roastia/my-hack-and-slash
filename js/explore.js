@@ -612,7 +612,6 @@ function renderAutoRow() {
         <button class="auto-btn" style="margin-left:4px;${batOn ? batStyle : offStyle}" onclick="toggleAutoBattle()">
             ${batOn ? '⚔ 戦闘AUTO' : '⚔ AUTO'}
         </button>
-        <button class="auto-btn" style="margin-left:auto; border-color:#ff8888; color:#ff8888;" onclick="handleReturn()">⬅ 帰還</button>
     `;
 }
 
