@@ -1234,3 +1234,6 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main)
 button, a, input, select, textarea, [onclick] {
     touch-action: manipulation;
 }
+/* action-group を JS で hidden にした場合は必ず非表示（モバイルの!importantを上書き） */
+.action-group.hidden { display: none !important; }
+#autoRow.hidden      { display: none !important; }
