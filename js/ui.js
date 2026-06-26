@@ -647,22 +647,14 @@ function clearLog() {
 // =============================================================
 
 function updateActionButtons() {
+    const _actionGroup = document.querySelector('.action-group');
     if (!activeDungeon) {
-        exploreBtn.disabled    = true;
-        exploreBtn.textContent = '';
+        if (_actionGroup) _actionGroup.style.display = 'none';
         exploreBtn.classList.add('hidden');
         returnBtn.classList.add('hidden');
-        exploreBtn.classList.remove('btn-attack');
-        returnBtn.classList.remove('btn-flee');
-        exploreScene.classList.remove('battle-mode-bg');
-        exploreBtn.style.order = '1';
-        returnBtn.style.order  = '2';
-        exploreBtn.style.fontSize     = '';
-        exploreBtn.style.letterSpacing = '';
-        returnBtn.style.fontSize      = '';
-        returnBtn.style.letterSpacing  = '';
         return;
     }
+    if (_actionGroup) _actionGroup.style.display = '';
 
     if (eventState.active && eventState.type === 'console') {
         exploreBtn.disabled    = false;
