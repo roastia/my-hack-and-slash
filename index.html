@@ -151,7 +151,7 @@
                     <button id="tabShop"   class="mini-btn tab-btn"        onclick="switchTab('shop')"   style="font-size:14px; padding:6px 10px;">道具屋</button>
                     <button id="tabLab"     class="mini-btn tab-btn"        onclick="switchTab('lab')"     style="font-size:14px; padding:6px 10px;">強 化</button>
                     <button id="tabCraft"   class="mini-btn tab-btn"        onclick="switchTab('craft')"   style="font-size:14px; padding:6px 10px;">工 房</button>
-                    <button id="tabFish"    class="mini-btn tab-btn"        onclick="openFishing()"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
+                    <button id="tabFish"    class="mini-btn tab-btn"        onclick="switchTab('fish')"        style="font-size:14px; padding:6px 10px;">🎣 釣 り</button>
                     <button id="tabDna"     class="mini-btn tab-btn"        onclick="switchTab('dna')"     style="font-size:14px; padding:6px 10px;">🧬 変 異</button>
                     <button id="tabTrap"    class="mini-btn tab-btn"        onclick="switchTab('trap')"    style="font-size:14px; padding:6px 10px;">🪤 罠</button>
                     <button id="tabArchive" class="mini-btn tab-btn"        onclick="switchTab('archive')" style="font-size:14px; padding:6px 10px;">記 録</button>
@@ -215,6 +215,11 @@
                         </div>
                         <button class="mini-btn" style="border-color:#aa88ff;color:#aa88ff; font-size:13px; padding:6px 12px;" onclick="upgradeMedalAp()">拡張 (G<span id="costMedalApDisp">30</span>)</button>
                     </div>
+                    <!-- 武勲ショップ -->
+                    <div style="border-top:1px dashed #334; margin-top:10px; padding-top:8px;">
+                        <div style="color:var(--accent-orange); font-size:13px; margin-bottom:6px;">⚔ 武勲ショップ <span id="meritShopCount" style="font-size:11px; color:var(--text-dim)"></span></div>
+                        <div id="meritShopList"></div>
+                    </div>
                 </div>
 
                 <!-- 工房タブ -->
@@ -225,6 +230,9 @@
 
                 <!-- 拠点トラップタブ -->
                 <div id="panelTrap" class="base-panel hidden"></div>
+
+                <!-- 釣りパネル -->
+                <div id="panelFish" class="base-panel hidden"></div>
 
                 <!-- アーカイブタブ -->
                 <div id="panelArchive" class="base-panel hidden">
@@ -306,9 +314,6 @@
             <span class="nav-icon">👤</span><span>状 態</span>
         </button>
     </div>
-
-    <!-- 釣りパネル（モバイルoverlay用・body直下に配置） -->
-    <div id="fishingPanel" class="hidden fishing-panel-overlay"></div>
 
     <!-- ストーリーモーダル（初回訪問時） -->
     <div id="storyModal" class="story-modal hidden">

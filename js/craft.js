@@ -24,23 +24,38 @@ function renderCraft() {
     recipeHeader.textContent = '⚗ 合成レシピ';
     panel.appendChild(recipeHeader);
 
-    craftRecipes.forEach((recipe, idx) => {
+    // craftable items first
+    const sorted = craftRecipes.map((r,i) => ({r,i})).sort((a,b) => {
+        const ca = Object.entries(a.r.ingredients).every(([m,c]) => (materials[m]||0) >= c);
+        const cb = Object.entries(b.r.ingredients).every(([m,c]) => (materials[m]||0) >= c);
+        return cb - ca;
+    });
+
+    sorted.forEach(({r: recipe, i: idx}) => {
         const canCraft = Object.entries(recipe.ingredients).every(
             ([mat, count]) => (materials[mat] || 0) >= count
         );
-        const ingText = Object.entries(recipe.ingredients)
-            .map(([mat, cnt]) => `${mat}×${cnt}`)
-            .join(' + ');
+        const ingParts = Object.entries(recipe.ingredients).map(([mat, cnt]) => {
+            const have = materials[mat] || 0;
+            const ok   = have >= cnt;
+            return `<span style="color:${ok ? '#aaffaa' : '#ff8888'}">${mat}×${cnt}(${have})</span>`;
+        });
+        const ingHtml = ingParts.join(' <span style="color:var(--text-dim)">+</span> ');
+        const resultDesc = recipe.desc.split('→')[1]?.trim() || recipe.desc;
 
         const div = document.createElement('div');
         div.className = 'lab-item';
-        div.style.cssText = 'align-items:center;';
+        div.style.cssText = canCraft
+            ? 'align-items:center; border:1px solid var(--accent-green); border-radius:8px; background:rgba(108,203,95,0.07); padding:10px 8px; margin-bottom:6px;'
+            : 'align-items:center; opacity:0.55; padding:10px 8px; margin-bottom:6px;';
         div.innerHTML = `
             <div style="flex:1;">
-                <div style="color:var(--text-main); font-size:14px;">⚗ ${recipe.name}</div>
-                <div class="lab-desc" style="color:#aaddaa;">${ingText} → ${recipe.desc.split('→')[1]?.trim() || recipe.desc}</div>
+                ${canCraft ? '<span style="color:var(--accent-green); font-size:11px; font-weight:bold;">✅ 今すぐ作れる</span><br>' : ''}
+                <div style="color:${canCraft ? 'var(--text-main)' : 'var(--text-dim)'}; font-size:14px; font-weight:${canCraft ? 'bold' : 'normal'};">⚗ ${recipe.name}</div>
+                <div class="lab-desc" style="margin-top:3px;">${ingHtml}</div>
+                <div class="lab-desc" style="color:#aaddaa; font-size:11px;">→ ${resultDesc}</div>
             </div>
-            <button class="mini-btn btn-equip" style="font-size:13px; padding:5px 10px;"
+            <button class="mini-btn ${canCraft ? 'btn-equip' : ''}" style="font-size:13px; padding:5px 10px; flex-shrink:0;"
                 onclick="craftItem(${idx})" ${canCraft ? '' : 'disabled'}>
                 合成
             </button>`;

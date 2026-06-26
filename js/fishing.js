@@ -22,20 +22,26 @@ const fishCatalog = [
 function openFishing() {
     fishingState.active = true;
     fishingState.phase  = 'idle';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.base-panel').forEach(p => p.classList.add('hidden'));
+    const tabFish = document.getElementById('tabFish');
+    if (tabFish) tabFish.classList.add('active');
+    const panel = document.getElementById('panelFish');
+    if (panel) panel.classList.remove('hidden');
     renderFishing();
 }
 
 function closeFishing() {
     fishingState.active = false;
     fishingState.phase  = 'idle';
-    const panel = document.getElementById('fishingPanel');
+    const panel = document.getElementById('panelFish');
     if (panel) panel.classList.add('hidden');
     renderBaseScene();
     updateUI();
 }
 
 function renderFishing() {
-    const panel = document.getElementById('fishingPanel');
+    const panel = document.getElementById('panelFish');
     if (!panel) return;
     panel.classList.remove('hidden');
 

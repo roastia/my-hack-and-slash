@@ -159,6 +159,7 @@ function executeBattleTurn(skillId) {
             logMsg = `<span class="attack-text">💥 渾身の一撃！ ${dmg} dmgを与えた！ (Lv${skillLv} × ${mult.toFixed(1)})</span>`;
             const heal = Math.floor(dmg * (getStealRate() / 100));
             if (heal > 0) { currentHp = Math.min(maxHp, currentHp + heal); logMsg += ` <span class="event-text">(吸収 +${heal})</span>`; }
+            sp = Math.min(maxSp, sp + 5);
 
         } else if (skillId === 'rapidStrike') {
             // 連撃：複数回ヒット
@@ -173,6 +174,7 @@ function executeBattleTurn(skillId) {
             }
             const total = dmgParts.reduce((a, b) => a + b, 0);
             logMsg = `<span class="attack-text">⚔ ${hits}連撃！ [${dmgParts.join('+')}] 計 ${total} dmg！ (Lv${skillLv})</span>`;
+            sp = Math.min(maxSp, sp + 3);
 
         } else if (skillId === 'healingWave') {
             // 回復術：HP回復（精神で強化）
@@ -188,6 +190,7 @@ function executeBattleTurn(skillId) {
             battleState.guardActive = true;
             battleState.guardMult   = defMult;
             logMsg = `<span class="event-text">🛡 鉄壁の構え！ 次の被ダメを ${Math.round((1 - defMult) * 100)}% 軽減！ (Lv${skillLv})</span>`;
+            sp = Math.min(maxSp, sp + 4);
         }
 
         saveData();
@@ -206,6 +209,8 @@ function executeBattleTurn(skillId) {
             currentHp = Math.min(maxHp, currentHp + heal);
             logMsg   += ` <span class="event-text">(吸収 +${heal})</span>`;
         }
+        // 通常攻撃はSP-2消費（スキルを使う動機付け）
+        sp = Math.max(0, sp - 2);
     }
 
     // ── 撃破判定 ──

@@ -649,7 +649,8 @@ function clearLog() {
 function updateActionButtons() {
     if (!activeDungeon) {
         exploreBtn.disabled    = true;
-        exploreBtn.textContent = '［ 目 標 を 選 択 ］';
+        exploreBtn.textContent = '';
+        exploreBtn.classList.add('hidden');
         returnBtn.classList.add('hidden');
         exploreBtn.classList.remove('btn-attack');
         returnBtn.classList.remove('btn-flee');
@@ -665,6 +666,7 @@ function updateActionButtons() {
 
     if (eventState.active && eventState.type === 'console') {
         exploreBtn.disabled    = false;
+        exploreBtn.classList.remove('hidden');
         exploreBtn.textContent = '［接続: HP半減/遺物］';
         returnBtn.classList.remove('hidden');
         returnBtn.disabled     = false;
@@ -689,6 +691,7 @@ function updateActionButtons() {
 
     if (battleState.active) {
         exploreBtn.disabled    = false;
+        exploreBtn.classList.remove('hidden');
         exploreBtn.textContent = '通常攻撃';
         exploreBtn.classList.add('btn-attack');
         returnBtn.classList.remove('hidden');
@@ -737,11 +740,13 @@ function updateActionButtons() {
         if (tp2) tp2.classList.add('hidden');
         if (isBossDefeated) {
             exploreBtn.disabled    = true;
+            exploreBtn.classList.remove('hidden');
             exploreBtn.textContent = '［ 最 深 部 ］';
             exploreBtn.style.order = '2';
             returnBtn.style.order  = '1';
         } else {
             exploreBtn.disabled    = false;
+            exploreBtn.classList.remove('hidden');
             exploreBtn.textContent = '［ 進 む ］';
             exploreBtn.style.order = '1';
             returnBtn.style.order  = '2';
@@ -933,10 +938,29 @@ function updateUI() {
                     </div>
                 `;
             } else {
+                // 装備比較
+                let compareHtml = '';
+                const cur = equipment[item.type];
+                if (cur) {
+                    const dAtk = (item.atk || 0) - (cur.atk || 0);
+                    const dDef = (item.def || 0) - (cur.def || 0);
+                    const parts = [];
+                    if (item.atk !== undefined || cur.atk) {
+                        const col = dAtk > 0 ? '#6ccb5f' : dAtk < 0 ? '#ff5c5c' : '#888';
+                        parts.push(`<span style="color:${col}">ATK ${dAtk >= 0 ? '+' : ''}${dAtk}</span>`);
+                    }
+                    if (item.def !== undefined || cur.def) {
+                        const col = dDef > 0 ? '#6ccb5f' : dDef < 0 ? '#ff5c5c' : '#888';
+                        parts.push(`<span style="color:${col}">DEF ${dDef >= 0 ? '+' : ''}${dDef}</span>`);
+                    }
+                    if (parts.length) compareHtml = `<span style="font-size:11px; margin-left:4px;">[${parts.join(' ')}]</span>`;
+                } else {
+                    compareHtml = `<span style="font-size:11px; color:#6ccb5f; margin-left:4px;">[新規装備]</span>`;
+                }
                 li.innerHTML = `
                     <div style="display:flex; flex-direction:column; flex-grow:1; padding-left:6px;">
                         <span class="item-name" style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span>
-                        <span class="item-stats">${statsText}<span style="color:${r.color}; opacity:0.75; margin-left:6px;">${r.label}</span></span>
+                        <span class="item-stats">${statsText}<span style="color:${r.color}; opacity:0.75; margin-left:6px;">${r.label}</span>${compareHtml}</span>
                     </div>
                     <div class="item-actions">
                         <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>
@@ -1044,6 +1068,7 @@ function switchTab(tab) {
         document.getElementById('tabLab').classList.add('active');
         document.getElementById('panelLab').classList.remove('hidden');
         updateIllustration('lab');
+        if (typeof renderMeritShop === 'function') renderMeritShop();
     }
     if (tab === 'shop') {
         const tabShop = document.getElementById('tabShop');
@@ -1081,6 +1106,14 @@ function switchTab(tab) {
         const pt = document.getElementById('panelTrap');
         if (pt) pt.classList.remove('hidden');
         if (typeof renderTrapPanel === 'function') renderTrapPanel();
+        updateIllustration('base');
+    }
+    if (tab === 'fish') {
+        const tf = document.getElementById('tabFish');
+        if (tf) tf.classList.add('active');
+        const pf = document.getElementById('panelFish');
+        if (pf) pf.classList.remove('hidden');
+        if (typeof renderFishing === 'function') renderFishing();
         updateIllustration('base');
     }
 }

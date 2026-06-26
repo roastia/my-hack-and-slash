@@ -196,3 +196,74 @@ function removeTrap(idx) {
     saveData();
     renderTrapPanel();
 }
+
+
+// =============================================================
+// 武勲ショップ
+// =============================================================
+const meritShopItems = [
+    { id: 'ms_sp',       name: 'SP最大値+10',           cost: 15, desc: 'SP上限を恒久的に10増加',          icon: '✦', type: 'stat' },
+    { id: 'ms_heal',     name: 'HP全回復',               cost: 10, desc: 'HPを100%回復する',               icon: '💊', type: 'use' },
+    { id: 'ms_mat3',     name: '素材×3一括取得',          cost: 8,  desc: '全素材を3個ずつ追加取得',         icon: '🌿', type: 'use' },
+    { id: 'ms_expx2',    name: 'スキル経験値2倍(次戦)',   cost: 20, desc: '次の戦闘のスキル使用数が2倍計上', icon: '📚', type: 'buff' },
+    { id: 'ms_frenzy',   name: 'テンション「狂乱」固定(次戦)', cost: 25, desc: '次戦開始時にテンションを狂乱に固定', icon: '🔥', type: 'buff' },
+    { id: 'ms_dnaslot',  name: 'DNA変異スロット+1',       cost: 50, desc: 'DNA変異スロットを永久に1増加',    icon: '🧬', type: 'perm' },
+];
+
+function renderMeritShop() {
+    const listEl = document.getElementById('meritShopList');
+    const countEl = document.getElementById('meritShopCount');
+    if (!listEl) return;
+    if (countEl) countEl.textContent = `(武勲: ${battleMerit})`;
+
+    let html = '';
+    meritShopItems.forEach(item => {
+        const canBuy = battleMerit >= item.cost;
+        const typeColor = item.type === 'perm' ? '#aa88ff' : item.type === 'buff' ? '#ffa040' : item.type === 'stat' ? '#6ccb5f' : '#60cdff';
+        html += `<div class="lab-item" style="opacity:${canBuy ? '1' : '0.5'}; margin-bottom:4px;">
+            <div style="flex:1;">
+                <span style="color:${typeColor}; font-size:13px;">${item.icon} ${item.name}</span>
+                <div class="lab-desc">${item.desc}</div>
+            </div>
+            <button class="mini-btn" style="border-color:${typeColor};color:${typeColor}; font-size:12px; padding:4px 8px; flex-shrink:0;"
+                onclick="buyMeritShopItem('${item.id}')" ${canBuy ? '' : 'disabled'}>
+                ⚔${item.cost}
+            </button>
+        </div>`;
+    });
+    listEl.innerHTML = html;
+}
+
+function buyMeritShopItem(id) {
+    const item = meritShopItems.find(i => i.id === id);
+    if (!item) return;
+    if (battleMerit < item.cost) { addLog('武勲が足りない！'); return; }
+    battleMerit -= item.cost;
+
+    if (id === 'ms_sp') {
+        maxSp += 10;
+        sp = Math.min(sp, maxSp);
+        addLog(`<span style="color:#60cdff">✦ SP最大値が10増加した！ (${maxSp})</span>`);
+    } else if (id === 'ms_heal') {
+        currentHp = maxHp;
+        addLog(`<span style="color:#6ccb5f">💊 HPが全回復した！</span>`);
+    } else if (id === 'ms_mat3') {
+        craftMaterialTypes.forEach(m => { materials[m] = (materials[m] || 0) + 3; });
+        addLog(`<span style="color:#aaffaa">🌿 全素材が3個ずつ追加された！</span>`);
+    } else if (id === 'ms_expx2') {
+        window._meritSkillExpDouble = true;
+        addLog(`<span style="color:#ffa040">📚 次戦のスキル経験値が2倍になる！</span>`);
+    } else if (id === 'ms_frenzy') {
+        window._meritFrenzyNext = true;
+        addLog(`<span style="color:#ffa040">🔥 次戦のテンションが「狂乱」に固定される！</span>`);
+    } else if (id === 'ms_dnaslot') {
+        if (typeof maxDnaSlots !== 'undefined') {
+            maxDnaSlots = (maxDnaSlots || 3) + 1;
+            addLog(`<span style="color:#aa88ff">🧬 DNA変異スロットが${maxDnaSlots}に増加した！</span>`);
+        }
+    }
+
+    saveData();
+    renderMeritShop();
+    updateUI();
+}
