@@ -257,10 +257,9 @@ function buyMeritShopItem(id) {
         window._meritFrenzyNext = true;
         addLog(`<span style="color:#ffa040">🔥 次戦のテンションが「狂乱」に固定される！</span>`);
     } else if (id === 'ms_dnaslot') {
-        if (typeof maxDnaSlots !== 'undefined') {
-            maxDnaSlots = (maxDnaSlots || 3) + 1;
-            addLog(`<span style="color:#aa88ff">🧬 DNA変異スロットが${maxDnaSlots}に増加した！</span>`);
-        }
+        mutationSlots = (mutationSlots || 3) + 1;
+        addLog(`<span style="color:#aa88ff">🧬 DNA変異スロットが${mutationSlots}に増加した！</span>`);
+        if (typeof renderDnaPanel === 'function') renderDnaPanel();
     }
 
     saveData();
