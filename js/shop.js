@@ -113,9 +113,9 @@ function renderShop() {
         let statusHtml = '';
         if (learned) {
             const lv   = getSkillLevel(item.skillId);
-            const uses = skillBook[item.skillId].uses;
+            const kills = (typeof stats !== 'undefined') ? stats.kills : 0;
             const next = getSkillNextThreshold(item.skillId);
-            statusHtml = `<span style="color:var(--accent-green); font-size:12px;">習得済み Lv${lv} (${uses}/${next || 'MAX'}回)</span>`;
+            statusHtml = `<span style="color:var(--accent-green); font-size:12px;">習得済み Lv${lv}（討伐${kills}/${next || 'MAX'}体）</span>`;
         }
 
         div.innerHTML = `

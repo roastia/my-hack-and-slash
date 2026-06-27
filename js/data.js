@@ -199,25 +199,25 @@ const combatSkills = [
     },
 ];
 
+// スキルレベル = 総討伐数で決まる（全スキル共通）
+const SKILL_KILL_THRESHOLDS = [20, 50, 100, 200, 350];
+
 function getSkillLevel(skillId) {
     const entry = typeof skillBook !== 'undefined' ? skillBook[skillId] : null;
     if (!entry || !entry.learned) return 0;
-    const skill = combatSkills.find(s => s.id === skillId);
-    if (!skill) return 1;
+    const kills = (typeof stats !== 'undefined') ? (stats.kills || 0) : 0;
     let lv = 1;
-    for (let i = 0; i < skill.levelThresholds.length; i++) {
-        if (entry.uses >= skill.levelThresholds[i]) lv = i + 1;
+    for (let i = 0; i < SKILL_KILL_THRESHOLDS.length; i++) {
+        if (kills >= SKILL_KILL_THRESHOLDS[i]) lv = i + 2;
     }
     return Math.min(5, lv);
 }
 
 function getSkillNextThreshold(skillId) {
     const entry = typeof skillBook !== 'undefined' ? skillBook[skillId] : null;
-    if (!entry) return 10;
-    const skill = combatSkills.find(s => s.id === skillId);
-    if (!skill) return 10;
+    if (!entry) return SKILL_KILL_THRESHOLDS[0];
     const lv = getSkillLevel(skillId);
-    return lv < 5 ? skill.levelThresholds[lv] : null;
+    return lv < 5 ? SKILL_KILL_THRESHOLDS[lv] : null;
 }
 
 
@@ -615,61 +615,39 @@ const trapCatalog = [
 // 称号（二つ名）カタログ
 // =============================================================
 const titleCatalog = [
+    // ── 初期・討伐系 ──────────────────────────────────────────
     {
         id: 'nameless', name: '名もなき勇者', icon: '⚔',
         desc: '始まりの称号。特別な効果はない。',
-        unlockHint: '最初から所持',
-        unlockFn: () => true,
-        effects: {}
+        unlockHint: '最初から所持', unlockFn: () => true, effects: {}
+    },
+    {
+        id: 'first_blood', name: '初陣の戦士', icon: '🗡',
+        desc: '攻撃+3 / 素早さ+2。初めての勝利が魂を鍛える。',
+        unlockHint: '1体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 1,
+        effects: { atkBonus: 3, spdBonus: 2 }
+    },
+    {
+        id: 'rookie', name: '駆け出し冒険者', icon: '🌱',
+        desc: 'EXP +15%。まだ見ぬ世界への第一歩。',
+        unlockHint: '10体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 10,
+        effects: { expMult: 1.15 }
     },
     {
         id: 'berserker', name: '狂戦士', icon: '🔥',
-        desc: '攻撃力 ×1.5 / 防御力 ×0.7。火力で押し切る荒くれ者。',
+        desc: '攻撃 ×1.5 / 防御 ×0.7。火力で押し切る荒くれ者。',
         unlockHint: '50体討伐',
         unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 50,
         effects: { atkMult: 1.5, defMult: 0.7 }
     },
     {
         id: 'guardian', name: '鉄壁の守護者', icon: '🛡',
-        desc: '防御力 ×1.5 / 攻撃力 ×0.75。鉄の意志で仲間を守る。',
+        desc: '防御 ×1.5 / 攻撃 ×0.75。鉄の意志で守り抜く。',
         unlockHint: '100体討伐',
         unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 100,
         effects: { defMult: 1.5, atkMult: 0.75 }
-    },
-    {
-        id: 'shadow', name: '影の暗殺者', icon: '🗡',
-        desc: '会心+25% / 素早さ+8 / 防御 ×0.6。先手を取って一気に仕留める。',
-        unlockHint: 'クリティカル20回達成',
-        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.critHits >= 20,
-        effects: { critBonus: 25, spdBonus: 8, defMult: 0.6 }
-    },
-    {
-        id: 'greedy', name: '貪欲なる者', icon: '💰',
-        desc: '奪取率+15% / スキルEXP +20%。あらゆるものを掻き集める。',
-        unlockHint: '敵から15回奪取',
-        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stealCount >= 15,
-        effects: { stealBonus: 15, expMult: 1.2 }
-    },
-    {
-        id: 'undying', name: '不死身の戦士', icon: '💀',
-        desc: '防御 ×1.3 / 精神+15 / 攻撃 ×0.8。何度倒れても立ち上がる不屈の魂。',
-        unlockHint: '5回力尽きる',
-        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 5,
-        effects: { defMult: 1.3, spiritBonus: 15, atkMult: 0.8 }
-    },
-    {
-        id: 'mage', name: '魔道の申し子', icon: '✨',
-        desc: '魔法 ×1.5 / 精神+10 / 物理攻撃 ×0.7。魔力と共に生きる者。',
-        unlockHint: 'スキル30回使用',
-        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.skillUseCount >= 30,
-        effects: { magicMult: 1.5, spiritBonus: 10, atkMult: 0.7 }
-    },
-    {
-        id: 'challenger', name: '命知らずの挑戦者', icon: '⚡',
-        desc: '攻撃 ×1.8 / 防御 ×0.4 / 素早さ+10。リスクを恐れぬ真の勇者。',
-        unlockHint: '3回力尽き、かつ30体討伐',
-        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 3 && stats.kills >= 30,
-        effects: { atkMult: 1.8, defMult: 0.4, spdBonus: 10 }
     },
     {
         id: 'chosen', name: '天運の使者', icon: '⭐',
@@ -679,11 +657,144 @@ const titleCatalog = [
         effects: { critBonus: 15, expMult: 1.2 }
     },
     {
+        id: 'legend', name: '伝説の勇者', icon: '👑',
+        desc: '攻撃 ×1.3 / 防御 ×1.3 / 素早さ+10。歴史に名を刻む英雄。',
+        unlockHint: '500体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 500,
+        effects: { atkMult: 1.3, defMult: 1.3, spdBonus: 10 }
+    },
+    {
+        id: 'slayer', name: '魔王の宿敵', icon: '⚔',
+        desc: '攻撃 ×1.6 / 会心+20%。1000を超える魔物を屠った者。',
+        unlockHint: '1000体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 1000,
+        effects: { atkMult: 1.6, critBonus: 20 }
+    },
+    // ── 特殊行動系 ────────────────────────────────────────────
+    {
+        id: 'shadow', name: '影の暗殺者', icon: '🌑',
+        desc: '会心+25% / 素早さ+8 / 防御 ×0.6。先手を取って一気に仕留める。',
+        unlockHint: 'クリティカル20回',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.critHits >= 20,
+        effects: { critBonus: 25, spdBonus: 8, defMult: 0.6 }
+    },
+    {
+        id: 'crit_master', name: '必殺の求道者', icon: '💥',
+        desc: '会心+30% / 攻撃 ×1.2。急所を貫く技を極めた者。',
+        unlockHint: 'クリティカル100回',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.critHits >= 100,
+        effects: { critBonus: 30, atkMult: 1.2 }
+    },
+    {
+        id: 'greedy', name: '貪欲なる者', icon: '💰',
+        desc: '奪取+15% / EXP +20%。あらゆるものを掻き集める。',
+        unlockHint: '15回奪取',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stealCount >= 15,
+        effects: { stealBonus: 15, expMult: 1.2 }
+    },
+    {
+        id: 'mage', name: '魔道の申し子', icon: '✨',
+        desc: '精神+10 / 攻撃 ×0.8。スキルを極めた魔術師。',
+        unlockHint: 'スキル30回使用',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.skillUseCount >= 30,
+        effects: { spiritBonus: 10, atkMult: 0.8 }
+    },
+    {
+        id: 'skill_master', name: 'スキルマスター', icon: '📖',
+        desc: '全スキルダメージ +25% / SP最大値+20。技の頂点に立つ者。',
+        unlockHint: 'スキル200回使用',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.skillUseCount >= 200,
+        effects: { skillDmgBonus: 25, spBonus: 20 }
+    },
+    {
         id: 'explorer', name: '果ての探索者', icon: '🗺',
         desc: '素早さ ×1.3 / 奪取+10%。誰も踏み入れぬ地を目指す者。',
         unlockHint: '300歩探索',
         unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stepsTotal >= 300,
         effects: { spdMult: 1.3, stealBonus: 10 }
+    },
+    {
+        id: 'pilgrim', name: '巡礼の旅人', icon: '🚶',
+        desc: 'EXP +25% / 素早さ+5。千里の道も一歩から。',
+        unlockHint: '1000歩探索',
+        unlockFn: () => (typeof titleStats !== 'undefined') && titleStats.stepsTotal >= 1000,
+        effects: { expMult: 1.25, spdBonus: 5 }
+    },
+    // ── 生存・死亡系 ─────────────────────────────────────────
+    {
+        id: 'undying', name: '不死身の戦士', icon: '💀',
+        desc: '防御 ×1.3 / 精神+15 / 攻撃 ×0.8。何度倒れても立ち上がる。',
+        unlockHint: '5回力尽きる',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 5,
+        effects: { defMult: 1.3, spiritBonus: 15, atkMult: 0.8 }
+    },
+    {
+        id: 'challenger', name: '命知らずの挑戦者', icon: '⚡',
+        desc: '攻撃 ×1.8 / 防御 ×0.4 / 素早さ+10。リスクを恐れぬ真の勇者。',
+        unlockHint: '3回力尽き＆30体討伐',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 3 && stats.kills >= 30,
+        effects: { atkMult: 1.8, defMult: 0.4, spdBonus: 10 }
+    },
+    {
+        id: 'ghost', name: '亡霊の呪縛', icon: '👻',
+        desc: '精神+25 / 防御 ×1.4 / 攻撃 ×0.6。死に慣れた者の静けさ。',
+        unlockHint: '10回力尽きる',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.deaths >= 10,
+        effects: { spiritBonus: 25, defMult: 1.4, atkMult: 0.6 }
+    },
+    {
+        id: 'survivor', name: '無傷の帰還者', icon: '🌟',
+        desc: 'EXP +30% / 素早さ+8。傷つかず戻り続ける熟達の旅人。',
+        unlockHint: '20回無事帰還',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.returns >= 20,
+        effects: { expMult: 1.3, spdBonus: 8 }
+    },
+    // ── 職業・スキル習熟系 ────────────────────────────────────
+    {
+        id: 'job_master', name: '万能の職人', icon: '🔧',
+        desc: '全ステータス+5%。複数の職業を修めた者。',
+        unlockHint: '3つの職業をLv3以上に',
+        unlockFn: () => {
+            if (typeof jobKillCounts === 'undefined' || typeof JOB_LEVEL_THRESHOLDS === 'undefined') return false;
+            const thresh = JOB_LEVEL_THRESHOLDS[2] || 100;
+            return Object.values(jobKillCounts).filter(v => v >= thresh).length >= 3;
+        },
+        effects: { atkMult: 1.05, defMult: 1.05, spdBonus: 3 }
+    },
+    {
+        id: 'trap_master', name: '罠師', icon: '🕸',
+        desc: '拠点トラップ威力+30%。仕掛けの達人。',
+        unlockHint: 'トラップを合計50回発動',
+        unlockFn: () => {
+            if (typeof trapUseCounts === 'undefined') return false;
+            return Object.values(trapUseCounts).reduce((a,b)=>a+b,0) >= 50;
+        },
+        effects: { trapDmgBonus: 30 }
+    },
+    // ── 複合条件系 ────────────────────────────────────────────
+    {
+        id: 'warlord', name: '覇道の将軍', icon: '🏴',
+        desc: '攻撃 ×1.4 / 防御 ×1.2 / EXP+10%。戦場を制する者。',
+        unlockHint: '300体討伐＆会心50回',
+        unlockFn: () => (typeof stats !== 'undefined') && stats.kills >= 300 &&
+                        (typeof titleStats !== 'undefined') && titleStats.critHits >= 50,
+        effects: { atkMult: 1.4, defMult: 1.2, expMult: 1.1 }
+    },
+    {
+        id: 'phantom', name: '幻影の剣士', icon: '🌀',
+        desc: '素早さ ×1.5 / 会心+20% / 防御 ×0.5。影のように動く剣士。',
+        unlockHint: '素早さ40以上＆クリティカル30回',
+        unlockFn: () => (typeof getTotalSpeed === 'function') && getTotalSpeed() >= 40 &&
+                        (typeof titleStats !== 'undefined') && titleStats.critHits >= 30,
+        effects: { spdMult: 1.5, critBonus: 20, defMult: 0.5 }
+    },
+    {
+        id: 'iron_will', name: '鋼鉄の意志', icon: '⚙',
+        desc: '防御 ×1.6 / 精神+20。どんな状況でも揺るがない心。',
+        unlockHint: '防御力20以上＆100体討伐',
+        unlockFn: () => (typeof getTotalDef === 'function') && getTotalDef() >= 20 &&
+                        (typeof stats !== 'undefined') && stats.kills >= 100,
+        effects: { defMult: 1.6, spiritBonus: 20 }
     },
 ];
 

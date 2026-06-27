@@ -347,6 +347,11 @@ function executeBattleTurn(skillId) {
     // ── 撃破判定 ──
     if (enemy.hp <= 0) {
         stats.kills++;
+        // ── スキルレベルアップ確認 ──
+        if (typeof SKILL_KILL_THRESHOLDS !== 'undefined' && SKILL_KILL_THRESHOLDS.includes(stats.kills)) {
+            const _sNewLv = SKILL_KILL_THRESHOLDS.indexOf(stats.kills) + 2;
+            addLog(`<span style="color:#88ccff">📖 討伐数${stats.kills}体！全スキルが Lv${_sNewLv} に上昇！</span>`);
+        }
         // 職業熟練度カウント
         if (typeof equippedJob !== 'undefined' && equippedJob && equippedJob !== 'none') {
             jobKillCounts[equippedJob] = (jobKillCounts[equippedJob] || 0) + 1;
