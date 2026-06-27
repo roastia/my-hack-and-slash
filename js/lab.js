@@ -232,10 +232,7 @@ function renderMeritShop() {
         const canBuy = battleMerit >= item.cost;
         const typeColor = item.type === 'perm' ? '#aa88ff' : item.type === 'buff' ? '#ffa040' : item.type === 'stat' ? '#6ccb5f' : '#60cdff';
         html += `<div class="lab-item" style="opacity:${canBuy ? '1' : '0.5'}; margin-bottom:3px;">
-            <div style="flex:1;">
-                <span style="color:${typeColor}; font-size:13px;">${item.icon} ${item.name}</span>
-                <div class="lab-desc">${item.desc}</div>
-            </div>
+            <div style="flex:1; font-size:13px;"><span style="color:\${typeColor};">\${item.icon} \${item.name}</span> <span class="lab-desc">\${item.desc}</span></div>
             <button class="mini-btn" style="border-color:${typeColor};color:${typeColor}; font-size:12px; padding:4px 8px; flex-shrink:0;"
                 onclick="buyMeritShopItem('${item.id}')" ${canBuy ? '' : 'disabled'}>
                 ⚔${item.cost}

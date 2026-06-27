@@ -20,10 +20,7 @@ function renderShop() {
         div.style.cssText = 'align-items:center;';
         const canBuy = starDust >= item.cost && inventory.length < maxInventory;
         div.innerHTML = `
-            <div>
-                <div style="color:var(--text-main); font-size:13px;">💧 ${item.name}</div>
-                <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
-            </div>
+            <div style="flex:1; font-size:13px;">💧 ${item.name} <span class="lab-desc" style="color:#88ccff;">${item.desc}</span></div>
             <button class="mini-btn" style="border-color:#6699dd;color:#88ccff; font-size:13px; padding:3px 8px;"
                 onclick="buyShopWater(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
@@ -45,10 +42,7 @@ function renderShop() {
         div.style.cssText = 'align-items:center;';
         const canBuy = starDust >= item.cost;
         div.innerHTML = `
-            <div>
-                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
-                <div class="lab-desc" style="color:#aaddaa;">現在: ${materials[item.mat] || 0}個</div>
-            </div>
+            <div style="flex:1; font-size:13px;">${item.name} <span class="lab-desc" style="color:#aaddaa;">現在: ${materials[item.mat] || 0}個</span></div>
             <button class="mini-btn" style="border-color:#aaddaa;color:#aaddaa; font-size:13px; padding:3px 8px;"
                 onclick="buyShopMaterial(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
@@ -70,10 +64,7 @@ function renderShop() {
         div.style.cssText = 'align-items:center;';
         const canBuy = starDust >= item.cost && inventory.length < maxInventory;
         div.innerHTML = `
-            <div>
-                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
-                <div class="lab-desc" style="color:#c8a060;">満腹+${item.food.hunger}${item.food.hp ? ' / HP+'+item.food.hp : ''}</div>
-            </div>
+            <div style="flex:1; font-size:13px;">${item.name} <span class="lab-desc" style="color:#c8a060;">満腹+${item.food.hunger}${item.food.hp ? ' HP+'+item.food.hp : ''}</span></div>
             <button class="mini-btn btn-equip" style="font-size:13px; padding:3px 8px;"
                 onclick="buyShopFood(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
@@ -95,10 +86,7 @@ function renderShop() {
         div.style.cssText = 'align-items:center;';
         const canBuy = starDust >= item.cost;
         div.innerHTML = `
-            <div>
-                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
-                <div class="lab-desc" style="color:var(--accent-magenta);">${item.desc}</div>
-            </div>
+            <div style="flex:1; font-size:13px;">${item.name} <span class="lab-desc" style="color:var(--accent-magenta);">${item.desc}</span></div>
             <button class="mini-btn btn-mix" style="font-size:13px; padding:3px 8px;"
                 onclick="buyShopSkill(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
@@ -131,11 +119,7 @@ function renderShop() {
         }
 
         div.innerHTML = `
-            <div style="flex:1;">
-                <div style="color:var(--text-main); font-size:13px;">${skill ? skill.icon : ''} ${item.name}</div>
-                <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
-                ${statusHtml}
-            </div>
+            <div style="flex:1; font-size:13px;">${skill ? skill.icon : ''} ${item.name} <span class="lab-desc" style="color:#88ccff;">${item.desc}</span>${statusHtml ? '<br>'+statusHtml : ''}</div>
             <button class="mini-btn" style="font-size:13px; padding:3px 8px; border-color:#88ccff; color:#88ccff;"
                 onclick="buyShopCombatSkill(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
