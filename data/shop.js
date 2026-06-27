@@ -198,4 +198,12 @@ const shopData = [
   { "id": "flameBurst",   "type": "skill", "name": "炎撃",   "desc": "炎属性の一撃。弱点+50%",       "cost": 120 },
   { "id": "iceEdge",      "type": "skill", "name": "氷刃",   "desc": "氷属性+敵速度デバフ",            "cost": 120 },
   { "id": "thunderClap",  "type": "skill", "name": "雷霆",   "desc": "雷属性の全体攻撃",               "cost": 150 },
+  { "name": "毒の牙の書",   "category": "combat_skill", "meritCost": 18, "skillId": "poisonFang",   "desc": "スキル「毒の牙」を習得" },
+  { "name": "聖光撃の書",   "category": "combat_skill", "meritCost": 25, "skillId": "holyLight",    "desc": "スキル「聖光撃」を習得" },
+  { "name": "闇撃の書",     "category": "combat_skill", "meritCost": 20, "skillId": "darkBlade",    "desc": "スキル「闇撃」を習得" },
+  { "name": "ドレインの書", "category": "combat_skill", "meritCost": 22, "skillId": "drainStrike",  "desc": "スキル「ドレイン」を習得" },
+  { "name": "バーサークの書","category": "combat_skill", "meritCost": 20, "skillId": "berserkRage",  "desc": "スキル「バーサーク」を習得" },
+  { "name": "鎧砕きの書",   "category": "combat_skill", "meritCost": 22, "skillId": "shieldBreak",  "desc": "スキル「鎧砕き」を習得" },
+  { "name": "必中の矢の書", "category": "combat_skill", "meritCost": 22, "skillId": "sureShot",     "desc": "スキル「必中の矢」を習得" },
+  { "name": "全力解放の書", "category": "combat_skill", "meritCost": 40, "skillId": "megaBlast",    "desc": "スキル「全力解放」を習得" },
 ];

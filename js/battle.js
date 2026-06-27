@@ -37,6 +37,10 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
 // プレイヤーのダメージ計算（クリット・精霊込み）
 function calcPlayerDamage(atkOverride, skillElement) {
     let atk      = atkOverride !== undefined ? atkOverride : getTotalAttack();
+    // バーサーク中はATK倍率UP
+    if (typeof battleState !== 'undefined' && battleState.berserkTurns > 0 && battleState.berserkAtkMult > 1) {
+        atk = Math.floor(atk * battleState.berserkAtkMult);
+    }
     let critRate = getCritRate() / 100;
     let isCrit   = Math.random() < critRate;
     if (isCrit && typeof titleStats !== 'undefined') { titleStats.critHits++; if(typeof checkTitleUnlocks==='function') checkTitleUnlocks(); }
@@ -146,7 +150,7 @@ function executeBattleTurn(skillId) {
     // ── スキル実行 ──
     if (skill) {
         // SPコスト確認
-        const spCosts = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10 };
+        const spCosts = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10, poisonFang: 20, holyLight: 25, darkBlade: 22, drainStrike: 18, berserkRage: 20, shieldBreak: 22, sureShot: 18, megaBlast: 0 };
         const spCost  = spCosts[skillId] || 15;
         if (sp < spCost) {
             addLog(`<span class="damage-text">SPが足りない！ (必要: ${spCost} / 現在: ${sp})</span>`);
@@ -237,6 +241,85 @@ function executeBattleTurn(skillId) {
             logMsg = `<span class="attack-text">⚡ 雷霆！ 天雷がスタックを貫く！ ${dmg} dmg${wMsg} (Lv${skillLv})</span>`;
             if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
             sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'poisonFang') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const elemB = (typeof getElementBonus==='function') ? getElementBonus('刺', battleState.enemy?.weakElement) : 1.0;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            battleState.poisonTurns = (battleState.poisonTurns||0) + skill.poisonTurns;
+            battleState.poisonDmg   = Math.floor(getTotalAttack() * 0.15);
+            const wMsg = elemB>1 ? ' <span style="color:#aaffaa">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">☠ 毒の牙！ ${dmg} dmg${wMsg} 毒付与（${skill.poisonTurns}ターン）(Lv${skillLv})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+        } else if (skillId === 'holyLight') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const spiritB = 1 + (typeof baseSpirit!=='undefined' ? baseSpirit*0.03 : 0);
+            const elemB = (typeof getElementBonus==='function') ? getElementBonus('光', battleState.enemy?.weakElement) : 1.0;
+            const rawAtk = getTotalAttack();
+            const dmg = Math.max(1, Math.floor(rawAtk * mult * elemB * spiritB * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const wMsg = elemB>1 ? ' <span style="color:#ffffaa">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">✨ 聖光撃！ ${dmg} dmg${wMsg} (Lv${skillLv} / 精霊補正×${spiritB.toFixed(2)})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'darkBlade') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const hpRatio = currentHp / maxHp;
+            const lowHpBonus = 1 + (1 - hpRatio) * 0.5; // HP低いほど最大+50%
+            const elemB = (typeof getElementBonus==='function') ? getElementBonus('闇', battleState.enemy?.weakElement) : 1.0;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * lowHpBonus * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const wMsg = elemB>1 ? ' <span style="color:#cc44ff">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">🌑 闇撃！ ${dmg} dmg${wMsg} (Lv${skillLv} / 危機補正×${lowHpBonus.toFixed(2)})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'drainStrike') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const drainPct = skill.drainPcts[skillLv - 1];
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * (0.9+Math.random()*0.2)));
+            const healed = Math.floor(dmg * drainPct);
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            currentHp = Math.min(maxHp, currentHp + healed);
+            logMsg = `<span class="attack-text">🩸 ドレイン！ ${dmg} dmg / HP +${healed} 吸収！ (Lv${skillLv} / 吸収${Math.round(drainPct*100)}%)</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 3);
+        } else if (skillId === 'berserkRage') {
+            const atkBoost = skill.atkBoostMults[skillLv - 1];
+            const defPenalty = skill.defPenaltyMults[skillLv - 1];
+            battleState.berserkTurns = skill.buffTurns;
+            battleState.berserkAtkMult = atkBoost;
+            battleState.berserkDefMult = defPenalty;
+            logMsg = `<span class="event-text">😤 バーサーク発動！ ATK×${atkBoost} / DEF×${defPenalty} が${skill.buffTurns}ターン続く！ (Lv${skillLv})</span>`;
+            sp = Math.min(maxSp, sp + 5);
+        } else if (skillId === 'shieldBreak') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            logMsg = `<span class="attack-text">⚒ 鎧砕き！ ${dmg} dmg（防御無視）(Lv${skillLv})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'player');
+            sp = Math.min(maxSp, sp + 4);
+        } else if (skillId === 'sureShot') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const elemB = (typeof getElementBonus==='function') ? getElementBonus('風', battleState.enemy?.weakElement) : 1.0;
+            const critMult = typeof getCritMultiplier==='function' ? getCritMultiplier() : 1.5;
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * elemB * critMult * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const wMsg = elemB>1 ? ' <span style="color:#88ff88">【弱点！×1.5】</span>' : '';
+            logMsg = `<span class="attack-text">🏹 必中の矢！ CRITICAL!! ${dmg} dmg${wMsg} (Lv${skillLv})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'crit');
+            if(typeof triggerShake==='function')triggerShake();
+            if(typeof triggerFlash==='function')triggerFlash('crit');
+            sp = Math.min(maxSp, sp + 3);
+        } else if (skillId === 'megaBlast') {
+            const mult = skill.dmgMults[skillLv - 1];
+            const spBonus = 1 + sp * 0.01; // 残SPが多いほど強化
+            const dmg = Math.max(1, Math.floor(getTotalAttack() * mult * spBonus * (0.9+Math.random()*0.2)));
+            enemy.hp = Math.max(0, enemy.hp - dmg);
+            const usedSp = sp;
+            sp = 0;
+            logMsg = `<span class="attack-text">💫 全力解放！ ${dmg} dmg（SP${usedSp}消費）(Lv${skillLv} × ${mult.toFixed(1)})</span>`;
+            if(typeof showFloatingDamage==='function')showFloatingDamage(dmg,'crit');
+            if(typeof triggerFlash==='function')triggerFlash('boss');
         }
 
         saveData();
@@ -350,6 +433,28 @@ function executeBattleTurn(skillId) {
         updateActionButtons();
 
     } else {
+        // ── 毒・バーサーク処理 ──
+        if (battleState.poisonTurns > 0) {
+            const _pdmg = battleState.poisonDmg || Math.floor(getTotalAttack() * 0.12);
+            enemy.hp = Math.max(0, enemy.hp - _pdmg);
+            battleState.poisonTurns--;
+            logMsg += `<br><span style="color:#88ff88">☠ 毒ダメージ ${_pdmg}！（残${battleState.poisonTurns}ターン）</span>`;
+            if (enemy.hp <= 0) {
+                // 毒で撃破
+                addLog(logMsg);
+                stats.kills++;
+                exp += enemy.exp; starDust += 1;
+                addLog(`<span class="attack-text">☠ 毒で ${enemy.name} を倒した！</span>`);
+                checkLevelUp(); endBattle(); return;
+            }
+        }
+        if (battleState.berserkTurns > 0) {
+            battleState.berserkTurns--;
+            if (battleState.berserkTurns <= 0) {
+                battleState.berserkAtkMult = 1; battleState.berserkDefMult = 1;
+                logMsg += '<br><span style="color:#aaa">バーサーク終了。</span>';
+            }
+        }
         // ── 敵の反撃 ──
         battleState.enemyAtb += battleState.enemySpeed;
         if (battleState.enemyAtb >= 100) {
@@ -477,7 +582,7 @@ function startAutoBattle() {
         if (!battleState.active) { stopAutoBattle(); return; }
         // カスタムAI優先度でスキルを選択
         const priority = (typeof customAiPriority !== 'undefined') ? customAiPriority : ['normal'];
-        const spCosts  = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10, flameBurst: 18, iceEdge: 15, thunderClap: 30 };
+        const spCosts  = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10, flameBurst: 18, iceEdge: 15, thunderClap: 30, poisonFang: 20, holyLight: 25, darkBlade: 22, drainStrike: 18, berserkRage: 20, shieldBreak: 22, sureShot: 18, megaBlast: 30 };
         let chosen = 'normal';
         for (const sid of priority) {
             if (sid === 'normal') { chosen = 'normal'; break; }
