@@ -1237,3 +1237,16 @@ button, a, input, select, textarea, [onclick] {
 /* action-group を JS で hidden にした場合は必ず非表示（モバイルの!importantを上書き） */
 .action-group.hidden { display: none !important; }
 #autoRow.hidden      { display: none !important; }
+
+/* ヘルプⓘアイコン */
+.info-icon {
+    display: inline-block;
+    color: var(--accent-cyan);
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.7;
+    vertical-align: middle;
+    margin-left: 4px;
+    transition: opacity 0.15s;
+}
+.info-icon:hover, .info-icon:active { opacity: 1; }

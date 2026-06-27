@@ -192,46 +192,46 @@
                 <!-- LABタブ (永続強化) -->
                 <div id="panelLab" class="base-panel hidden">
                     <div class="log-entry" style="color: var(--accent-green); border:none;">
-                        鍛冶屋へようこそ。<br>持ち帰ったゴールド(G)で、基礎能力を鍛えることができます。
+                        鍛冶屋へようこそ。持ち帰ったゴールドで基礎能力を永続強化します。<br><span style="font-size:11px;color:var(--text-dim)">各項目のⓘをタップすると詳細説明が見られます。</span>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">体力強化 (最大HP UP)</div>
+                            <div style="color: var(--text-main)">体力強化 (最大HP UP) <span class="info-icon" onclick="showHelp('体力強化','最大HPを永続的に強化。ダンジョン突入時の初期HPが増加し、より深い層まで生き残りやすくなる。強化は累積し、セーブデータに保存される。')">ⓘ</span></div>
                             <div class="lab-desc">現在の初期HP: <span id="labHpDisp">30</span></div>
                         </div>
                         <button id="btnUpgradeHp" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeHp()">強化 (G<span id="costHpDisp">10</span>)</button>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">攻撃力強化 (基礎ATK UP)</div>
+                            <div style="color: var(--text-main)">攻撃力強化 (基礎ATK UP) <span class="info-icon" onclick="showHelp('攻撃力強化','基礎ATKを永続的に強化。武器を装備していなくても適用される素の攻撃力。装備ATKと合算されてダメージが決まる。')">ⓘ</span></div>
                             <div class="lab-desc">現在の初期ATK: <span id="labAtkDisp">2</span></div>
                         </div>
                         <button id="btnUpgradeAtk" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeAtk()">強化 (G<span id="costAtkDisp">20</span>)</button>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">防御力強化 (基礎DEF UP)</div>
+                            <div style="color: var(--text-main)">防御力強化 (基礎DEF UP) <span class="info-icon" onclick="showHelp('防御力強化','基礎DEFを永続的に強化。防具なしでも適用される素の防御力。装備DEFと合算されて被ダメージを軽減する。')">ⓘ</span></div>
                             <div class="lab-desc">現在の初期DEF: <span id="labDefDisp">0</span></div>
                         </div>
                         <button id="btnUpgradeDef" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeDef()">強化 (G<span id="costDefDisp">15</span>)</button>
                     </div>
                     <div class="lab-item">
                         <div>
-                            <div style="color: var(--text-main)">遠隔技術強化 (遠隔ATK UP)</div>
+                            <div style="color: var(--text-main)">遠隔技術強化 (遠隔ATK UP) <span class="info-icon" onclick="showHelp('遠隔技術強化','弓タイプの武器を装備しているときだけ加算される遠隔ATKを強化。通常武器には効果がない。弓使いのビルドで重要なステータス。')">ⓘ</span></div>
                             <div class="lab-desc">遠隔ATK: <span id="labRangeDisp">0</span> ／ 弓装備時に適用</div>
                         </div>
                         <button id="btnUpgradeRange" class="mini-btn btn-mix" style="font-size:14px; padding:6px 12px;" onclick="upgradeRange()">強化 (G<span id="costRangeDisp">25</span>)</button>
                     </div>
                     <div class="lab-item" style="border-top:1px dashed #334; margin-top:8px; padding-top:8px;">
                         <div>
-                            <div style="color:var(--danger-red)">🏚 拠点修繕</div>
+                            <div style="color:var(--danger-red)">🏚 拠点修繕 <span class="info-icon" onclick="showHelp('拠点修繕','拠点のコンディション（0〜100）を回復する。コンディションが低いと探索の効率が落ち、素材収集量も減少する。放置するとさらに劣化するので定期的なメンテナンスが重要。')">ⓘ</span></div>
                             <div class="lab-desc">コンディション: <span id="labBaseCondDisp">100</span>/100</div>
                         </div>
                         <button id="btnRepairBase" class="mini-btn" style="border-color:var(--danger-red);color:var(--danger-red); font-size:13px; padding:6px 12px;" onclick="repairBase()">修繕 (G<span id="costRepairDisp">20</span>)</button>
                     </div>
                     <div class="lab-item" style="border-top:1px dashed #334; margin-top:8px; padding-top:8px;">
                         <div>
-                            <div style="color:#aa88ff">🏅 メダルAP上限拡張</div>
+                            <div style="color:#aa88ff">🏅 メダルAP上限拡張 <span class="info-icon" onclick="showHelp('メダルAP上限拡張','装備できるメダルの合計APの上限を拡張する。メダルは各種ボーナスを持つアクセサリ。AP上限が高いほど強力なメダルを複数装備できるようになる。')">ⓘ</span></div>
                             <div class="lab-desc">現在のAP上限: <span id="labApDisp">10</span> / 装備AP: <span id="labApUsedDisp">0</span></div>
                         </div>
                         <button class="mini-btn" style="border-color:#aa88ff;color:#aa88ff; font-size:13px; padding:6px 12px;" onclick="upgradeMedalAp()">拡張 (G<span id="costMedalApDisp">30</span>)</button>
@@ -346,6 +346,20 @@
         <button id="mnavStatus" onclick="mobileSwitchView('status')">
             <span class="nav-icon">👤</span><span>状 態</span>
         </button>
+    </div>
+
+    <!-- ヘルプTooltipモーダル -->
+    <div id="helpModal" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999;
+         background:rgba(0,0,0,0.55); padding:12px;" onclick="closeHelp()">
+        <div style="background:var(--bg-panel); border:1px solid var(--accent-gold); border-radius:10px 10px 0 0;
+             padding:16px 18px 20px; max-width:480px; margin:0 auto; position:relative;"
+             onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <span id="helpTitle" style="color:var(--accent-gold); font-size:15px; font-family:serif; font-weight:bold;"></span>
+                <button onclick="closeHelp()" style="background:none; border:none; color:var(--text-dim); font-size:18px; cursor:pointer; padding:0 4px;">✕</button>
+            </div>
+            <div id="helpDesc" style="color:var(--text-main); font-size:13px; line-height:1.7;"></div>
+        </div>
     </div>
 
     <!-- ストーリーモーダル（初回訪問時） -->

@@ -70,7 +70,10 @@ function mobileSwitchView(view) {
 
     if (view === 'action') {
         document.getElementById('mnavAction').classList.add('mob-tab-active');
-        // 中央パネルはそのまま表示
+        // 中央パネルはそのまま。拠点にいるなら地図タブへ
+        const inBase = !document.getElementById('exploreScene') ||
+            document.getElementById('exploreScene').classList.contains('hidden');
+        if (inBase && typeof switchTab === 'function') switchTab('map');
     } else if (view === 'inventory') {
         document.getElementById('mnavInventory').classList.add('mob-tab-active');
         rightPanel.classList.add('mob-active');
@@ -115,3 +118,16 @@ function initGame() {
     handleMobileLayout();
 }
 initGame();
+
+// ヘルプTooltipシステム
+function showHelp(title, desc) {
+    const modal = document.getElementById('helpModal');
+    if (!modal) return;
+    document.getElementById('helpTitle').textContent = title;
+    document.getElementById('helpDesc').innerHTML = desc;
+    modal.style.display = 'block';
+}
+function closeHelp() {
+    const modal = document.getElementById('helpModal');
+    if (modal) modal.style.display = 'none';
+}
