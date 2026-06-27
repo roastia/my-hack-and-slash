@@ -21,7 +21,7 @@ function renderCraft() {
     const recipeHeader = document.createElement('div');
     recipeHeader.className = 'log-entry';
     recipeHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-top:8px; padding-bottom:4px; font-size:14px;';
-    recipeHeader.textContent = '⚗ 合成レシピ';
+    recipeHeader.innerHTML = '⚗ 合成レシピ <span class="info-icon" onclick="showHelp(\'合成レシピ\',\'探索で集めた素材を組み合わせてアイテムを作れる。緑枠のレシピは今すぐ作成可能。素材はダンジョンの草木や宝箱から入手できる。作成したアイテムは所持品に追加される。\')">ⓘ</span>';
     panel.appendChild(recipeHeader);
 
     // craftable items first

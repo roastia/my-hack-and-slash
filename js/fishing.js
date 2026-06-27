@@ -50,7 +50,7 @@ function renderFishing() {
     const invFull = inventory.length >= maxInventory;
 
     let html = `
-        <div style="color:var(--accent-cyan); font-size:15px; font-weight:bold; margin-bottom:8px;">🎣 釣り場</div>
+        <div style="color:var(--accent-cyan); font-size:15px; font-weight:bold; margin-bottom:8px;">🎣 釣り場 <span class="info-icon" onclick="showHelp('釣り','タイミングよくボタンを押してアイテムや食料を釣り上げるミニゲーム。SP5消費で1回挑戦できる。釣り竿をアップグレードするほど良いアイテムが出やすくなる。SP回復ポーション・食料・装備品などが手に入る。')">ⓘ</span></div>
         <div class="lab-desc" style="margin-bottom:10px;">釣竿レベル: <b>${fishingState.rodLevel}</b> / SP: ${sp}/${maxSp}</div>
     `;
 

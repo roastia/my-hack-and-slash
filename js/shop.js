@@ -11,7 +11,7 @@ function renderShop() {
     const waterHeader = document.createElement('div');
     waterHeader.className = 'log-entry';
     waterHeader.style.cssText = 'color:#88ccff; border:none; padding-bottom:4px; font-size:14px;';
-    waterHeader.textContent = '💧 飲み物';
+    waterHeader.innerHTML = '💧 飲み物 <span class="info-icon" onclick="showHelp(\'飲み物\',\'渇きを回復しSPが増加する。探索中は渇きゲージが減少し、0になると行動不能になる。定期的に飲み物を補充しておくことが重要。\')">ⓘ</span>';
     panel.appendChild(waterHeader);
 
     shopItems.filter(s => s.category === 'water').forEach((item, idx) => {
@@ -61,7 +61,7 @@ function renderShop() {
     const foodHeader = document.createElement('div');
     foodHeader.className = 'log-entry';
     foodHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-top:6px; padding-bottom:4px; font-size:14px;';
-    foodHeader.textContent = '🍖 食料';
+    foodHeader.innerHTML = '🍖 食料 <span class="info-icon" onclick="showHelp(\'食料\',\'満腹度を回復し、HP回復効果もある食べ物。探索中は空腹ゲージが減少し、0になると毎ステップダメージを受ける。ダンジョンに入る前に準備しておこう。\')">ⓘ</span>';
     panel.appendChild(foodHeader);
 
     shopItems.filter(s => s.category === 'food').forEach((item, idx) => {
@@ -111,7 +111,7 @@ function renderShop() {
     const csHeader = document.createElement('div');
     csHeader.className = 'log-entry';
     csHeader.style.cssText = 'color:#88ccff; border:none; padding-top:8px; padding-bottom:2px; font-size:14px;';
-    csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span><br><span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
+    csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span> <span class="info-icon" onclick="showHelp(\'戦闘スキル書\',\'武勲ポイントを消費してスキルを習得できる。スキルは戦闘中にSPを消費して発動し、通常攻撃より大きな効果を持つ。一度習得したスキルは永続的に使用可能。\')">ⓘ</span><br><span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
     panel.appendChild(csHeader);
 
     shopItems.filter(s => s.category === 'combat_skill').forEach((item) => {

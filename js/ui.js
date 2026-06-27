@@ -1283,7 +1283,7 @@ function renderBaseScene() {
         constDiv.style.cssText = 'margin-bottom:10px; padding:8px; background:rgba(30,20,60,0.6); border:1px solid #443; border-radius:6px;';
         const active = activeDungeonConstellation || 'none';
         const diffColors = ['var(--text-dim)', 'var(--accent-orange)', 'var(--danger-red)', '#ff4444'];
-        constDiv.innerHTML = `<div style="color:var(--accent-cyan);font-size:12px;margin-bottom:6px;">✨ 星座（ダンジョン修飾）: <b style="color:#ffd700">${
+        constDiv.innerHTML = `<div style="color:var(--accent-cyan);font-size:12px;margin-bottom:6px;">✨ 星座（ダンジョン修飾）<span class="info-icon" onclick="showHelp('星座（ダンジョン修飾）','ダンジョンに難易度バフをかける仕組み。星座を選ぶと敵が強くなる代わりに獲得EXP・ゴールド・素材ドロップ量が増加する。⚠の数が多いほど高難度。なしを選ぶと通常難易度で探索できる。')">ⓘ</span>: <b style="color:#ffd700">${
             constellationCatalog.find(c=>c.id===active)?.name || 'なし'
         }</b></div><div style="display:flex;flex-wrap:wrap;gap:4px;">${
             constellationCatalog.map(c => {
