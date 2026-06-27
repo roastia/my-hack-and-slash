@@ -213,12 +213,40 @@ function removeTrap(idx) {
 // 武勲ショップ
 // =============================================================
 const meritShopItems = [
-    { id: 'ms_sp',       name: 'SP最大値+10',           cost: 15, desc: 'SP上限を恒久的に10増加',          icon: '✦', type: 'stat' },
-    { id: 'ms_heal',     name: 'HP全回復',               cost: 10, desc: 'HPを100%回復する',               icon: '💊', type: 'use' },
-    { id: 'ms_mat3',     name: '素材×3一括取得',          cost: 8,  desc: '全素材を3個ずつ追加取得',         icon: '🌿', type: 'use' },
-    { id: 'ms_expx2',    name: 'スキル経験値2倍(次戦)',   cost: 20, desc: '次の戦闘のスキル使用数が2倍計上', icon: '📚', type: 'buff' },
-    { id: 'ms_frenzy',   name: 'テンション「狂乱」固定(次戦)', cost: 25, desc: '次戦開始時にテンションを狂乱に固定', icon: '🔥', type: 'buff' },
-    { id: 'ms_dnaslot',  name: 'DNA変異スロット+1',       cost: 50, desc: 'DNA変異スロットを永久に1増加',    icon: '🧬', type: 'perm' },
+    // ── stat: 恒久ステータス強化 ──────────────────────────────────────
+    { id: 'ms_maxhp',    name: '最大HP+10',         cost: 20, desc: '最大HPを永続+10',              icon: '❤', type: 'stat' },
+    { id: 'ms_sp',       name: 'SP最大値+10',        cost: 15, desc: 'SP上限を永続+10',              icon: '✦', type: 'stat' },
+    { id: 'ms_sp20',     name: 'SP最大値+20',        cost: 25, desc: 'SP上限を永続+20',              icon: '✦✦', type: 'stat' },
+    { id: 'ms_atk',      name: 'ATK+3',             cost: 25, desc: '攻撃力を永続+3',               icon: '⚔', type: 'stat' },
+    { id: 'ms_def',      name: 'DEF+3',             cost: 20, desc: '防御力を永続+3',               icon: '🛡', type: 'stat' },
+    { id: 'ms_spd',      name: '素早さ+3',           cost: 20, desc: '素早さを永続+3',               icon: '💨', type: 'stat' },
+    { id: 'ms_crit',     name: '会心率+5%',          cost: 30, desc: '会心率を永続+5%',              icon: '💥', type: 'stat' },
+    { id: 'ms_spirit',   name: '精神+5',             cost: 20, desc: '精神を永続+5',                icon: '🔮', type: 'stat' },
+    { id: 'ms_medalap',  name: 'メダルAP+2',         cost: 40, desc: 'メダル装備APを永続+2',         icon: '🏅', type: 'stat' },
+    { id: 'ms_bagup',    name: '所持枠+5',           cost: 35, desc: '所持品上限を永続+5',           icon: '🎒', type: 'stat' },
+    // ── use: 消費効果 ─────────────────────────────────────────────────
+    { id: 'ms_heal',     name: 'HP全回復',           cost: 10, desc: 'HPを100%回復する',             icon: '💊', type: 'use' },
+    { id: 'ms_sp_rest',  name: 'SP全回復',           cost: 12, desc: 'SPを100%回復する',             icon: '🔋', type: 'use' },
+    { id: 'ms_hunger',   name: '満腹度全回復',        cost: 8,  desc: '満腹度を最大まで回復',         icon: '🍖', type: 'use' },
+    { id: 'ms_thirst',   name: '渇き全回復',          cost: 8,  desc: '渇きを最大まで回復',           icon: '💧', type: 'use' },
+    { id: 'ms_mat3',     name: '全素材×3取得',        cost: 8,  desc: '全素材を3個ずつ追加',          icon: '🌿', type: 'use' },
+    { id: 'ms_mat10',    name: '全素材×10取得',       cost: 18, desc: '全素材を10個ずつ追加',         icon: '🌿🌿', type: 'use' },
+    { id: 'ms_gold100',  name: 'ゴールド+100',        cost: 15, desc: 'ゴールドを100増加',            icon: '💰', type: 'use' },
+    { id: 'ms_gold500',  name: 'ゴールド+500',        cost: 50, desc: 'ゴールドを500増加',            icon: '💎', type: 'use' },
+    { id: 'ms_revive',   name: '次戦自動復活',         cost: 30, desc: '次戦で力尽きた際HP50%で復活', icon: '🌟', type: 'use' },
+    // ── buff: 次戦バフ ────────────────────────────────────────────────
+    { id: 'ms_expx2',    name: 'EXP2倍(次戦)',       cost: 20, desc: '次戦の獲得EXPが2倍',           icon: '📚', type: 'buff' },
+    { id: 'ms_frenzy',   name: 'テンション狂乱(次戦)', cost: 25, desc: '次戦開始時テンション狂乱固定', icon: '🔥', type: 'buff' },
+    { id: 'ms_atkbuff',  name: 'ATK2倍(次戦)',       cost: 30, desc: '次戦の攻撃力が2倍',            icon: '⚡', type: 'buff' },
+    { id: 'ms_shield',   name: '被ダメ半減(次戦)',    cost: 30, desc: '次戦の受けるダメージが50%減',   icon: '🛡', type: 'buff' },
+    { id: 'ms_crithigh', name: '会心率100%(次戦)',    cost: 35, desc: '次戦の会心率が100%',           icon: '🎯', type: 'buff' },
+    { id: 'ms_nospend',  name: 'SP消費0(次戦)',       cost: 40, desc: '次戦のSP消費が0',              icon: '✨', type: 'buff' },
+    { id: 'ms_spdbuff',  name: '素早さ2倍(次戦)',     cost: 25, desc: '次戦の素早さが2倍',            icon: '💨', type: 'buff' },
+    // ── perm: 永久解放 ────────────────────────────────────────────────
+    { id: 'ms_dnaslot',  name: 'DNA変異スロット+1',   cost: 50, desc: 'DNA変異スロットを永久+1',      icon: '🧬', type: 'perm' },
+    { id: 'ms_dnaslot2', name: 'DNA変異スロット+2',   cost: 90, desc: 'DNA変異スロットを永久+2',      icon: '🧬🧬', type: 'perm' },
+    { id: 'ms_trapboost',name: 'トラップ威力+20%',    cost: 40, desc: 'トラップの基礎ダメージ永続+20%',icon: '🕸', type: 'perm' },
+    { id: 'ms_jobboost', name: 'ジョブ習熟速度+50%',  cost: 45, desc: 'ジョブ討伐カウントが1.5倍',    icon: '🔧', type: 'perm' },
 ];
 
 function renderMeritShop() {
@@ -248,26 +276,102 @@ function buyMeritShopItem(id) {
     if (battleMerit < item.cost) { addLog('武勲が足りない！'); return; }
     battleMerit -= item.cost;
 
-    if (id === 'ms_sp') {
-        maxSp += 10;
-        sp = Math.min(sp, maxSp);
-        addLog(`<span style="color:#60cdff">✦ SP最大値が10増加した！ (${maxSp})</span>`);
+    // stat系
+    if (id === 'ms_maxhp') {
+        permMaxHp += 10; maxHp = permMaxHp; currentHp = Math.min(currentHp + 10, maxHp);
+        addLog(`<span style="color:#6ccb5f">❤ 最大HPが10増加した！(${maxHp})</span>`);
+    } else if (id === 'ms_sp') {
+        maxSp += 10; sp = Math.min(sp, maxSp);
+        addLog(`<span style="color:#60cdff">✦ SP最大値が10増加した！(${maxSp})</span>`);
+    } else if (id === 'ms_sp20') {
+        maxSp += 20; sp = Math.min(sp, maxSp);
+        addLog(`<span style="color:#60cdff">✦✦ SP最大値が20増加した！(${maxSp})</span>`);
+    } else if (id === 'ms_atk') {
+        permBaseAtk += 3; baseAttack = permBaseAtk;
+        addLog(`<span style="color:var(--accent-cyan)">⚔ 攻撃力が永続+3！(${getTotalAttack()})</span>`);
+    } else if (id === 'ms_def') {
+        permBaseDef += 3; baseDefense = permBaseDef;
+        addLog(`<span style="color:var(--accent-cyan)">🛡 防御力が永続+3！(${getTotalDef()})</span>`);
+    } else if (id === 'ms_spd') {
+        baseSpeed += 3;
+        addLog(`<span style="color:var(--accent-cyan)">💨 素早さが永続+3！(${baseSpeed})</span>`);
+    } else if (id === 'ms_crit') {
+        if (typeof equipment.weapon !== 'undefined' || true) { window._meritCritBonus = (window._meritCritBonus || 0) + 5; }
+        addLog(`<span style="color:#ffa040">💥 会心率が永続+5%！</span>`);
+    } else if (id === 'ms_spirit') {
+        baseSpirit += 5;
+        addLog(`<span style="color:#88aaff">🔮 精神が永続+5！(${baseSpirit})</span>`);
+    } else if (id === 'ms_medalap') {
+        medalApLimit += 2;
+        addLog(`<span style="color:#ffd700">🏅 メダルAP上限が${medalApLimit}に増加した！</span>`);
+    } else if (id === 'ms_bagup') {
+        bagUpgradeLevel = (bagUpgradeLevel || 0) + 1; maxInventory = 10 + bagUpgradeLevel * 5;
+        addLog(`<span style="color:#c8a060">🎒 所持品枠が${maxInventory}に増加した！</span>`);
+    // use系
     } else if (id === 'ms_heal') {
         currentHp = maxHp;
         addLog(`<span style="color:#6ccb5f">💊 HPが全回復した！</span>`);
+    } else if (id === 'ms_sp_rest') {
+        sp = maxSp;
+        addLog(`<span style="color:#60cdff">🔋 SPが全回復した！(${sp})</span>`);
+    } else if (id === 'ms_hunger') {
+        hunger = maxHunger;
+        addLog(`<span style="color:#c8a060">🍖 満腹度が全回復した！</span>`);
+    } else if (id === 'ms_thirst') {
+        thirst = maxThirst;
+        addLog(`<span style="color:#88ccff">💧 渇きが全回復した！</span>`);
     } else if (id === 'ms_mat3') {
         craftMaterialTypes.forEach(m => { materials[m] = (materials[m] || 0) + 3; });
         addLog(`<span style="color:#aaffaa">🌿 全素材が3個ずつ追加された！</span>`);
+    } else if (id === 'ms_mat10') {
+        craftMaterialTypes.forEach(m => { materials[m] = (materials[m] || 0) + 10; });
+        addLog(`<span style="color:#aaffaa">🌿🌿 全素材が10個ずつ追加された！</span>`);
+    } else if (id === 'ms_gold100') {
+        starDust += 100;
+        addLog(`<span style="color:#ffd700">💰 ゴールドが100増加した！(${starDust}G)</span>`);
+    } else if (id === 'ms_gold500') {
+        starDust += 500;
+        addLog(`<span style="color:#ffd700">💎 ゴールドが500増加した！(${starDust}G)</span>`);
+    } else if (id === 'ms_revive') {
+        window._meritReviveNext = true;
+        addLog(`<span style="color:#ffffaa">🌟 次戦で力尽きてもHP50%で復活する！</span>`);
+    // buff系
     } else if (id === 'ms_expx2') {
-        window._meritSkillExpDouble = true;
-        addLog(`<span style="color:#ffa040">📚 次戦のスキル経験値が2倍になる！</span>`);
+        window._meritExpDouble = true;
+        addLog(`<span style="color:#ffa040">📚 次戦の獲得EXPが2倍になる！</span>`);
     } else if (id === 'ms_frenzy') {
         window._meritFrenzyNext = true;
         addLog(`<span style="color:#ffa040">🔥 次戦のテンションが「狂乱」に固定される！</span>`);
+    } else if (id === 'ms_atkbuff') {
+        window._meritAtkDouble = true;
+        addLog(`<span style="color:var(--accent-cyan)">⚡ 次戦の攻撃力が2倍になる！</span>`);
+    } else if (id === 'ms_shield') {
+        window._meritShieldNext = true;
+        addLog(`<span style="color:#88ccff">🛡 次戦の被ダメージが半減する！</span>`);
+    } else if (id === 'ms_crithigh') {
+        window._meritCritMax = true;
+        addLog(`<span style="color:#ffa040">🎯 次戦の会心率が100%になる！</span>`);
+    } else if (id === 'ms_nospend') {
+        window._meritNoSpCost = true;
+        addLog(`<span style="color:#aa88ff">✨ 次戦のSP消費が0になる！</span>`);
+    } else if (id === 'ms_spdbuff') {
+        window._meritSpdDouble = true;
+        addLog(`<span style="color:#88ccff">💨 次戦の素早さが2倍になる！</span>`);
+    // perm系
     } else if (id === 'ms_dnaslot') {
         mutationSlots = (mutationSlots || 3) + 1;
         addLog(`<span style="color:#aa88ff">🧬 DNA変異スロットが${mutationSlots}に増加した！</span>`);
         if (typeof renderDnaPanel === 'function') renderDnaPanel();
+    } else if (id === 'ms_dnaslot2') {
+        mutationSlots = (mutationSlots || 3) + 2;
+        addLog(`<span style="color:#aa88ff">🧬🧬 DNA変異スロットが${mutationSlots}に増加した！</span>`);
+        if (typeof renderDnaPanel === 'function') renderDnaPanel();
+    } else if (id === 'ms_trapboost') {
+        window._meritTrapBoost = (window._meritTrapBoost || 0) + 20;
+        addLog(`<span style="color:#ffaa44">🕸 トラップ威力が永続+20%！(累計+${window._meritTrapBoost}%)</span>`);
+    } else if (id === 'ms_jobboost') {
+        window._meritJobBoost = true;
+        addLog(`<span style="color:#aaffaa">🔧 ジョブ習熟速度が1.5倍になった！</span>`);
     }
 
     saveData();

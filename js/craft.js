@@ -46,19 +46,12 @@ function renderCraft() {
         const div = document.createElement('div');
         div.className = 'lab-item';
         div.style.cssText = canCraft
-            ? 'align-items:center; border:1px solid var(--accent-green); border-radius:8px; background:rgba(108,203,95,0.07); padding:10px 8px; margin-bottom:6px;'
-            : 'align-items:center; opacity:0.55; padding:10px 8px; margin-bottom:6px;';
+            ? 'align-items:center; border:1px solid var(--accent-green); border-radius:6px; background:rgba(108,203,95,0.07); padding:5px 8px; margin-bottom:4px;'
+            : 'align-items:center; opacity:0.5; padding:5px 8px; margin-bottom:4px;';
         div.innerHTML = `
-            <div style="flex:1;">
-                ${canCraft ? '<span style="color:var(--accent-green); font-size:11px; font-weight:bold;">✅ 今すぐ作れる</span><br>' : ''}
-                <div style="color:${canCraft ? 'var(--text-main)' : 'var(--text-dim)'}; font-size:14px; font-weight:${canCraft ? 'bold' : 'normal'};">⚗ ${recipe.name}</div>
-                <div class="lab-desc" style="margin-top:3px;">${ingHtml}</div>
-                <div class="lab-desc" style="color:#aaddaa; font-size:11px;">→ ${resultDesc}</div>
-            </div>
-            <button class="mini-btn ${canCraft ? 'btn-equip' : ''}" style="font-size:13px; padding:5px 10px; flex-shrink:0;"
-                onclick="craftItem(${idx})" ${canCraft ? '' : 'disabled'}>
-                合成
-            </button>`;
+            <div style="flex:1; font-size:13px; color:${canCraft ? 'var(--text-main)' : 'var(--text-dim)'};">${canCraft ? '✅ ' : '⚗ '}<b>${recipe.name}</b> <span class="lab-desc">${ingHtml} → <span style="color:#aaddaa;">${resultDesc}</span></span></div>
+            <button class="mini-btn ${canCraft ? 'btn-equip' : ''}" style="font-size:12px; padding:3px 8px; flex-shrink:0;"
+                onclick="craftItem(${idx})" ${canCraft ? '' : 'disabled'}>合成</button>`;
         panel.appendChild(div);
     });
 }
