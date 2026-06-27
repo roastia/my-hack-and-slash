@@ -99,7 +99,7 @@ function renderShop() {
     const csHeader = document.createElement('div');
     csHeader.className = 'log-entry';
     csHeader.style.cssText = 'color:#88ccff; border:none; padding-top:4px; padding-bottom:2px; font-size:13px;';
-    csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span> <span class="info-icon" onclick="showHelp(\'戦闘スキル書\',\'武勲ポイントを消費してスキルを習得できる。スキルは戦闘中にSPを消費して発動し、通常攻撃より大きな効果を持つ。一度習得したスキルは永続的に使用可能。\')">ⓘ</span><br><span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
+    csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span> <span class="info-icon" onclick="showHelp(\'戦闘スキル書\',\'武勲ポイントを消費してスキルを習得できる。スキルは戦闘中にSPを消費して発動し、通常攻撃より大きな効果を持つ。一度習得したスキルは永続的に使用可能。\')">ⓘ</span> &nbsp;<span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
     panel.appendChild(csHeader);
 
     shopItems.filter(s => s.category === 'combat_skill').forEach((item) => {
