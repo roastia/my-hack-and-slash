@@ -1273,6 +1273,30 @@ button, a, input, select, textarea, [onclick] {
     z-index: 9998;
 }
 
+
+/* ============================================================
+   プルトゥリフレッシュ
+   ============================================================ */
+#ptrIndicator {
+    background: linear-gradient(180deg, rgba(0,180,255,0.18) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(0,180,255,0.3);
+}
+#ptrIndicator .ptr-arrow {
+    display: inline-block;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 8px rgba(0,200,255,0.8);
+}
+#ptrIndicator.ptr-releasing .ptr-arrow {
+    animation: ptr-spin 0.4s linear infinite;
+}
+#ptrIndicator.ptr-releasing .ptr-label {
+    color: var(--accent-gold);
+}
+@keyframes ptr-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
 @keyframes game-shake {
     0%,100% { transform: translate(0,0) rotate(0deg); }
     10%     { transform: translate(-5px,-3px) rotate(-1deg); }

@@ -150,6 +150,11 @@
 
             <!-- イラスト表示用ビューポート -->
             <div class="viewport-area">
+                <!-- プルトゥリフレッシュ インジケーター -->
+                <div id="ptrIndicator" style="position:absolute;top:0;left:0;right:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;opacity:0;transform:translateY(-20px);transition:opacity 0.15s,transform 0.15s;pointer-events:none;">
+                    <div class="ptr-arrow" style="font-size:22px;transition:transform 0.2s;">↻</div>
+                    <div class="ptr-label" style="font-size:11px;color:var(--accent-cyan);margin-top:2px;letter-spacing:1px;">↓ 引っ張ってリロード</div>
+                </div>
                 <div id="viewportContent" class="viewport-content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></div>
                 <!-- 敵HP表示（SVG外） -->
                 <div id="enemyHpOverlay" style="display:none; position:absolute; bottom:8px; left:8px; right:8px; pointer-events:none;">

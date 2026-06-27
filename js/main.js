@@ -165,3 +165,72 @@ function triggerRainbow(el) {
     el.classList.add('game-rainbow');
     setTimeout(() => el.classList.remove('game-rainbow'), 6000);
 }
+
+
+// =============================================================
+// プルトゥリフレッシュ（イラスト下スワイプでリロード）
+// =============================================================
+(function initPullToRefresh() {
+    const THRESHOLD = 65;  // px: この距離以上引っ張ったらリロード
+    let startY = 0, pulling = false, indicator = null;
+
+    function getIndicator() {
+        if (!indicator) {
+            indicator = document.getElementById('ptrIndicator');
+        }
+        return indicator;
+    }
+
+    function setIndicatorState(progress, releasing) {
+        const el = getIndicator();
+        if (!el) return;
+        const pct = Math.min(progress / THRESHOLD, 1);
+        const rotate = pct * 180;
+        el.style.opacity = pct.toFixed(2);
+        el.style.transform = `translateY(${Math.min(progress * 0.6, 40)}px)`;
+        const arrow = el.querySelector('.ptr-arrow');
+        if (arrow) arrow.style.transform = `rotate(${rotate}deg)`;
+        const label = el.querySelector('.ptr-label');
+        if (label) label.textContent = releasing ? '🔄 リロード！' : (pct >= 1 ? '↑ 離してリロード' : '↓ 引っ張ってリロード');
+        if (releasing) el.classList.add('ptr-releasing');
+        else el.classList.remove('ptr-releasing');
+    }
+
+    function hideIndicator() {
+        const el = getIndicator();
+        if (!el) return;
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-20px)';
+        el.classList.remove('ptr-releasing');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const vp = document.querySelector('.viewport-area');
+        if (!vp) return;
+
+        vp.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            pulling = false;
+        }, { passive: true });
+
+        vp.addEventListener('touchmove', (e) => {
+            const dy = e.touches[0].clientY - startY;
+            if (dy > 0) {
+                pulling = true;
+                setIndicatorState(dy, false);
+            }
+        }, { passive: true });
+
+        vp.addEventListener('touchend', (e) => {
+            if (!pulling) return;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (dy >= THRESHOLD) {
+                setIndicatorState(dy, true);
+                setTimeout(() => location.reload(), 500);
+            } else {
+                hideIndicator();
+            }
+            pulling = false;
+        });
+    });
+})();
