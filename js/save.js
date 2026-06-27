@@ -55,7 +55,7 @@ function saveData() {
         dnaCounts, mutations, mutationSlots,
         traps,
         equippedTitle, unlockedTitles, titleStats,
-        equippedJob,
+        equippedJob, jobKillCounts, trapUseCounts,
         activeDungeonConstellation, customAiPriority,
         bagUpgradeLevel,
         fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
@@ -116,6 +116,8 @@ function loadData() {
         traps          = data.traps            || [];
         equippedTitle  = data.equippedTitle    || null;
         equippedJob    = data.equippedJob     || 'none';
+        jobKillCounts  = data.jobKillCounts   || {};
+        trapUseCounts  = data.trapUseCounts   || {};
         bagUpgradeLevel = data.bagUpgradeLevel || 0;
         maxInventory    = 10 + bagUpgradeLevel * 5;
         unlockedTitles = data.unlockedTitles   || ['nameless'];

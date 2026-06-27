@@ -103,3 +103,7 @@ let customAiPriority = ['healingWave', 'powerStrike', 'rapidStrike', 'guardStanc
 
 // --- ジョブシステム ---
 let equippedJob = 'none';  // 現在のジョブID
+
+// --- 職業熟練度・トラップ熟練度 ---
+let jobKillCounts  = {};   // { jobId: 討伐数 }
+let trapUseCounts  = {};   // { trapId: 累計使用回数 }

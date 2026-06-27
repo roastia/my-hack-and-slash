@@ -172,9 +172,13 @@ function renderTrapPanel() {
     // 購入ショップ
     html += `<div style="font-size:11px;color:var(--text-dim);margin:8px 0 4px;">── トラップ購入 (G消費) ──</div>`;
     trapCatalog.forEach(t => {
+        const _tMastery = (typeof trapUseCounts !== 'undefined') ? Math.floor((trapUseCounts[t.id] || 0) / 5) : 0;
+        const _tUseTotal= (typeof trapUseCounts !== 'undefined') ? (trapUseCounts[t.id] || 0) : 0;
+        const _tMasteryBadge = _tMastery > 0
+            ? `<span style="color:#aaffcc;font-size:11px"> 熟練Lv${_tMastery}(+${_tMastery*20}%dmg)</span>` : '';
         const canBuy = starDust >= t.cost && traps.length < MAX_TRAPS;
         html += `<div class="lab-item">
-            <div><b>${t.icon||'🪤'} ${t.name}</b> <span class="lab-desc">${t.desc} / G${t.cost}</span></div>
+            <div><b>${t.icon||'🪤'} ${t.name}</b>${_tMasteryBadge} <span class="lab-desc">${t.desc} / G${t.cost}${_tUseTotal>0?' / 累計'+_tUseTotal+'回':''}</span></div>
             <button class="mini-btn btn-equip" onclick="buyTrap('${t.id}')" ${canBuy ? '' : 'disabled'}>購入</button>
         </div>`;
     });
@@ -456,12 +460,25 @@ function renderJobPanel() {
 
         const canAfford = starDust >= j.changeCost;
         const costLabel = j.changeCost === 0 ? '無料' : `G${j.changeCost}`;
+        // 熟練度表示
+        let lvBadge = '';
+        if (j.id !== 'none') {
+            const _jlv = (typeof getJobLevel === 'function') ? getJobLevel(j.id) : 0;
+            const _jkc = (typeof jobKillCounts !== 'undefined') ? (jobKillCounts[j.id] || 0) : 0;
+            const _thresh = [20, 50, 100, 200, 350];
+            const _next = _thresh[_jlv] || null;
+            const _bar = _jlv >= 5 ? '<span style="color:#ffd700">MAX</span>'
+                       : `<span style="color:#aaa">${_jkc}/${_next}戦</span>`;
+            const _stars = '★'.repeat(_jlv) + '☆'.repeat(5 - _jlv);
+            lvBadge = `<div style="font-size:11px;color:#ffd700;margin-top:2px">${_stars} Lv${_jlv} ${_bar}</div>`;
+        }
 
         html += `<div class="lab-item" style="${isActive ? 'border-color:var(--accent-green);background:rgba(0,200,100,0.07);' : ''}">
             <div style="flex:1;">
                 <div style="font-weight:bold;color:${isActive ? 'var(--accent-green)' : 'var(--text-main)'}">${j.icon} ${j.name}${isActive ? ' ✓ 選択中' : ''}</div>
                 <div class="lab-desc">${j.desc}</div>
                 <div class="lab-desc" style="margin-top:3px">${effText}</div>
+                ${lvBadge}
             </div>
             ${isActive ? '' : `<button class="mini-btn btn-equip" onclick="changeJob('${j.id}')" style="font-size:12px;" ${canAfford?'':'disabled style="opacity:0.5;font-size:12px;"'}>${costLabel}</button>`}
         </div>`;

@@ -250,10 +250,7 @@ function executeBattleTurn(skillId) {
         const atkLabel = isRange ? '🏹 射撃！' : '>>';
         logMsg   = `<span class="attack-text">${atkLabel} ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
         showFloatingDamage(myDmgData.total, myDmgData.isCrit ? 'crit' : 'player');
-        if (myDmgData.isCrit) {
-            if (typeof triggerShake === 'function') triggerShake();
-            if (typeof triggerFlash === 'function') triggerFlash('crit');
-        }
+        const _isCrit = myDmgData.isCrit;
         const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
         if (heal > 0) {
             currentHp = Math.min(maxHp, currentHp + heal);
@@ -266,6 +263,17 @@ function executeBattleTurn(skillId) {
     // ── 撃破判定 ──
     if (enemy.hp <= 0) {
         stats.kills++;
+        // 職業熟練度カウント
+        if (typeof equippedJob !== 'undefined' && equippedJob && equippedJob !== 'none') {
+            jobKillCounts[equippedJob] = (jobKillCounts[equippedJob] || 0) + 1;
+            const _jlv = (typeof getJobLevel === 'function') ? getJobLevel(equippedJob) : 0;
+            const _thresh = [20, 50, 100, 200, 350];
+            const _kc = jobKillCounts[equippedJob];
+            if (_thresh.includes(_kc)) {
+                const _jobj = (typeof jobCatalog !== 'undefined') ? jobCatalog.find(x => x.id === equippedJob) : null;
+                addLog(`<span style="color:#ffd700">✨ 【${_jobj ? _jobj.name : equippedJob}】が Lv${_jlv+1} に熟練！ステータス上昇！</span>`);
+            }
+        }
         let _gainedExp = enemy.exp;
         // 称号 EXP補正
         if (typeof getTitleEffects === 'function') { const _te=getTitleEffects(); if(_te.expMult) _gainedExp = Math.floor(_gainedExp * _te.expMult); }
@@ -308,6 +316,7 @@ function executeBattleTurn(skillId) {
 
         logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span> / <span style="color:#88ccff">武勲 +${meritGain}</span>`;
         addLog(logMsg);
+        if (_isCrit) { if (typeof triggerShake === 'function') triggerShake(); if (typeof triggerFlash === 'function') triggerFlash('crit'); }
         checkLevelUp();
 
         if (battleState.isBoss) {
@@ -362,6 +371,7 @@ function executeBattleTurn(skillId) {
             }
         }
         addLog(logMsg);
+        if (_isCrit) { if (typeof triggerShake === 'function') triggerShake(); if (typeof triggerFlash === 'function') triggerFlash('crit'); }
         updateIllustration(battleState.isBoss ? 'boss' : 'battle', enemy);
 
         if (currentHp <= 0) {

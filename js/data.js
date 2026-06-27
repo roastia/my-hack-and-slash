@@ -473,10 +473,31 @@ function getMutationEffects() {
 // 拠点トラップカタログ
 // ============================================================
 const trapCatalog = [
-    { id: 'trap_spike',  name: 'スパイクトラップ', icon: '⚔️', cost: 15, dmgBase: 35, uses: 2, ignoresDef: false, desc: '物理35ダメ×2回' },
-    { id: 'trap_magic',  name: '魔法陣トラップ',   icon: '✨', cost: 25, dmgBase: 60, uses: 1, ignoresDef: true,  desc: '魔法60ダメ×1回（防御無視）' },
-    { id: 'trap_poison', name: '毒霧トラップ',     icon: '☠️', cost: 18, dmgBase: 20, uses: 3, ignoresDef: false, desc: '毒20ダメ×3回' },
-    { id: 'trap_needle', name: '針山トラップ',     icon: '🪡', cost: 10, dmgBase: 15, uses: 4, ignoresDef: false, desc: '15ダメ×4回（使い捨て多め）' },
+    // ── Tier 1: 基本トラップ ─────────────────────────────────────────────
+    { id: 'trap_spike',   name: 'スパイクトラップ', icon: '⚔️', cost: 15, dmgBase: 35, uses: 2, ignoresDef: false, desc: '物理35ダメ×2回' },
+    { id: 'trap_magic',   name: '魔法陣トラップ',   icon: '✨', cost: 25, dmgBase: 60, uses: 1, ignoresDef: true,  desc: '魔法60ダメ×1回（防御無視）' },
+    { id: 'trap_poison',  name: '毒霧トラップ',     icon: '☠️', cost: 18, dmgBase: 20, uses: 3, ignoresDef: false, desc: '毒20ダメ×3回' },
+    { id: 'trap_needle',  name: '針山トラップ',     icon: '🪡', cost: 10, dmgBase: 15, uses: 4, ignoresDef: false, desc: '15ダメ×4回（使い捨て多め）' },
+    // ── Tier 2: 属性トラップ ─────────────────────────────────────────────
+    { id: 'trap_fire',    name: '炎の壁トラップ',   icon: '🔥', cost: 30, dmgBase: 50, uses: 2, ignoresDef: false, desc: '炎50ダメ×2回' },
+    { id: 'trap_ice',     name: '氷結トラップ',     icon: '❄️', cost: 35, dmgBase: 65, uses: 1, ignoresDef: true,  desc: '魔法65ダメ×1回（防御無視）' },
+    { id: 'trap_thunder', name: '雷撃トラップ',     icon: '⚡', cost: 32, dmgBase: 45, uses: 2, ignoresDef: true,  desc: '雷45ダメ×2回（防御無視）' },
+    { id: 'trap_wind',    name: '風刃トラップ',     icon: '🌀', cost: 22, dmgBase: 35, uses: 3, ignoresDef: false, desc: '風35ダメ×3回' },
+    // ── Tier 3: 重火力トラップ ────────────────────────────────────────────
+    { id: 'trap_bomb',    name: '爆裂トラップ',     icon: '💣', cost: 45, dmgBase: 90, uses: 1, ignoresDef: false, desc: '物理90ダメ×1回' },
+    { id: 'trap_grav',    name: '重力トラップ',     icon: '⬛', cost: 38, dmgBase: 40, uses: 3, ignoresDef: true,  desc: '40ダメ×3回（防御無視）' },
+    { id: 'trap_chain',   name: '鎖爆発トラップ',   icon: '🔗', cost: 50, dmgBase: 30, uses: 5, ignoresDef: false, desc: '物理30ダメ×5回' },
+    { id: 'trap_holy',    name: '光の槍トラップ',   icon: '🌟', cost: 60, dmgBase: 100,uses: 1, ignoresDef: true,  desc: '光100ダメ×1回（防御無視）' },
+    // ── Tier 4: 毒・呪いトラップ ──────────────────────────────────────────
+    { id: 'trap_venom',   name: '猛毒針トラップ',   icon: '🧪', cost: 28, dmgBase: 18, uses: 5, ignoresDef: false, desc: '毒18ダメ×5回' },
+    { id: 'trap_curse',   name: '呪いの陣トラップ', icon: '🔮', cost: 42, dmgBase: 30, uses: 4, ignoresDef: true,  desc: '呪30ダメ×4回（防御無視）' },
+    { id: 'trap_dark',    name: '暗黒の鎖トラップ', icon: '🌑', cost: 55, dmgBase: 50, uses: 3, ignoresDef: true,  desc: '闇50ダメ×3回（防御無視）' },
+    { id: 'trap_spider',  name: '蜘蛛の巣トラップ', icon: '🕷️', cost: 20, dmgBase: 12, uses: 6, ignoresDef: false, desc: '物理12ダメ×6回' },
+    // ── Tier 5: 最高位トラップ ────────────────────────────────────────────
+    { id: 'trap_iron',    name: '鉄球トラップ',     icon: '⚙️', cost: 48, dmgBase: 75, uses: 2, ignoresDef: false, desc: '物理75ダメ×2回' },
+    { id: 'trap_earth',   name: '大地の怒りトラップ',icon:'🌋', cost: 52, dmgBase: 55, uses: 3, ignoresDef: false, desc: '地55ダメ×3回' },
+    { id: 'trap_holy2',   name: '聖水の罠',         icon: '💧', cost: 40, dmgBase: 55, uses: 2, ignoresDef: true,  desc: '聖55ダメ×2回（防御無視）' },
+    { id: 'trap_dragon',  name: '龍炎の罠',         icon: '🐉', cost: 80, dmgBase: 130,uses: 1, ignoresDef: true,  desc: '龍炎130ダメ×1回（防御無視）' },
 ];
 
 // =============================================================
@@ -592,59 +613,91 @@ function getElementBonus(attackElement, defenderWeakElement) {
 // =============================================================
 // ジョブ（職業）カタログ
 // =============================================================
+// 職業の熟練度レベル閾値（この戦闘数で次のLvへ）
+const JOB_LEVEL_THRESHOLDS = [20, 50, 100, 200, 350];
+
+function getJobLevel(jobId) {
+    if (typeof jobKillCounts === 'undefined') return 0;
+    const kills = jobKillCounts[jobId] || 0;
+    let lv = 0;
+    for (const t of JOB_LEVEL_THRESHOLDS) { if (kills >= t) lv++; else break; }
+    return lv; // 0〜5
+}
+
+function getJobLevelBonus(baseEffects, lv) {
+    if (lv === 0) return baseEffects;
+    const bonus = {};
+    const scale = 1 + lv * 0.08; // Lv1:+8%, Lv5:+40%
+    for (const [k, v] of Object.entries(baseEffects)) {
+        if (typeof v !== 'number') { bonus[k] = v; continue; }
+        if (k.endsWith('Mult')) {
+            // >1 は強化方向に、<1 は弱体方向を緩和
+            bonus[k] = v >= 1 ? v + (v - 1) * (lv * 0.1)
+                              : Math.min(1, v + (1 - v) * (lv * 0.05));
+        } else if (k.endsWith('Bonus') || k === 'spRegen' || k === 'spiritBonus') {
+            bonus[k] = Math.round(v * scale);
+        } else {
+            bonus[k] = v;
+        }
+    }
+    return bonus;
+}
+
 const jobCatalog = [
-    {
-        id: 'none', name: '無職', icon: '👤',
-        desc: '特別な恩恵なし。すべての職業の基礎。',
-        changeCost: 0,
-        effects: {}
-    },
-    {
-        id: 'warrior', name: '戦士', icon: '⚔',
-        desc: 'ATK+20% / DEF+10%。重い装備を纏い前線で戦う。',
-        changeCost: 50,
-        effects: { atkMult: 1.2, defMult: 1.1 }
-    },
-    {
-        id: 'mage', name: '魔道士', icon: '🔮',
-        desc: '魔法ATK×2 / 精神+20 / 物理ATK-30%。魔力に特化した術師。',
-        changeCost: 50,
-        effects: { magicMult: 2.0, spiritBonus: 20, atkMult: 0.7 }
-    },
-    {
-        id: 'rogue', name: '盗賊', icon: '🗡',
-        desc: '会心+20% / 素早さ+15 / 奪取+10%。素早い一撃で仕留める。',
-        changeCost: 50,
-        effects: { critBonus: 20, spdBonus: 15, stealBonus: 10 }
-    },
-    {
-        id: 'cleric', name: '聖者', icon: '✦',
-        desc: '精神+30 / DEF+15% / SPリジェネ+3/turn。神の加護を受けし者。',
-        changeCost: 60,
-        effects: { spiritBonus: 30, defMult: 1.15, spRegen: 3 }
-    },
-    {
-        id: 'monk', name: '武道家', icon: '🥋',
-        desc: '会心+25% / ATK+15% / DEF-20%。素手に近い軽装で最大火力を発揮。',
-        changeCost: 60,
-        effects: { critBonus: 25, atkMult: 1.15, defMult: 0.8 }
-    },
-    {
-        id: 'ranger', name: '弓使い', icon: '🏹',
-        desc: '遠隔ATK×1.5 / 素早さ+10 / 会心+10%。遠距離から精確に狙う。',
-        changeCost: 50,
-        effects: { rangeMult: 1.5, spdBonus: 10, critBonus: 10 }
-    },
-    {
-        id: 'alchemist', name: '錬金術師', icon: '⚗',
-        desc: '素材ドロップ+50% / G収入+30% / ATK-10%。知識で富を生み出す賢者。',
-        changeCost: 70,
-        effects: { matDropMult: 1.5, goldMult: 1.3, atkMult: 0.9 }
-    },
+    // ── 基本 ──────────────────────────────────────────────────────────────
+    { id: 'none',       name: '無職',       icon: '👤', changeCost:  0, desc: '特別な恩恵なし。すべての職業の基礎。',                                                   effects: {} },
+    { id: 'warrior',    name: '戦士',       icon: '⚔️', changeCost: 50, desc: 'ATK+20% / DEF+10%。重い装備を纏い前線で戦う。',                                          effects: { atkMult:1.2, defMult:1.1 } },
+    { id: 'mage',       name: '魔道士',     icon: '🔮', changeCost: 50, desc: '魔法ATK×2 / 精神+20 / 物理-30%。魔力に特化した術師。',                                   effects: { magicMult:2.0, spiritBonus:20, atkMult:0.7 } },
+    { id: 'rogue',      name: '盗賊',       icon: '🗡️', changeCost: 50, desc: '会心+20% / 素早さ+15 / 奪取+10%。素早い一撃で仕留める。',                               effects: { critBonus:20, spdBonus:15, stealBonus:10 } },
+    { id: 'cleric',     name: '聖者',       icon: '✦',  changeCost: 60, desc: '精神+30 / DEF+15% / SPリジェネ+3。神の加護を受けし者。',                                 effects: { spiritBonus:30, defMult:1.15, spRegen:3 } },
+    { id: 'monk',       name: '武道家',     icon: '🥋', changeCost: 60, desc: '会心+25% / ATK+15% / DEF-20%。素手に近い軽装で最大火力を発揮。',                         effects: { critBonus:25, atkMult:1.15, defMult:0.8 } },
+    { id: 'ranger',     name: '弓使い',     icon: '🏹', changeCost: 50, desc: '遠隔ATK×1.5 / 素早さ+10 / 会心+10%。遠距離から精確に狙う。',                            effects: { rangeMult:1.5, spdBonus:10, critBonus:10 } },
+    { id: 'alchemist',  name: '錬金術師',   icon: '⚗️', changeCost: 70, desc: '素材ドロップ+50% / G収入+30% / ATK-10%。知識で富を生み出す賢者。',                       effects: { matDropMult:1.5, goldMult:1.3, atkMult:0.9 } },
+    // ── 剣・槍・格闘系 ──────────────────────────────────────────────────
+    { id: 'swordsman',  name: '剣士',       icon: '🗡️', changeCost: 55, desc: 'ATK+30% / 素早さ+5。磨かれた剣技で敵を圧倒する。',                                       effects: { atkMult:1.3, spdBonus:5 } },
+    { id: 'knight',     name: '騎士',       icon: '🛡️', changeCost: 55, desc: 'DEF+30% / HP+20%。鉄壁の守りで味方を護る騎士。',                                         effects: { defMult:1.3, hpMult:1.2 } },
+    { id: 'lancer',     name: '槍術士',     icon: '🔱', changeCost: 60, desc: 'ATK+25% / 会心+15%。長槍の間合いを活かした戦士。',                                       effects: { atkMult:1.25, critBonus:15 } },
+    { id: 'darkKnight', name: '暗黒騎士',   icon: '🖤', changeCost: 80, desc: 'ATK+40% / DEF-20% / 奪取+8%。闇の力で敵を蹂躙する。',                                    effects: { atkMult:1.4, defMult:0.8, stealBonus:8 } },
+    { id: 'paladin',    name: 'パラディン', icon: '🌟', changeCost: 90, desc: 'DEF+25% / SPリジェネ+2 / ATK-10%。聖なる力で守護する者。',                               effects: { defMult:1.25, spRegen:2, atkMult:0.9 } },
+    { id: 'berserker',  name: '狂戦士',     icon: '😤', changeCost: 70, desc: 'ATK+60% / DEF-30%。怒りに身を委ねた破壊の化身。',                                         effects: { atkMult:1.6, defMult:0.7 } },
+    { id: 'samurai',    name: '侍',         icon: '⛩️', changeCost: 80, desc: 'ATK+35% / 会心+20% / DEF-15%。武士道を体現する剣豪。',                                   effects: { atkMult:1.35, critBonus:20, defMult:0.85 } },
+    // ── 魔法・精神系 ─────────────────────────────────────────────────────
+    { id: 'sage',       name: '賢者',       icon: '📖', changeCost: 90, desc: '魔法×2.5 / 精神+30 / ATK-50%。奥義を極めた魔法の使い手。',                              effects: { magicMult:2.5, spiritBonus:30, atkMult:0.5 } },
+    { id: 'shaman',     name: '呪術師',     icon: '🔯', changeCost: 65, desc: '魔法×1.5 / 会心+10% / 精神+15。精霊の力を借りる術者。',                                  effects: { magicMult:1.5, critBonus:10, spiritBonus:15 } },
+    { id: 'druid',      name: 'ドルイド',   icon: '🌿', changeCost: 65, desc: 'SPリジェネ+4 / DEF+15% / ATK-20%。自然の摂理と調和する者。',                            effects: { spRegen:4, defMult:1.15, atkMult:0.8 } },
+    { id: 'summoner',   name: '召喚士',     icon: '🌀', changeCost: 75, desc: 'EXP+40% / G+20%。召喚獣を使役し戦場を制す。',                                            effects: { expMult:1.4, goldMult:1.2 } },
+    { id: 'necromancer',name: '死霊術師',   icon: '💀', changeCost: 85, desc: 'EXP+60% / 魔法×1.8 / HP-20%。死者を操る禁忌の術師。',                                   effects: { expMult:1.6, magicMult:1.8, hpMult:0.8 } },
+    { id: 'archmage',   name: '大魔導士',   icon: '🌌', changeCost:120, desc: '魔法×3.0 / 精神+50 / ATK×0.3。魔法の頂点に君臨する者。',                               effects: { magicMult:3.0, spiritBonus:50, atkMult:0.3 } },
+    { id: 'spellblade', name: '魔剣士',     icon: '⚡', changeCost: 75, desc: 'ATK+20% / 魔法×1.3。剣と魔法を融合させた複合戦士。',                                     effects: { atkMult:1.2, magicMult:1.3 } },
+    // ── 素早さ・奇襲系 ──────────────────────────────────────────────────
+    { id: 'ninja',      name: '忍者',       icon: '🥷', changeCost: 75, desc: '素早さ+25 / 会心+30% / ATK-10%。影に潜む暗殺者。',                                       effects: { spdBonus:25, critBonus:30, atkMult:0.9 } },
+    { id: 'dancer',     name: '踊り子',     icon: '💃', changeCost: 60, desc: '素早さ+30 / 精神+20 / DEF-10%。舞いで敵を翻弄する。',                                    effects: { spdBonus:30, spiritBonus:20, defMult:0.9 } },
+    { id: 'pirate',     name: '海賊',       icon: '🏴‍☠️', changeCost: 65, desc: '奪取+40% / G+40% / 会心+10%。荒くれ者の自由な生き方。',                                effects: { stealBonus:40, goldMult:1.4, critBonus:10 } },
+    { id: 'shadow',     name: '影使い',     icon: '🌑', changeCost: 70, desc: '奪取+30% / 会心+15% / 遠隔×1.2。闇に潜む影の支配者。',                                  effects: { stealBonus:30, critBonus:15, rangeMult:1.2 } },
+    // ── 支援・経済系 ─────────────────────────────────────────────────────
+    { id: 'bard',       name: '吟遊詩人',   icon: '🎶', changeCost: 60, desc: 'SPリジェネ+5 / EXP+25%。詩で仲間を鼓舞する旅人。',                                       effects: { spRegen:5, expMult:1.25 } },
+    { id: 'merchant',   name: '商人',       icon: '💰', changeCost: 70, desc: 'G×2.0 / 素材ドロップ+60%。稼ぎに特化した商売人。',                                       effects: { goldMult:2.0, matDropMult:1.6 } },
+    { id: 'detective',  name: '探偵',       icon: '🔍', changeCost: 65, desc: 'EXP+50% / 奪取+20%。真実を追い求める調査者。',                                            effects: { expMult:1.5, stealBonus:20 } },
+    { id: 'tactician',  name: '戦略家',     icon: '🎯', changeCost: 80, desc: 'G+50% / EXP+30%。知略で戦場を支配する指揮官。',                                           effects: { goldMult:1.5, expMult:1.3 } },
+    { id: 'sealer',     name: '封印師',     icon: '📿', changeCost: 75, desc: '精神+40 / EXP+30% / ATK-20%。古の印術を操る賢者。',                                      effects: { spiritBonus:40, expMult:1.3, atkMult:0.8 } },
+    // ── 特殊・高難度系 ──────────────────────────────────────────────────
+    { id: 'dragoon',    name: '竜騎士',     icon: '🐲', changeCost:100, desc: 'ATK+35% / DEF+15%。竜の力を宿した至高の戦士。',                                           effects: { atkMult:1.35, defMult:1.15 } },
+    { id: 'holyKnight', name: '聖剣士',     icon: '⚔️', changeCost:100, desc: 'ATK+25% / DEF+25% / SPリジェネ+2。光と剣を体現する者。',                                effects: { atkMult:1.25, defMult:1.25, spRegen:2 } },
+    { id: 'destroyer',  name: '破壊者',     icon: '💥', changeCost: 90, desc: 'ATK×2.0 / DEF×0.5。破壊のみを追い求める狂人。',                                          effects: { atkMult:2.0, defMult:0.5 } },
+    { id: 'guardian',   name: '守護者',     icon: '🛡️', changeCost: 90, desc: 'DEF×2.0 / ATK×0.5。全てを守る盾となった者。',                                            effects: { defMult:2.0, atkMult:0.5 } },
+    { id: 'hunter',     name: '狩人',       icon: '🎣', changeCost: 60, desc: '遠隔×1.8 / 素材ドロップ+30%。獲物を追う孤高の狩人。',                                    effects: { rangeMult:1.8, matDropMult:1.3 } },
+    { id: 'geomancer',  name: '風水師',     icon: '🌊', changeCost: 70, desc: 'G+30% / DEF+20% / 遠隔×1.3。大地の力を操る術師。',                                       effects: { goldMult:1.3, defMult:1.2, rangeMult:1.3 } },
+    { id: 'blacksmith', name: '鍛冶師',     icon: '🔨', changeCost: 65, desc: 'DEF+30% / ATK+10% / 素材ドロップ+40%。武具の達人。',                                     effects: { defMult:1.3, atkMult:1.1, matDropMult:1.4 } },
+    { id: 'zealot',     name: '狂信者',     icon: '🔥', changeCost: 85, desc: 'ATK+50% / 魔法+50%。信念の力で限界を超える者。',                                          effects: { atkMult:1.5, magicMult:1.5 } },
+    { id: 'beastTamer', name: '魔獣使い',   icon: '🐺', changeCost: 70, desc: '素材ドロップ+80% / EXP+20%。野生を統べる異能者。',                                       effects: { matDropMult:1.8, expMult:1.2 } },
 ];
 
 function getJobEffects() {
     if (typeof equippedJob === 'undefined' || !equippedJob) return {};
     const j = jobCatalog.find(x => x.id === equippedJob);
-    return j ? j.effects : {};
+    if (!j) return {};
+    const lv = (typeof getJobLevel === 'function') ? getJobLevel(equippedJob) : 0;
+    return (lv > 0 && typeof getJobLevelBonus === 'function')
+        ? getJobLevelBonus(j.effects, lv)
+        : j.effects;
 }

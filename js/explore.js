@@ -173,10 +173,17 @@ function fightStack() {
         const usedNames = [];
         traps = traps.filter(trap => {
             if (trap.usesLeft <= 0) return false;
-            const dmg = trap.ignoresDef ? trap.dmgBase : Math.max(1, trap.dmgBase - Math.floor(avgAtk * 0.1));
+            const _masteryLv = (typeof trapUseCounts !== 'undefined') ? Math.floor((trapUseCounts[trap.id] || 0) / 5) : 0;
+            const _scaledBase = Math.round(trap.dmgBase * (1 + _masteryLv * 0.2));
+            const dmg = trap.ignoresDef ? _scaledBase : Math.max(1, _scaledBase - Math.floor(avgAtk * 0.1));
             totalHp = Math.max(1, totalHp - dmg);
             trapDmgTotal += dmg;
             usedNames.push(trap.name);
+            if (typeof trapUseCounts !== 'undefined') {
+                trapUseCounts[trap.id] = (trapUseCounts[trap.id] || 0) + 1;
+                const _tc = trapUseCounts[trap.id];
+                if (_tc % 5 === 0) addLog(`<span style="color:#aaffcc">🪤 【${trap.name}】熟練度 Lv${Math.floor(_tc/5)} に上昇！ダメージ+20%</span>`);
+            }
             trap.usesLeft--;
             return trap.usesLeft > 0;
         });
