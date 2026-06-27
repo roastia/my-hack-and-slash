@@ -389,6 +389,7 @@ function checkTitleUnlocks() {
         if (!unlockedTitles.includes(t.id) && t.unlockFn && t.unlockFn()) {
             unlockedTitles.push(t.id);
             addLog(`<span style="color:#ffd700">🏆 称号【${t.icon} ${t.name}】を解除した！</span>`);
+            if (typeof showBanner === 'function') showBanner('🏆 称号解除！', '#ffd700', t.icon + ' ' + t.name);
             newUnlock = true;
         }
     });

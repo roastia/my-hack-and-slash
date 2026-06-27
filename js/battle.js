@@ -23,6 +23,7 @@ function startBattle(enemyName, enemyMaxHp, enemyAtk, enemyExp, isBoss, enemySpe
     };
 
     updateIllustration(isBoss ? 'boss' : 'battle', battleState.enemy);
+    if (isBoss && typeof showBossEncounterEffect === 'function') showBossEncounterEffect();
     const spdCmp = pSpd >= eSpd
         ? `<span style="color:var(--accent-cyan)">▲ 素早さ有利</span>`
         : `<span style="color:var(--danger-red)">▼ 素早さ不利</span>`;
@@ -112,6 +113,8 @@ function tickUntilPlayerTurn(atbCost) {
             currentHp = Math.max(0, currentHp - dmg);
             const magPart = dmgData.magic > 0 ? ` <span style="color:#88aaff; font-size:11px">(魔${dmgData.magic})</span>` : '';
             addLog(`<span class="damage-text">⚡ ${battleState.enemy.name}が先手！ ${dmg} dmgを受けた！${magPart}</span>`);
+            if (typeof shakeHpBar === 'function') shakeHpBar();
+            if (typeof showFloatDamage === 'function') showFloatDamage(dmg, 'enemy');
             if (currentHp <= 0) {
                 currentHp = 0;
                 gameOver();
@@ -150,6 +153,8 @@ function executeBattleTurn(skillId) {
 
     // ── スキル実行 ──
     if (skill) {
+        // スキルカットイン
+        if (typeof showSkillCutin === 'function') showSkillCutin(skill.name, skill.icon || '⚡');
         // SPコスト確認
         const spCosts = { powerStrike: 20, rapidStrike: 15, healingWave: 25, guardStance: 10, poisonFang: 20, holyLight: 25, darkBlade: 22, drainStrike: 18, berserkRage: 20, shieldBreak: 22, sureShot: 18, megaBlast: 0 };
         const spCost  = spCosts[skillId] || 15;
@@ -347,6 +352,9 @@ function executeBattleTurn(skillId) {
     // ── 撃破判定 ──
     if (enemy.hp <= 0) {
         stats.kills++;
+        // ── 撃破エフェクト ──
+        if (battleState.isBoss) { if (typeof showConfetti === 'function') showConfetti(); }
+        else { if (typeof showExplosion === 'function') showExplosion(); }
         // ── スキルレベルアップ確認 ──
         if (typeof SKILL_KILL_THRESHOLDS !== 'undefined' && SKILL_KILL_THRESHOLDS.includes(stats.kills)) {
             const _sNewLv = SKILL_KILL_THRESHOLDS.indexOf(stats.kills) + 2;
@@ -361,6 +369,7 @@ function executeBattleTurn(skillId) {
             if (_thresh.includes(_kc)) {
                 const _jobj = (typeof jobCatalog !== 'undefined') ? jobCatalog.find(x => x.id === equippedJob) : null;
                 addLog(`<span style="color:#ffd700">✨ 【${_jobj ? _jobj.name : equippedJob}】が Lv${_jlv+1} に熟練！ステータス上昇！</span>`);
+                if (typeof showBanner === 'function') showBanner('✨ 職業熟練！', '#aaffaa', (_jobj ? _jobj.name : equippedJob) + ' Lv' + (_jlv+1));
             }
         }
         let _gainedExp = enemy.exp;
@@ -405,6 +414,7 @@ function executeBattleTurn(skillId) {
 
         logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span> / <span style="color:#88ccff">武勲 +${meritGain}</span>`;
         addLog(logMsg);
+        if (typeof showFloatDamage === 'function') showFloatDamage(myDmgData.total, _isCrit ? 'crit' : 'normal');
         if (_isCrit) { if (typeof triggerShake === 'function') triggerShake(); if (typeof triggerFlash === 'function') triggerFlash('crit'); }
         checkLevelUp();
 
@@ -558,6 +568,8 @@ function checkLevelUp() {
         baseAttack += 1;
         baseSpeed  += 1;
         addLog(`<span class="levelup-text">★ レベルアップ！ ★<br>Lv.${level}に成長した！ HPが全回復し、力と素早さが増した！</span>`);
+        if (typeof showBanner === 'function') showBanner('⬆ LEVEL UP!  Lv.' + level, '#ffd700', 'HP全回復 / ATK・SPD +1');
+        if (typeof triggerFlash === 'function') triggerFlash('boss');
     }
 }
 

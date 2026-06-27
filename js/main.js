@@ -167,6 +167,149 @@ function triggerRainbow(el) {
 }
 
 
+
+// =============================================================
+// ゲームエフェクト関数群
+// =============================================================
+
+// ── フロートダメージ数字 ──────────────────────────────────────────
+function showFloatDamage(amount, type) {
+    const el = document.createElement('div');
+    el.className = 'float-dmg ' + (type || 'normal');
+    el.textContent = (type === 'heal') ? '+' + amount : (type === 'enemy' || type === 'poison') ? '-' + amount : '-' + amount;
+    const vp = document.querySelector('.viewport-area') || document.body;
+    const rect = vp.getBoundingClientRect();
+    const cx = rect.left + rect.width  * (0.25 + Math.random() * 0.5);
+    const cy = rect.top  + rect.height * (type === 'enemy' ? 0.6 : 0.2 + Math.random() * 0.4);
+    el.style.left = cx + 'px';
+    el.style.top  = cy + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+}
+
+// ── スキルカットイン ──────────────────────────────────────────────
+function showSkillCutin(name, icon, color) {
+    const old = document.querySelector('.skill-cutin');
+    if (old) old.remove();
+    const el = document.createElement('div');
+    el.className = 'skill-cutin';
+    el.style.borderColor = color || 'var(--accent-cyan)';
+    el.innerHTML = '<span style="font-size:22px;margin-right:10px;">' + (icon||'⚡') + '</span>'
+                 + '<span style="font-size:15px;font-weight:bold;color:#fff;letter-spacing:1px;">' + name + '</span>';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
+}
+
+// ── 爆発パーティクル ──────────────────────────────────────────────
+function showExplosion() {
+    const vp = document.querySelector('.viewport-area');
+    const rect = vp ? vp.getBoundingClientRect()
+                    : { left: window.innerWidth/2-50, top: window.innerHeight/2-50, width:100, height:100 };
+    const cx = rect.left + rect.width  / 2;
+    const cy = rect.top  + rect.height / 2;
+    const colors = ['#ff6644','#ffaa00','#ff2200','#ffdd00','#ff8800','#ffbbaa'];
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'explosion-particle';
+        const angle = (i / 18) * Math.PI * 2 + Math.random() * 0.3;
+        const dist  = 55 + Math.random() * 90;
+        p.style.left = (cx - 4) + 'px';
+        p.style.top  = (cy - 4) + 'px';
+        p.style.background = colors[i % colors.length];
+        p.style.setProperty('--tx', (Math.cos(angle) * dist) + 'px');
+        p.style.setProperty('--ty', (Math.sin(angle) * dist) + 'px');
+        p.style.animationDelay = (Math.random() * 0.08) + 's';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+    }
+}
+
+// ── ボス撃破confetti ──────────────────────────────────────────────
+function showConfetti() {
+    showExplosion();
+    const colors = ['#ffd700','#ff6699','#66ffcc','#ff9900','#66aaff','#ff44aa','#aaffaa'];
+    for (let i = 0; i < 70; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const sz = (6 + Math.random() * 9) + 'px';
+        p.style.left   = (Math.random() * 100) + 'vw';
+        p.style.top    = '-20px';
+        p.style.width  = sz; p.style.height = sz;
+        p.style.background   = colors[Math.floor(Math.random() * colors.length)];
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        p.style.animationDuration = (1.6 + Math.random() * 2.2) + 's';
+        p.style.animationDelay   = (Math.random() * 0.9) + 's';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 5000);
+    }
+    triggerFlash('boss');
+}
+
+// ── バナー通知 ────────────────────────────────────────────────────
+function showBanner(mainText, color, subText) {
+    const el = document.createElement('div');
+    el.className = 'game-banner';
+    el.style.borderColor = color || '#ffd700';
+    el.style.boxShadow   = '0 0 28px ' + (color || '#ffd700') + '55';
+    el.innerHTML = '<div style="color:' + (color||'#ffd700') + ';font-size:17px;font-weight:bold;">' + mainText + '</div>'
+                 + (subText ? '<div style="color:#bbb;font-size:12px;margin-top:3px;">' + subText + '</div>' : '');
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3400);
+}
+
+// ── ボス遭遇エフェクト ────────────────────────────────────────────
+function showBossEncounterEffect() {
+    const vp = document.querySelector('.viewport-area');
+    if (vp) {
+        vp.classList.add('boss-encounter-pulse');
+        setTimeout(() => vp.classList.remove('boss-encounter-pulse'), 2000);
+    }
+    const ov = document.getElementById('gameFlashOverlay');
+    if (ov) {
+        ov.style.background = 'rgba(255,0,0,0.25)';
+        ov.classList.remove('game-flash-active');
+        void ov.offsetWidth;
+        ov.classList.add('game-flash-active');
+        ov.addEventListener('animationend', () => ov.classList.remove('game-flash-active'), { once: true });
+    }
+}
+
+// ── HPバー被弾シェイク ────────────────────────────────────────────
+function shakeHpBar() {
+    const row = document.querySelector('.gauge-row');
+    if (!row) return;
+    row.classList.remove('hp-bar-shake');
+    void row.offsetWidth;
+    row.classList.add('hp-bar-shake');
+    row.addEventListener('animationend', () => row.classList.remove('hp-bar-shake'), { once: true });
+}
+
+// ── HP危険グロー更新 ──────────────────────────────────────────────
+function updateHpDangerGlow() {
+    const row = document.querySelector('.gauge-row');
+    if (!row) return;
+    if (typeof currentHp !== 'undefined' && typeof maxHp !== 'undefined'
+        && currentHp > 0 && currentHp / maxHp <= 0.2) {
+        row.classList.add('hp-danger-glow');
+    } else {
+        row.classList.remove('hp-danger-glow');
+    }
+}
+
+// ── アイテムドロップポップ ────────────────────────────────────────
+function showItemPopup(text, color) {
+    const el = document.createElement('div');
+    el.className = 'item-popup';
+    el.innerHTML = text;
+    el.style.color = color || '#ffd700';
+    const vp = document.querySelector('.viewport-area');
+    const rect = vp ? vp.getBoundingClientRect() : { left: window.innerWidth/2, bottom: window.innerHeight/2 };
+    el.style.left = (rect.left + (vp ? vp.offsetWidth/2 : 0)) + 'px';
+    el.style.top  = (rect.bottom - 30) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+}
+
 // =============================================================
 // プルトゥリフレッシュ（イラスト下スワイプでリロード）
 // =============================================================

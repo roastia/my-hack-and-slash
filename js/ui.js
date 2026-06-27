@@ -862,6 +862,7 @@ function formatEq(eq, prop) {
 }
 
 function updateUI() {
+    if (typeof updateHpDangerGlow === 'function') updateHpDangerGlow();
     // プログレスバー
     if (activeDungeon) {
         floorDisplay.textContent = `(Sec:${currentFloor}/${activeDungeon.maxFloor} Step:${stepCount})`;
