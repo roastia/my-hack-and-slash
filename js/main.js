@@ -131,3 +131,37 @@ function closeHelp() {
     const modal = document.getElementById('helpModal');
     if (modal) modal.style.display = 'none';
 }
+
+// ============================================================
+// 画面エフェクト
+// ============================================================
+
+// クリティカル時：ログの最新エントリを揺らす
+function triggerShake() {
+    const log = document.getElementById('logContent');
+    if (!log) return;
+    const last = log.lastElementChild;
+    if (!last) return;
+    last.classList.remove('game-shake');
+    void last.offsetWidth;
+    last.classList.add('game-shake');
+    last.addEventListener('animationend', () => last.classList.remove('game-shake'), { once: true });
+}
+
+// ヒット・ボス撃破時：画面フラッシュ
+function triggerFlash(intensity) {
+    const ov = document.getElementById('gameFlashOverlay');
+    if (!ov) return;
+    ov.style.background = intensity === 'boss' ? '#ffe8aa' : '#ffffff';
+    ov.classList.remove('game-flash-active');
+    void ov.offsetWidth;
+    ov.classList.add('game-flash-active');
+    ov.addEventListener('animationend', () => ov.classList.remove('game-flash-active'), { once: true });
+}
+
+// レアアイテム入手時：指定要素に虹色アニメ（6秒後に解除）
+function triggerRainbow(el) {
+    if (!el) return;
+    el.classList.add('game-rainbow');
+    setTimeout(() => el.classList.remove('game-rainbow'), 6000);
+}

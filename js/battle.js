@@ -250,6 +250,10 @@ function executeBattleTurn(skillId) {
         const atkLabel = isRange ? '🏹 射撃！' : '>>';
         logMsg   = `<span class="attack-text">${atkLabel} ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
         showFloatingDamage(myDmgData.total, myDmgData.isCrit ? 'crit' : 'player');
+        if (myDmgData.isCrit) {
+            if (typeof triggerShake === 'function') triggerShake();
+            if (typeof triggerFlash === 'function') triggerFlash('crit');
+        }
         const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
         if (heal > 0) {
             currentHp = Math.min(maxHp, currentHp + heal);
@@ -307,6 +311,7 @@ function executeBattleTurn(skillId) {
         checkLevelUp();
 
         if (battleState.isBoss) {
+            if (typeof triggerFlash === 'function') triggerFlash('boss');
             if (dungeons.indexOf(activeDungeon) === currentProgress) currentProgress++;
             isBossDefeated = true;
             const bossScale = activeDungeon.diff * 2 + currentFloor * 2 + 8;
@@ -318,7 +323,11 @@ function executeBattleTurn(skillId) {
             if (inventory.length < 10) {
                 inventory.push(bossItem);
                 const br = getRarityInfo(bossItem);
-                addLog(`✦ ボスの遺品として <span style="color:${br.color}; font-weight:bold">［${bossItem.name}］</span> <span style="color:${br.color}; font-size:12px">${br.label}</span> を手に入れた！`);
+                const _bossLogMsg = `✦ ボスの遺品として <span style="color:${br.color}; font-weight:bold" ${bossItem.stars >= 2 ? 'id="latestRareItemName"' : ''}>［${bossItem.name}］</span> <span style="color:${br.color}; font-size:12px">${br.label}</span> を手に入れた！`;
+                addLog(_bossLogMsg);
+                if (bossItem.stars >= 2 && typeof triggerRainbow === 'function') {
+                    setTimeout(() => triggerRainbow(document.getElementById('latestRareItemName')), 50);
+                }
             } else {
                 addLog(`<span class="levelup-text">✦ ボスは <span class="item-text">［${bossItem.name}］</span> を落としたが、荷物が満杯で持てなかった！</span>`);
             }

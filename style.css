@@ -1250,3 +1250,59 @@ button, a, input, select, textarea, [onclick] {
     transition: opacity 0.15s;
 }
 .info-icon:hover, .info-icon:active { opacity: 1; }
+
+/* ============================================================
+   テキスト＆画面エフェクト
+   ============================================================ */
+
+/* フラッシュ用全画面オーバーレイ */
+#gameFlashOverlay {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+@keyframes game-shake {
+    0%,100% { transform: translate(0,0) rotate(0deg); }
+    10%     { transform: translate(-5px,-3px) rotate(-1deg); }
+    20%     { transform: translate(6px,4px)   rotate(1.5deg); }
+    30%     { transform: translate(-4px,3px)  rotate(-1deg); }
+    40%     { transform: translate(5px,-3px)  rotate(1deg); }
+    50%     { transform: translate(-3px,4px)  rotate(-1.5deg); }
+    60%     { transform: translate(4px,-2px)  rotate(1deg); }
+    70%     { transform: translate(-2px,3px)  rotate(-0.5deg); }
+    80%     { transform: translate(3px,-1px)  rotate(0.5deg); }
+    90%     { transform: translate(-1px,2px)  rotate(0deg); }
+}
+@keyframes game-flash {
+    0%   { opacity: 0; }
+    12%  { opacity: 0.75; }
+    100% { opacity: 0; }
+}
+@keyframes game-rainbow {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.game-shake {
+    animation: game-shake 0.5s ease-out;
+}
+.game-flash-active {
+    animation: game-flash 0.55s ease-out forwards;
+}
+.game-rainbow {
+    background: linear-gradient(
+        90deg,
+        #ff4444, #ff9900, #ffee00,
+        #44ff88, #44ccff, #bb44ff,
+        #ff44aa, #ff4444
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    animation: game-rainbow 1.6s linear infinite;
+}

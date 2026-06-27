@@ -495,7 +495,10 @@ function findItem() {
     if (inventory.length < maxInventory) {
         inventory.push(item);
         const r = getRarityInfo(item);
-        addLog(`宝箱から <span style="color:${r.color}; font-weight:bold">［${item.name}］</span> <span style="color:${r.color}; font-size:12px">${r.label}</span> を入手した！`);
+        addLog(`宝箱から <span style="color:${r.color}; font-weight:bold" ${item.stars >= 2 ? 'id="latestRareItemName"' : ''}>［${item.name}］</span> <span style="color:${r.color}; font-size:12px">${r.label}</span> を入手した！`);
+        if (item.stars >= 2 && typeof triggerRainbow === 'function') {
+            setTimeout(() => triggerRainbow(document.getElementById('latestRareItemName')), 50);
+        }
     } else {
         addLog(`［${item.name}］を発見したが、荷物が満杯で持てなかった。`);
     }
