@@ -89,7 +89,7 @@ function renderDnaPanel() {
     const slotMax = mutationSlots;
     let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">
         <span style="color:var(--accent-cyan);font-size:14px;">🧬 DNA突然変異 <span class="info-icon" onclick="showHelp('DNA突然変異','ダンジョンで入手したDNAを消費して突然変異を解放・装備できる。装備スロット数はmutationSlotsに依存し、一定の組み合わせで強力なシナジー（現型）が発動する。DNAは敵を倒すたびに一定確率でドロップする。')">ⓘ</span></span><br>
-        装備中: <b style="color:var(--accent-cyan)">\${equippedCount}/\${slotMax}</b> スロット使用 ─ 変異の解除にはDNAが必要
+        装備中: <b style="color:var(--accent-cyan)">${equippedCount}/${slotMax}</b> スロット使用 ─ 変異の解除にはDNAが必要
     </div>`;
 
     mutationCatalog.forEach(mut => {
@@ -155,7 +155,7 @@ function renderTrapPanel() {
     const placed = traps.length;
     let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">
         <span style="color:var(--accent-orange);font-size:14px;">🪤 拠点トラップ <span class="info-icon" onclick="showHelp('拠点トラップ','拠点に罠を設置しておくと、次のダンジョン探索で戦闘突入時に先制ダメージを与えられる。素材を消費して工房で作成する。設置できる数に上限あり。')">ⓘ</span></span><br>
-        設置中: <b style="color:var(--accent-orange)">\${placed}/\${MAX_TRAPS}</b> ─ 戦闘突入時に敵へ先制ダメージ
+        設置中: <b style="color:var(--accent-orange)">${placed}/${MAX_TRAPS}</b> ─ 戦闘突入時に敵へ先制ダメージ
     </div>`;
 
     // 設置済みトラップ
@@ -311,7 +311,7 @@ function renderTitlePanel() {
     let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
         <span style="color:#ffd700;font-size:14px;">🏆 称号（二つ名） <span class="info-icon" onclick="showHelp('称号（二つ名）','特定の条件を達成すると称号がアンロックされる。装備するとATK/DEF/SPD/CRITなどのステータスにボーナスが付く。一度に1つだけ装備可能。条件はクリット数・スキル使用数・歩数など様々。')">ⓘ</span></span><br>
         称号を装備すると強力なステータス補正を得られます。一度に1つだけ装備できます。<br>
-        装備中: <b style="color:#ffd700">\${equipped ? titleCatalog.find(t=>t.id===equipped)?.name || 'なし' : 'なし'}</b>
+        装備中: <b style="color:#ffd700">${equipped ? titleCatalog.find(t=>t.id===equipped)?.name || 'なし' : 'なし'}</b>
     </div>`;
 
     const stars = ['', '★', '★★', '★★★'];
@@ -434,7 +434,7 @@ function renderJobPanel() {
     let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
         <span style="color:var(--accent-green);font-size:14px;">⚗ 職業 <span class="info-icon" onclick="showHelp('職業','職業を選択するとパッシブボーナスが永続的に適用される。職業変更にはGが必要（無職への変更は無料）。ジョブごとにATK/DEF/GOLD/EXP倍率や特殊効果が異なる。一度に1つの職業だけ持てる。')">ⓘ</span></span><br>
         職業を選ぶとパッシブ効果が永続します。変更にはGが必要です。<br>
-        現在: <b style="color:var(--accent-green)">\${currentJob ? currentJob.icon + ' ' + currentJob.name : '無職'}</b>
+        現在: <b style="color:var(--accent-green)">${currentJob ? currentJob.icon + ' ' + currentJob.name : '無職'}</b>
     </div>`;
 
     jobCatalog.forEach(j => {
