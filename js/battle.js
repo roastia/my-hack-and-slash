@@ -146,6 +146,7 @@ function executeBattleTurn(skillId) {
 
     let logMsg = '';
     let enemyDied = false;
+    let _isCrit = false;
 
     // ── スキル実行 ──
     if (skill) {
@@ -333,7 +334,7 @@ function executeBattleTurn(skillId) {
         const atkLabel = isRange ? '🏹 射撃！' : '>>';
         logMsg   = `<span class="attack-text">${atkLabel} ${myDmgData.isCrit ? 'CRITICAL!! ' : ''}${myDmgData.total} dmgを与えた！</span>${myDmgData.spiritLog}`;
         showFloatingDamage(myDmgData.total, myDmgData.isCrit ? 'crit' : 'player');
-        const _isCrit = myDmgData.isCrit;
+        _isCrit = myDmgData.isCrit;
         const heal = Math.floor(myDmgData.total * (getStealRate() / 100));
         if (heal > 0) {
             currentHp = Math.min(maxHp, currentHp + heal);
@@ -440,12 +441,24 @@ function executeBattleTurn(skillId) {
             battleState.poisonTurns--;
             logMsg += `<br><span style="color:#88ff88">☠ 毒ダメージ ${_pdmg}！（残${battleState.poisonTurns}ターン）</span>`;
             if (enemy.hp <= 0) {
-                // 毒で撃破
-                addLog(logMsg);
+                // 毒で撃破 — 通常撃破と同じ終了処理
                 stats.kills++;
-                exp += enemy.exp; starDust += 1;
-                addLog(`<span class="attack-text">☠ 毒で ${enemy.name} を倒した！</span>`);
-                checkLevelUp(); endBattle(); return;
+                exp += enemy.exp;
+                let _dustP = Math.floor(Math.random() * (activeDungeon.diff + currentFloor)) + 2;
+                starDust += _dustP;
+                const _meritP = Math.max(1, Math.floor(activeDungeon.diff * 0.5 + currentFloor * 0.3));
+                battleMerit += _meritP;
+                logMsg += `<br><span class="attack-text">☠ 毒で ${enemy.name} を倒した！ EXP+${enemy.exp} G+${_dustP} 武勲+${_meritP}</span>`;
+                addLog(logMsg);
+                checkLevelUp();
+                battleState.active = false;
+                stopAutoBattle();
+                if (typeof renderAutoRow === 'function') renderAutoRow();
+                updateIllustration('explore');
+                updateActionButtons();
+                updateUI();
+                saveData();
+                return;
             }
         }
         if (battleState.berserkTurns > 0) {
