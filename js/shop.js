@@ -213,8 +213,7 @@ function renderMedalSection() {
     let apUsed = getMedalApUsed();
     let html = `
         <div class="shop-section-header" style="margin-top:8px;">
-            🏅 神メダル &nbsp;<span style="color:#aaddff; font-size:12px; opacity:0.8">（武勲で購入・着脱）</span><br>
-            <span style="font-size:12px; color:#88ccff;">AP: <b>${apUsed}/${medalApLimit}</b> &nbsp;|&nbsp; 所持武勲: <b>${battleMerit}</b></span>
+            🏅 神メダル &nbsp;<span style="color:#aaddff; font-size:12px; opacity:0.8">（武勲で購入・着脱）</span> &nbsp;<span style="font-size:12px; color:#88ccff;">AP: <b>${apUsed}/${medalApLimit}</b> | 武勲: <b>${battleMerit}</b></span>
         </div>
         <div class="medal-grid">`;
     for (let i = 0; i < medalCatalog.length; i++) {
