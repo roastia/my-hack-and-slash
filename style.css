@@ -194,7 +194,8 @@ html, body {
    Viewport (scene / illustration area)
    ============================================================ */
 .viewport-area {
-    flex-grow: 1;
+    flex-grow: 3;
+    max-height: 260px;
     height: 0;
     background: linear-gradient(160deg, #0d1117 0%, #1a2035 60%, #0d1117 100%);
     border: 1px solid var(--border-color);
@@ -208,9 +209,9 @@ html, body {
 }
 
 .viewport-content svg {
-    width: 70%;
-    height: 70%;
-    max-height: 440px;
+    width: 55%;
+    height: 55%;
+    max-height: 220px;
     filter: drop-shadow(0 0 8px currentColor);
     animation: glitch 4s infinite alternate;
 }
@@ -1041,7 +1042,7 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--text-main)
 
     .viewport-area {
         flex-shrink: 0 !important;
-        height: 160px !important;
+        height: 110px !important;
         min-height: 0 !important;
         border-radius: 0 !important;
     }
