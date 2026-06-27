@@ -471,3 +471,17 @@ function changeJob(id) {
     updateUI();
     addLog(`<span style="color:var(--accent-green)">⚗ 職業を【${j.icon} ${j.name}】に変更した！${j.changeCost > 0 ? ' G-' + j.changeCost : ''}</span>`);
 }
+
+// 荷物拡張
+function upgradeBag() {
+    const costs = [50, 120, 220, 360, 550];
+    if (bagUpgradeLevel >= 5) { addLog('<span style="color:#88ccff">荷物はすでに最大まで拡張されている。</span>'); return; }
+    const cost = costs[bagUpgradeLevel];
+    if (starDust < cost) { addLog(`<span style="color:var(--danger-red)">Gが足りない！(必要: G${cost})</span>`); return; }
+    starDust -= cost;
+    bagUpgradeLevel++;
+    maxInventory += 5;
+    addLog(`<span style="color:#88ccff">🎒 荷物を拡張した！ 所持品 +5 → 最大${maxInventory}個 (Lv${bagUpgradeLevel})</span>`);
+    updateUI();
+    saveData();
+}

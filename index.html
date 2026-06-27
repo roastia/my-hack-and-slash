@@ -237,6 +237,13 @@
                         </div>
                         <button class="mini-btn" style="border-color:#aa88ff;color:#aa88ff; font-size:13px; padding:6px 12px;" onclick="upgradeMedalAp()">拡張 (G<span id="costMedalApDisp">30</span>)</button>
                     </div>
+                    <div class="lab-item" style="border-top:1px dashed #334; margin-top:8px; padding-top:8px;">
+                        <div>
+                            <div style="color:#88ccff">🎒 荷物拡張 <span class="info-icon" onclick="showHelp('荷物拡張','所持品の最大数を+5増やす。最大5回まで拡張可能（最大35個）。ダンジョンで拾いきれないアイテムを持ち帰るために必須の強化。')">ⓘ</span></div>
+                            <div class="lab-desc">現在: <span id="labBagDisp">10</span>個 ／ 拡張Lv <span id="labBagLvDisp">0</span> / 5</div>
+                        </div>
+                        <button id="btnUpgradeBag" class="mini-btn" style="border-color:#88ccff;color:#88ccff; font-size:13px; padding:6px 12px;" onclick="upgradeBag()">拡張 (G<span id="costBagDisp">50</span>)</button>
+                    </div>
                     <!-- 武勲ショップ -->
                     <div style="border-top:1px dashed #334; margin-top:10px; padding-top:8px;">
                         <div style="color:var(--accent-orange); font-size:13px; margin-bottom:6px;">⚔ 武勲ショップ <span id="meritShopCount" style="font-size:11px; color:var(--text-dim)"></span></div>
@@ -315,7 +322,7 @@
                     <span><span style="color:var(--accent-orange)">G: <span id="stardustDisplay">0</span></span></span>
                     <span style="display:flex;align-items:center;gap:6px;">
                         <button class="mini-btn" style="font-size:11px;padding:1px 6px;" onclick="sortInventory()">↕ 整列</button>
-                        <span id="itemCountDisplay">0</span> / 10
+                        <span id="itemCountDisplay">0</span> / <span id="maxInventoryDisp">10</span>
                     </span>
                 </div>
                 <div style="padding:3px 6px; border-bottom:1px solid var(--border-color); font-size:12px; color:#88ccff; text-align:right;">

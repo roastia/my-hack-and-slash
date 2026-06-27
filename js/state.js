@@ -25,7 +25,8 @@ let baseAttack = 2, baseDefense = 0;
 
 let equipment = { weapon: null, helm: null, armor: null, shield: null };
 let inventory  = [];
-const maxInventory = 10;
+let maxInventory = 10;
+let bagUpgradeLevel = 0;  // 荷物拡張レベル（max5）
 
 // --- 探索状態 ---
 let currentProgress  = 0;   // 解放済みダンジョン数

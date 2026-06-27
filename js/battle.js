@@ -320,7 +320,7 @@ function executeBattleTurn(skillId) {
             bossItem.name   = '[伝説]' + bossItem.name;
             if (bossItem.type === 'weapon') bossItem.atk += bonus;
             else bossItem.def += bonus;
-            if (inventory.length < 10) {
+            if (inventory.length < maxInventory) {
                 inventory.push(bossItem);
                 const br = getRarityInfo(bossItem);
                 const _bossLogMsg = `✦ ボスの遺品として <span style="color:${br.color}; font-weight:bold" ${bossItem.stars >= 2 ? 'id="latestRareItemName"' : ''}>［${bossItem.name}］</span> <span style="color:${br.color}; font-size:12px">${br.label}</span> を手に入れた！`;

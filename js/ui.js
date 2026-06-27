@@ -994,6 +994,18 @@ function updateUI() {
 
     // インベントリ
     itemCountDisplay.textContent = inventory.length;
+    const _mxd = document.getElementById('maxInventoryDisp');
+    if (_mxd) _mxd.textContent = maxInventory;
+    const _bld = document.getElementById('labBagDisp');
+    if (_bld) _bld.textContent = maxInventory;
+    const _blv = document.getElementById('labBagLvDisp');
+    if (_blv) _blv.textContent = bagUpgradeLevel;
+    const _bcb = document.getElementById('btnUpgradeBag');
+    if (_bcb) _bcb.disabled = bagUpgradeLevel >= 5;
+    const _bcd = document.getElementById('costBagDisp');
+    const bagCosts = [50, 120, 220, 360, 550];
+    if (_bcd && bagUpgradeLevel < 5) _bcd.textContent = bagCosts[bagUpgradeLevel];
+    if (_bcd && bagUpgradeLevel >= 5) { _bcd.textContent = '―'; }
     inventoryList.innerHTML = '';
     const typeIcons = { weapon: '⚔️', helm: '🪖', armor: '👕', shield: '🛡️' };
 

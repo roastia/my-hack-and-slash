@@ -57,6 +57,7 @@ function saveData() {
         equippedTitle, unlockedTitles, titleStats,
         equippedJob,
         activeDungeonConstellation, customAiPriority,
+        bagUpgradeLevel,
         fishingRodLevel: fishingState ? fishingState.rodLevel : 1,
         fishingRodUpgradeCost: fishingState ? fishingState.rodUpgradeCost : 30,
         costHp, costAtk, costDef, stats,
@@ -115,6 +116,8 @@ function loadData() {
         traps          = data.traps            || [];
         equippedTitle  = data.equippedTitle    || null;
         equippedJob    = data.equippedJob     || 'none';
+        bagUpgradeLevel = data.bagUpgradeLevel || 0;
+        maxInventory    = 10 + bagUpgradeLevel * 5;
         unlockedTitles = data.unlockedTitles   || ['nameless'];
         titleStats     = data.titleStats       || { critHits: 0, stealCount: 0, skillUseCount: 0, stepsTotal: 0 };
         activeDungeonConstellation = data.activeDungeonConstellation || null;
