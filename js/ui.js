@@ -1310,3 +1310,11 @@ function renderBaseScene() {
     returnBtn.classList.add('hidden');
     updateIllustration('base');
 }
+// 星座選択
+function selectConstellation(id) {
+    activeDungeonConstellation = id;
+    const c = (typeof constellationCatalog !== 'undefined') ? constellationCatalog.find(x => x.id === id) : null;
+    if (c) addLog(`✨ 星座を <b style="color:#ffd700">${c.name}</b> に設定した。${c.desc}`);
+    if (typeof saveData === 'function') saveData();
+    renderBaseScene();
+}
