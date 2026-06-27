@@ -10,7 +10,7 @@ function renderShop() {
     // ── 水セクション ──
     const waterHeader = document.createElement('div');
     waterHeader.className = 'log-entry';
-    waterHeader.style.cssText = 'color:#88ccff; border:none; padding-bottom:4px; font-size:14px;';
+    waterHeader.style.cssText = 'color:#88ccff; border:none; padding-bottom:2px; font-size:13px;';
     waterHeader.innerHTML = '💧 飲み物 <span class="info-icon" onclick="showHelp(\'飲み物\',\'渇きを回復しSPが増加する。探索中は渇きゲージが減少し、0になると行動不能になる。定期的に飲み物を補充しておくことが重要。\')">ⓘ</span>';
     panel.appendChild(waterHeader);
 
@@ -21,10 +21,10 @@ function renderShop() {
         const canBuy = starDust >= item.cost && inventory.length < maxInventory;
         div.innerHTML = `
             <div>
-                <div style="color:var(--text-main); font-size:14px;">💧 ${item.name}</div>
+                <div style="color:var(--text-main); font-size:13px;">💧 ${item.name}</div>
                 <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
             </div>
-            <button class="mini-btn" style="border-color:#6699dd;color:#88ccff; font-size:13px; padding:5px 10px;"
+            <button class="mini-btn" style="border-color:#6699dd;color:#88ccff; font-size:13px; padding:3px 8px;"
                 onclick="buyShopWater(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
                 購入 (G ${item.cost})
@@ -35,7 +35,7 @@ function renderShop() {
     // ── 素材セクション ──
     const matHeader2 = document.createElement('div');
     matHeader2.className = 'log-entry';
-    matHeader2.style.cssText = 'color:#aaddaa; border:none; padding-top:6px; padding-bottom:4px; font-size:14px;';
+    matHeader2.style.cssText = 'color:#aaddaa; border:none; padding-top:3px; padding-bottom:2px; font-size:13px;';
     matHeader2.textContent = '🌿 素材（クラフト用）';
     panel.appendChild(matHeader2);
 
@@ -46,10 +46,10 @@ function renderShop() {
         const canBuy = starDust >= item.cost;
         div.innerHTML = `
             <div>
-                <div style="color:var(--text-main); font-size:14px;">${item.name}</div>
+                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
                 <div class="lab-desc" style="color:#aaddaa;">現在: ${materials[item.mat] || 0}個</div>
             </div>
-            <button class="mini-btn" style="border-color:#aaddaa;color:#aaddaa; font-size:13px; padding:5px 10px;"
+            <button class="mini-btn" style="border-color:#aaddaa;color:#aaddaa; font-size:13px; padding:3px 8px;"
                 onclick="buyShopMaterial(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
                 購入 (G ${item.cost})
@@ -60,7 +60,7 @@ function renderShop() {
     // ── 食料セクション ──
     const foodHeader = document.createElement('div');
     foodHeader.className = 'log-entry';
-    foodHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-top:6px; padding-bottom:4px; font-size:14px;';
+    foodHeader.style.cssText = 'color:var(--accent-cyan); border:none; padding-top:3px; padding-bottom:2px; font-size:13px;';
     foodHeader.innerHTML = '🍖 食料 <span class="info-icon" onclick="showHelp(\'食料\',\'満腹度を回復し、HP回復効果もある食べ物。探索中は空腹ゲージが減少し、0になると毎ステップダメージを受ける。ダンジョンに入る前に準備しておこう。\')">ⓘ</span>';
     panel.appendChild(foodHeader);
 
@@ -71,10 +71,10 @@ function renderShop() {
         const canBuy = starDust >= item.cost && inventory.length < maxInventory;
         div.innerHTML = `
             <div>
-                <div style="color:var(--text-main); font-size:14px;">${item.name}</div>
+                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
                 <div class="lab-desc" style="color:#c8a060;">満腹+${item.food.hunger}${item.food.hp ? ' / HP+'+item.food.hp : ''}</div>
             </div>
-            <button class="mini-btn btn-equip" style="font-size:13px; padding:5px 10px;"
+            <button class="mini-btn btn-equip" style="font-size:13px; padding:3px 8px;"
                 onclick="buyShopFood(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
                 購入 (G ${item.cost})
@@ -85,7 +85,7 @@ function renderShop() {
     // ── スキル書セクション ──
     const skillHeader = document.createElement('div');
     skillHeader.className = 'log-entry';
-    skillHeader.style.cssText = 'color:var(--accent-magenta); border:none; padding-top:8px; padding-bottom:4px; font-size:14px;';
+    skillHeader.style.cssText = 'color:var(--accent-magenta); border:none; padding-top:4px; padding-bottom:2px; font-size:13px;';
     skillHeader.textContent = '📖 スキル書';
     panel.appendChild(skillHeader);
 
@@ -96,10 +96,10 @@ function renderShop() {
         const canBuy = starDust >= item.cost;
         div.innerHTML = `
             <div>
-                <div style="color:var(--text-main); font-size:14px;">${item.name}</div>
+                <div style="color:var(--text-main); font-size:13px;">${item.name}</div>
                 <div class="lab-desc" style="color:var(--accent-magenta);">${item.desc}</div>
             </div>
-            <button class="mini-btn btn-mix" style="font-size:13px; padding:5px 10px;"
+            <button class="mini-btn btn-mix" style="font-size:13px; padding:3px 8px;"
                 onclick="buyShopSkill(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
                 購入 (G ${item.cost})
@@ -110,7 +110,7 @@ function renderShop() {
     // ── 戦闘スキル書セクション ──
     const csHeader = document.createElement('div');
     csHeader.className = 'log-entry';
-    csHeader.style.cssText = 'color:#88ccff; border:none; padding-top:8px; padding-bottom:2px; font-size:14px;';
+    csHeader.style.cssText = 'color:#88ccff; border:none; padding-top:4px; padding-bottom:2px; font-size:13px;';
     csHeader.innerHTML = '⚔ 戦闘スキル書 &nbsp;<span style="color:#88ccff; font-size:12px; opacity:0.8">（武勲で購入）</span> <span class="info-icon" onclick="showHelp(\'戦闘スキル書\',\'武勲ポイントを消費してスキルを習得できる。スキルは戦闘中にSPを消費して発動し、通常攻撃より大きな効果を持つ。一度習得したスキルは永続的に使用可能。\')">ⓘ</span><br><span style="font-size:12px; color:#aaddff;">所持武勲: <b>' + battleMerit + '</b></span>';
     panel.appendChild(csHeader);
 
@@ -132,11 +132,11 @@ function renderShop() {
 
         div.innerHTML = `
             <div style="flex:1;">
-                <div style="color:var(--text-main); font-size:14px;">${skill ? skill.icon : ''} ${item.name}</div>
+                <div style="color:var(--text-main); font-size:13px;">${skill ? skill.icon : ''} ${item.name}</div>
                 <div class="lab-desc" style="color:#88ccff;">${item.desc}</div>
                 ${statusHtml}
             </div>
-            <button class="mini-btn" style="font-size:13px; padding:5px 10px; border-color:#88ccff; color:#88ccff;"
+            <button class="mini-btn" style="font-size:13px; padding:3px 8px; border-color:#88ccff; color:#88ccff;"
                 onclick="buyShopCombatSkill(${shopItems.indexOf(item)})"
                 ${canBuy ? '' : 'disabled'}>
                 ${learned ? '習得済' : '⚔ ' + item.meritCost + ' 武勲'}
@@ -228,7 +228,7 @@ function buyShopMaterial(index) {
 function renderMedalSection() {
     let apUsed = getMedalApUsed();
     let html = `
-        <div class="shop-section-header" style="margin-top:16px;">
+        <div class="shop-section-header" style="margin-top:8px;">
             🏅 神メダル &nbsp;<span style="color:#aaddff; font-size:12px; opacity:0.8">（武勲で購入・着脱）</span><br>
             <span style="font-size:12px; color:#88ccff;">AP: <b>${apUsed}/${medalApLimit}</b> &nbsp;|&nbsp; 所持武勲: <b>${battleMerit}</b></span>
         </div>

@@ -87,8 +87,8 @@ function renderDnaPanel() {
 
     const equippedCount = mutations.length;
     const slotMax = mutationSlots;
-    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">
-        <span style="color:var(--accent-cyan);font-size:14px;">🧬 DNA突然変異 <span class="info-icon" onclick="showHelp('DNA突然変異','ダンジョンで入手したDNAを消費して突然変異を解放・装備できる。装備スロット数はmutationSlotsに依存し、一定の組み合わせで強力なシナジー（現型）が発動する。DNAは敵を倒すたびに一定確率でドロップする。')">ⓘ</span></span><br>
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:3px;">
+        <span style="color:var(--accent-cyan);font-size:13px;">🧬 DNA突然変異 <span class="info-icon" onclick="showHelp('DNA突然変異','ダンジョンで入手したDNAを消費して突然変異を解放・装備できる。装備スロット数はmutationSlotsに依存し、一定の組み合わせで強力なシナジー（現型）が発動する。DNAは敵を倒すたびに一定確率でドロップする。')">ⓘ</span></span><br>
         装備中: <b style="color:var(--accent-cyan)">${equippedCount}/${slotMax}</b> スロット使用 ─ 変異の解除にはDNAが必要
     </div>`;
 
@@ -115,7 +115,7 @@ function renderDnaPanel() {
             <div style="flex:1;">
                 <div style="font-weight:bold;">${mut.icon} ${mut.name} <span style="color:var(--accent-green);font-size:12px;">${mut.desc}</span></div>
                 <div class="lab-desc">${mut.req.type} 討伐: ${have}/${need}
-                    <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:100px;margin-top:3px;overflow:hidden;">
+                    <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:100px;margin-top:1px;overflow:hidden;">
                         <div style="height:100%;width:${pct}%;background:${unlocked?'var(--accent-cyan)':'var(--accent-magenta)'};border-radius:100px;transition:width 0.3s;"></div>
                     </div>
                 </div>
@@ -153,14 +153,14 @@ function renderTrapPanel() {
     if (!panel) return;
 
     const placed = traps.length;
-    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:8px;">
-        <span style="color:var(--accent-orange);font-size:14px;">🪤 拠点トラップ <span class="info-icon" onclick="showHelp('拠点トラップ','拠点に罠を設置しておくと、次のダンジョン探索で戦闘突入時に先制ダメージを与えられる。素材を消費して工房で作成する。設置できる数に上限あり。')">ⓘ</span></span><br>
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:3px;">
+        <span style="color:var(--accent-orange);font-size:13px;">🪤 拠点トラップ <span class="info-icon" onclick="showHelp('拠点トラップ','拠点に罠を設置しておくと、次のダンジョン探索で戦闘突入時に先制ダメージを与えられる。素材を消費して工房で作成する。設置できる数に上限あり。')">ⓘ</span></span><br>
         設置中: <b style="color:var(--accent-orange)">${placed}/${MAX_TRAPS}</b> ─ 戦闘突入時に敵へ先制ダメージ
     </div>`;
 
     // 設置済みトラップ
     if (traps.length > 0) {
-        html += `<div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">── 設置済みトラップ ──</div>`;
+        html += `<div style="font-size:11px;color:var(--text-dim);margin-bottom:3px;">── 設置済みトラップ ──</div>`;
         traps.forEach((t, i) => {
             html += `<div class="lab-item" style="border-color:rgba(255,215,0,0.2);">
                 <div><b>${t.icon||'🪤'} ${t.name}</b> <span class="lab-desc">残り使用回数: ${t.usesLeft}</span></div>
@@ -231,7 +231,7 @@ function renderMeritShop() {
     meritShopItems.forEach(item => {
         const canBuy = battleMerit >= item.cost;
         const typeColor = item.type === 'perm' ? '#aa88ff' : item.type === 'buff' ? '#ffa040' : item.type === 'stat' ? '#6ccb5f' : '#60cdff';
-        html += `<div class="lab-item" style="opacity:${canBuy ? '1' : '0.5'}; margin-bottom:4px;">
+        html += `<div class="lab-item" style="opacity:${canBuy ? '1' : '0.5'}; margin-bottom:3px;">
             <div style="flex:1;">
                 <span style="color:${typeColor}; font-size:13px;">${item.icon} ${item.name}</span>
                 <div class="lab-desc">${item.desc}</div>
@@ -312,8 +312,8 @@ function renderTitlePanel() {
     const equipped = equippedTitle;
     const unlocked = unlockedTitles || ['nameless'];
 
-    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
-        <span style="color:#ffd700;font-size:14px;">🏆 称号（二つ名） <span class="info-icon" onclick="showHelp('称号（二つ名）','特定の条件を達成すると称号がアンロックされる。装備するとATK/DEF/SPD/CRITなどのステータスにボーナスが付く。一度に1つだけ装備可能。条件はクリット数・スキル使用数・歩数など様々。')">ⓘ</span></span><br>
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:5px;">
+        <span style="color:#ffd700;font-size:13px;">🏆 称号（二つ名） <span class="info-icon" onclick="showHelp('称号（二つ名）','特定の条件を達成すると称号がアンロックされる。装備するとATK/DEF/SPD/CRITなどのステータスにボーナスが付く。一度に1つだけ装備可能。条件はクリット数・スキル使用数・歩数など様々。')">ⓘ</span></span><br>
         称号を装備すると強力なステータス補正を得られます。一度に1つだけ装備できます。<br>
         装備中: <b style="color:#ffd700">${equipped ? titleCatalog.find(t=>t.id===equipped)?.name || 'なし' : 'なし'}</b>
     </div>`;
@@ -351,7 +351,7 @@ function renderTitlePanel() {
                 <div style="flex:1">
                     <div style="font-weight:bold;color:${isEquipped ? '#ffd700' : 'var(--text-main)'}">${t.icon} ${t.name}${isEquipped ? ' ✓ 装備中' : ''}</div>
                     <div class="lab-desc">${t.desc}</div>
-                    <div class="lab-desc" style="margin-top:3px">${effText}</div>
+                    <div class="lab-desc" style="margin-top:1px">${effText}</div>
                 </div>
                 <button class="mini-btn ${isEquipped ? 'btn-equipped' : 'btn-equip'}" onclick="equipTitle('${t.id}')">
                     ${isEquipped ? '外す' : '装備する'}
@@ -370,8 +370,8 @@ function renderAiPanel() {
     if (!panel) return;
 
     const priority = (typeof customAiPriority !== 'undefined') ? customAiPriority : ['normal'];
-    const aiHeaderHtml = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
-        <span style="color:var(--accent-cyan);font-size:14px;">🤖 カスタムAI <span class="info-icon" onclick="showHelp('カスタムAI','自動戦闘で使うスキルの優先順位を設定できる。▲▼で順番を入れ替え、上にあるほど優先して使用される。発動条件を満たせない場合は次の順位のスキルに移る。healingWaveはHP50%未満の時のみ発動。')">ⓘ</span></span><br>
+    const aiHeaderHtml = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:5px;">
+        <span style="color:var(--accent-cyan);font-size:13px;">🤖 カスタムAI <span class="info-icon" onclick="showHelp('カスタムAI','自動戦闘で使うスキルの優先順位を設定できる。▲▼で順番を入れ替え、上にあるほど優先して使用される。発動条件を満たせない場合は次の順位のスキルに移る。healingWaveはHP50%未満の時のみ発動。')">ⓘ</span></span><br>
         上から順に優先して使用されます。条件を満たせない場合は次へ移ります。
     </div>`;
     const skillNames = {
@@ -435,8 +435,8 @@ function renderJobPanel() {
     const current = typeof equippedJob !== 'undefined' ? equippedJob : 'none';
     const currentJob = jobCatalog.find(j => j.id === current);
 
-    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;">
-        <span style="color:var(--accent-green);font-size:14px;">⚗ 職業 <span class="info-icon" onclick="showHelp('職業','職業を選択するとパッシブボーナスが永続的に適用される。職業変更にはGが必要（無職への変更は無料）。ジョブごとにATK/DEF/GOLD/EXP倍率や特殊効果が異なる。一度に1つの職業だけ持てる。')">ⓘ</span></span><br>
+    let html = `<div style="color:var(--text-dim);font-size:12px;margin-bottom:5px;">
+        <span style="color:var(--accent-green);font-size:13px;">⚗ 職業 <span class="info-icon" onclick="showHelp('職業','職業を選択するとパッシブボーナスが永続的に適用される。職業変更にはGが必要（無職への変更は無料）。ジョブごとにATK/DEF/GOLD/EXP倍率や特殊効果が異なる。一度に1つの職業だけ持てる。')">ⓘ</span></span><br>
         職業を選ぶとパッシブ効果が永続します。変更にはGが必要です。<br>
         現在: <b style="color:var(--accent-green)">${currentJob ? currentJob.icon + ' ' + currentJob.name : '無職'}</b>
     </div>`;
@@ -470,14 +470,14 @@ function renderJobPanel() {
             const _bar = _jlv >= 5 ? '<span style="color:#ffd700">MAX</span>'
                        : `<span style="color:#aaa">${_jkc}/${_next}戦</span>`;
             const _stars = '★'.repeat(_jlv) + '☆'.repeat(5 - _jlv);
-            lvBadge = `<div style="font-size:11px;color:#ffd700;margin-top:2px">${_stars} Lv${_jlv} ${_bar}</div>`;
+            lvBadge = `<div style="font-size:11px;color:#ffd700;margin-top:1px">${_stars} Lv${_jlv} ${_bar}</div>`;
         }
 
         html += `<div class="lab-item" style="${isActive ? 'border-color:var(--accent-green);background:rgba(0,200,100,0.07);' : ''}">
             <div style="flex:1;">
                 <div style="font-weight:bold;color:${isActive ? 'var(--accent-green)' : 'var(--text-main)'}">${j.icon} ${j.name}${isActive ? ' ✓ 選択中' : ''}</div>
                 <div class="lab-desc">${j.desc}</div>
-                <div class="lab-desc" style="margin-top:3px">${effText}</div>
+                <div class="lab-desc" style="margin-top:1px">${effText}</div>
                 ${lvBadge}
             </div>
             ${isActive ? '' : `<button class="mini-btn btn-equip" onclick="changeJob('${j.id}')" style="font-size:12px;" ${canAfford?'':'disabled style="opacity:0.5;font-size:12px;"'}>${costLabel}</button>`}
