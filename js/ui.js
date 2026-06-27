@@ -1031,25 +1031,25 @@ function updateUI() {
             if (item.type === 'food') {
                 li.style.borderLeft = '3px solid #c8a060';
                 li.innerHTML = `
-                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#c8a060">🍖 \${item.name}</span> <span class="item-stats" style="color:#8a7050; font-size:12px;">満腹+\${item.hunger}\${item.hp ? ' HP+'+item.hp : ''}</span></div>
+                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#c8a060">🍖 ${item.name}</span> <span class="item-stats" style="color:#8a7050; font-size:12px;">満腹+${item.hunger}${item.hp ? ' HP+'+item.hp : ''}</span></div>
                     <div class="item-actions">
-                        <button class="mini-btn" style="border-color:#c8a060;color:#c8a060" onclick="eatFood(\${index})">食べる</button>
+                        <button class="mini-btn" style="border-color:#c8a060;color:#c8a060" onclick="eatFood(${index})">食べる</button>
                     </div>
                 `;
             } else if (item.type === 'water') {
                 li.style.borderLeft = '3px solid #6699dd';
                 li.innerHTML = `
-                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#88ccff">💧 \${item.name}</span> <span class="item-stats" style="color:#6688aa; font-size:12px;">渇き+\${item.thirstRestore}\${item.sp ? ' SP+'+item.sp : ''}</span></div>
+                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#88ccff">💧 ${item.name}</span> <span class="item-stats" style="color:#6688aa; font-size:12px;">渇き+${item.thirstRestore}${item.sp ? ' SP+'+item.sp : ''}</span></div>
                     <div class="item-actions">
-                        <button class="mini-btn" style="border-color:#6699dd;color:#88ccff" onclick="drinkWater(\${index})">飲む</button>
+                        <button class="mini-btn" style="border-color:#6699dd;color:#88ccff" onclick="drinkWater(${index})">飲む</button>
                     </div>
                 `;
             } else if (item.type === 'sp_potion') {
                 li.style.borderLeft = '3px solid #a050d8';
                 li.innerHTML = `
-                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#c080ff">✦ \${item.name}</span> <span class="item-stats" style="color:#8060a0; font-size:12px;">SP+\${item.spRestore}</span></div>
+                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:#c080ff">✦ ${item.name}</span> <span class="item-stats" style="color:#8060a0; font-size:12px;">SP+${item.spRestore}</span></div>
                     <div class="item-actions">
-                        <button class="mini-btn" style="border-color:#a050d8;color:#c080ff" onclick="useSpPotion(\${index})">使う</button>
+                        <button class="mini-btn" style="border-color:#a050d8;color:#c080ff" onclick="useSpPotion(${index})">使う</button>
                     </div>
                 `;
             } else {
@@ -1073,10 +1073,10 @@ function updateUI() {
                     compareHtml = `<span style="font-size:11px; color:#6ccb5f; margin-left:4px;">[新規装備]</span>`;
                 }
                 li.innerHTML = `
-                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:\${r.color}">\${typeIcons[item.type] || ''} \${item.name}</span> <span class="item-stats" style="font-size:12px;">\${statsText}<span style="color:\${r.color}; opacity:0.75;">\${r.label}</span>\${compareHtml}</span></div>
+                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span> <span class="item-stats" style="font-size:12px;">${statsText}<span style="color:${r.color}; opacity:0.75;">${r.label}</span>${compareHtml}</span></div>
                     <div class="item-actions">
-                        <button class="mini-btn btn-equip" onclick="equipItem(\${index})">装備</button>
-                        <button class="mini-btn btn-mix"   onclick="mixItem(\${index})">合成</button>
+                        <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>
+                        <button class="mini-btn btn-mix"   onclick="mixItem(${index})">合成</button>
                     </div>
                 `;
             }
@@ -1306,3 +1306,4 @@ function selectConstellation(id) {
     if (typeof saveData === 'function') saveData();
     renderBaseScene();
 }
+                    
