@@ -1306,4 +1306,3 @@ function selectConstellation(id) {
     if (typeof saveData === 'function') saveData();
     renderBaseScene();
 }
-                    

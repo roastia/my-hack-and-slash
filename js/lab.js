@@ -505,4 +505,3 @@ function upgradeBag() {
     updateUI();
     saveData();
 }
-    
