@@ -1073,8 +1073,10 @@ function updateUI() {
                 } else {
                     compareHtml = `<span style="font-size:11px; color:#6ccb5f; margin-left:4px;">[新規装備]</span>`;
                 }
+                if (isMythic) li.classList.add('item-mythic');
+                const mythicIcon = isMythic ? '◈ ' : (typeIcons[item.type] || '');
                 li.innerHTML = `
-                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:${r.color}">${typeIcons[item.type] || ''} ${item.name}</span> <span class="item-stats" style="font-size:12px;">${statsText}<span style="color:${r.color}; opacity:0.75;">${r.label}</span>${compareHtml}</span></div>
+                    <div style="flex-grow:1; padding-left:6px; font-size:13px;"><span style="color:${r.color}">${mythicIcon}${item.name}</span> <span class="item-stats" style="font-size:12px;">${statsText}<span style="color:${r.color}; opacity:0.75;">${r.label}</span>${compareHtml}</span></div>
                     <div class="item-actions">
                         <button class="mini-btn btn-equip" onclick="equipItem(${index})">装備</button>
                         <button class="mini-btn btn-mix"   onclick="mixItem(${index})">合成</button>

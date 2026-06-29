@@ -1474,3 +1474,83 @@ button, a, input, select, textarea, [onclick] {
     70%  { transform: translateX(-50%) translateY(-25px) scale(1.0); opacity: 1; }
     100% { transform: translateX(-50%) translateY(-50px) scale(0.9); opacity: 0; }
 }
+
+/* ── 神話アイテム 全画面演出 ──────────────────────── */
+#legendary-reveal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    animation: leg-fadein 0.5s ease;
+    cursor: pointer;
+}
+#legendary-reveal-overlay.leg-exit { animation: leg-fadeout 0.6s ease forwards; }
+@keyframes leg-fadein  { from { opacity:0; } to { opacity:1; } }
+@keyframes leg-fadeout { from { opacity:1; } to { opacity:0; } }
+
+.leg-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, #1a0a00 0%, #000 70%);
+    opacity: 0.95;
+}
+.leg-inner {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem;
+    max-width: 340px;
+}
+.leg-spark {
+    position: absolute; left: 50%; top: 40%;
+    transform: translate(-50%,-50%); width: 0; height: 0;
+}
+.leg-particle {
+    position: absolute;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #ff8c00 60%, transparent 100%);
+    animation: leg-burst 1.2s ease-out forwards;
+    top: 0; left: 0;
+}
+@keyframes leg-burst {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+.leg-pre {
+    font-size: 12px; letter-spacing: 3px; color: #ff8c00;
+    animation: leg-slide-in 0.6s 0.2s ease both;
+    text-shadow: 0 0 12px #ff8c00;
+    margin-bottom: 0.8rem;
+}
+.leg-name {
+    font-size: clamp(18px, 5vw, 28px); font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 20px #ff8c00, 0 0 40px #ff4400;
+    animation: leg-slide-in 0.6s 0.4s ease both, leg-shimmer 2s 1s ease infinite;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+}
+@keyframes leg-slide-in { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+@keyframes leg-shimmer  { 0%,100% { text-shadow: 0 0 20px #ff8c00, 0 0 40px #ff4400; } 50% { text-shadow: 0 0 30px #ffdd00, 0 0 60px #ff8c00, 0 0 100px #fff; } }
+.leg-lore {
+    font-size: 13px; color: #ccaa88; font-style: italic; line-height: 1.6;
+    animation: leg-slide-in 0.6s 0.7s ease both;
+    margin-bottom: 1rem;
+}
+.leg-stats {
+    font-size: 14px; color: #ffcc66; letter-spacing: 1px;
+    animation: leg-slide-in 0.6s 0.9s ease both;
+    margin-bottom: 1.4rem;
+}
+.leg-tap {
+    font-size: 11px; color: #666;
+    animation: leg-slide-in 0.6s 1.2s ease both, leg-blink 1.5s 1.2s ease infinite;
+}
+@keyframes leg-blink { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+
+/* インベントリ内の神話アイテム */
+.item-mythic {
+    border: 1px solid #ff8c00 !important;
+    box-shadow: 0 0 8px #ff8c0066, inset 0 0 12px #ff4400aa !important;
+    background: linear-gradient(135deg, #1a0800, #2a1000) !important;
+    animation: mythic-glow 2s ease infinite;
+}
+@keyframes mythic-glow {
+    0%,100% { box-shadow: 0 0 8px #ff8c0066, inset 0 0 12px #ff440066; }
+    50%     { box-shadow: 0 0 18px #ff8c00cc, inset 0 0 20px #ff8c0066; }
+}

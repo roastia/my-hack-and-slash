@@ -6,7 +6,27 @@
  * スケール値に応じてランダムなアイテムを生成する
  * @param {number} scale - ダンジョン難易度×階層で決まる強さ係数
  */
+const LEGENDARY_ITEMS = [
+    { name: '《天覇剣・ライトニング》', type: 'weapon', atk: 42, crit: 28, steal: 8,  def: 0, lore: '天地を割く伝説の剣。一振りで雷が走る。' },
+    { name: '《冥府の大鎌》',           type: 'weapon', atk: 36, crit: 18, steal: 22, def: 0, lore: '魂を刈り取る死神の得物。触れた者は皆、逝く。' },
+    { name: '《真祖の魔刀》',           type: 'weapon', atk: 32, crit: 22, steal: 18, def: 0, lore: '魔界の王が振るった呪いの刃。今も血を求める。' },
+    { name: '《星喰らいの弓》',         type: 'weapon', atk: 38, crit: 30, steal: 5,  def: 0, lore: '星を射落とした弓。矢は必ず心臓を貫く。' },
+    { name: '《龍鱗の鎧》',             type: 'armor',  atk: 0,  crit: 8,  steal: 5,  def: 44, lore: '古竜の鱗を編んだ不壊の鎧。炎も刃も通さぬ。' },
+    { name: '《虚空の外套》',           type: 'armor',  atk: 0,  crit: 12, steal: 20, def: 36, lore: '次元の狭間から生まれた装束。影の中を歩く者へ。' },
+    { name: '《神盾・エギス》',         type: 'shield', atk: 0,  crit: 5,  steal: 12, def: 48, lore: '神々が鍛えし究極の盾。かつて世界を守った。' },
+    { name: '《星詠みの兜》',           type: 'helm',   atk: 0,  crit: 22, steal: 8,  def: 32, lore: '星の加護を宿す古の兜。運命が変わると言う。' },
+    { name: '《不滅の鉄仮面》',         type: 'helm',   atk: 0,  crit: 10, steal: 5,  def: 40, lore: '主を替えながら戦場を渡ってきた呪われた兜。' },
+];
+
 function generateItem(scale) {
+    // 神話級ドロップ（0.3%）
+    if (Math.random() < 0.003) {
+        const leg = LEGENDARY_ITEMS[Math.floor(Math.random() * LEGENDARY_ITEMS.length)];
+        const m = Object.assign({}, leg);
+        m.stars = 4;
+        m.spirits = {};
+        return m;
+    }
     let base  = Object.assign({}, itemsDatabase[Math.floor(Math.random() * itemsDatabase.length)]);
     base.crit  = base.crit  || 0;
     base.steal = base.steal || 0;
@@ -102,6 +122,9 @@ function mixItem(index) {
 
 function getRarityInfo(item) {
     if (!item) return { label: '未装備', color: 'var(--text-dim)' };
+
+    // 神話級
+    if (item.stars === 4) return { label: '◈ 神 話', color: '#ff8c00' };
 
     // [伝説] プレフィックスは常にレジェンド
     if (item.name.includes('[伝説]')) return { label: '✦ 伝 説', color: '#d4a830' };

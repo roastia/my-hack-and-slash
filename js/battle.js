@@ -434,7 +434,8 @@ function executeBattleTurn(skillId) {
                 const br = getRarityInfo(bossItem);
                 const _bossLogMsg = `✦ ボスの遺品として <span style="color:${br.color}; font-weight:bold" ${bossItem.stars >= 2 ? 'id="latestRareItemName"' : ''}>［${bossItem.name}］</span> <span style="color:${br.color}; font-size:12px">${br.label}</span> を手に入れた！`;
                 addLog(_bossLogMsg);
-                if (bossItem.stars >= 2 && typeof triggerRainbow === 'function') {
+                if (bossItem.stars === 4 && typeof showLegendaryReveal === 'function') { showLegendaryReveal(bossItem); }
+                if (bossItem.stars >= 2 && bossItem.stars < 4 && typeof triggerRainbow === 'function') {
                     setTimeout(() => triggerRainbow(document.getElementById('latestRareItemName')), 50);
                 }
             } else {

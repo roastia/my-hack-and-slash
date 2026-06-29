@@ -377,3 +377,54 @@ function showItemPopup(text, color) {
         });
     });
 })();
+
+// ── 神話アイテム 全画面演出 ──────────────────────────────
+function showLegendaryReveal(item) {
+    // 既存オーバーレイ除去
+    const old = document.getElementById('legendary-reveal-overlay');
+    if (old) old.remove();
+
+    const ov = document.createElement('div');
+    ov.id = 'legendary-reveal-overlay';
+    ov.innerHTML = `
+      <div class="leg-bg"></div>
+      <div class="leg-inner">
+        <div class="leg-spark" id="legSpark"></div>
+        <div class="leg-pre">◈ 神話級アイテム入手 ◈</div>
+        <div class="leg-name">${item.name}</div>
+        <div class="leg-lore">${item.lore || ''}</div>
+        <div class="leg-stats">${[
+          item.atk  > 0 ? 'ATK +' + item.atk  : '',
+          item.def  > 0 ? 'DEF +' + item.def  : '',
+          item.crit > 0 ? 'CRT +' + item.crit : '',
+          item.steal> 0 ? '吸血 +' + item.steal: '',
+        ].filter(Boolean).join('  /  ')}</div>
+        <div class="leg-tap">タップで閉じる</div>
+      </div>
+    `;
+    document.body.appendChild(ov);
+
+    // 火花パーティクル
+    const spark = document.getElementById('legSpark');
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'leg-particle';
+        const angle = Math.random() * 360;
+        const dist  = 80 + Math.random() * 160;
+        const dx = Math.cos(angle * Math.PI / 180) * dist;
+        const dy = Math.sin(angle * Math.PI / 180) * dist;
+        p.style.cssText = `--dx:${dx}px;--dy:${dy}px;animation-delay:${Math.random()*0.6}s;`;
+        spark.appendChild(p);
+    }
+
+    ov.addEventListener('click', () => {
+        ov.classList.add('leg-exit');
+        setTimeout(() => ov.remove(), 600);
+    });
+    setTimeout(() => {
+        if (document.getElementById('legendary-reveal-overlay')) {
+            ov.classList.add('leg-exit');
+            setTimeout(() => ov.remove(), 600);
+        }
+    }, 6000);
+}
