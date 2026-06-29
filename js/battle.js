@@ -150,6 +150,7 @@ function executeBattleTurn(skillId) {
     let logMsg = '';
     let enemyDied = false;
     let _isCrit = false;
+    let myDmgData = null;
 
     // ── スキル実行 ──
     if (skill) {
@@ -414,7 +415,7 @@ function executeBattleTurn(skillId) {
 
         logMsg += `<br><span class="${battleState.isBoss ? 'boss-text' : 'attack-text'}">${enemy.name} を倒した！</span><br>EXP +${enemy.exp} / <span style="color:var(--accent-orange)">G +${dust}</span> / <span style="color:#88ccff">武勲 +${meritGain}</span>`;
         addLog(logMsg);
-        if (typeof showFloatDamage === 'function') showFloatDamage(myDmgData.total, _isCrit ? 'crit' : 'normal');
+        if (typeof showFloatDamage === 'function' && myDmgData) showFloatDamage(myDmgData.total, _isCrit ? 'crit' : 'normal');
         if (_isCrit) { if (typeof triggerShake === 'function') triggerShake(); if (typeof triggerFlash === 'function') triggerFlash('crit'); }
         checkLevelUp();
 
